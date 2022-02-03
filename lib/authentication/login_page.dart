@@ -77,8 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextField(
                           controller: emailController,
                           decoration: const InputDecoration(
-                            labelText: "E-Mail",
-                          ),
+                              labelText: "E-Mail",
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16.0)))),
                         ),
                       ),
                       Padding(
@@ -90,6 +92,9 @@ class _LoginPageState extends State<LoginPage> {
                           controller: passwordController,
                           decoration: const InputDecoration(
                             labelText: "Password",
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16.0))),
                           ),
                         ),
                       ),
