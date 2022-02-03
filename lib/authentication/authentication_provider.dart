@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travel_atvisor/authentication/authentication_result.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
@@ -7,7 +8,8 @@ class AuthenticationProvider {
 
   Stream<User?> get authState => firebaseAuth.idTokenChanges();
 
-  Future<String> signUp({required String email, required String password}) async {
+  Future<String> signUp(
+      {required String email, required String password}) async {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -16,20 +18,32 @@ class AuthenticationProvider {
       return e.message ?? "Unknown error occured";
     }
   }
-  
-  //SIGN IN METHOD
-  Future<String> signIn({required String email, required String password}) async {
+
+  Future<AuthenticationResult> signIn(
+      {required String email, required String password}) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return "Signed in!";
+      return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
-      return e.message ?? "Unkown error occured";
+      return parseErrorCode(e.code);
     }
   }
-  
-  //SIGN OUT METHOD
+
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+  }
+
+  AuthenticationResult parseErrorCode(String code) {
+    switch (code) {
+      case "user-not-found":
+        return AuthenticationResult.unkownUser;
+      case "invalid-email":
+        return AuthenticationResult.invalidMail;
+      case "wrong-password":
+        return AuthenticationResult.wrongPassword;
+      default:
+        return AuthenticationResult.unexpected;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/authentication/authentication_result.dart';
 
 import 'authentication_provider.dart';
 
@@ -11,11 +12,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  //Controllers for e-mail and password textfields.
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  //Handling signup and signin
   bool signUp = true;
 
   @override
@@ -24,59 +23,73 @@ class _LoginPageState extends State<LoginPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          //e-mail textfield
+          Text(
+            "Travel@visor",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          const Text("Bitte melde dich an, um die App zu verwenden"),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: "Email",
+            child: Card(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: "Email",
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: TextField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        labelText: "Password",
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            final authenticationResult = await context
+                                .read<AuthenticationProvider>()
+                                .signIn(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
+                            if (authenticationResult ==
+                                AuthenticationResult.success) {
+                              return;
+                            }
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text("Error")));
+                          },
+                          child: const Text("Anmelden"),
+                        ),
+                        OutlinedButton(
+                            onPressed: () {},
+                            child: const Text("Noch kein Konto?"))
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
           ),
-
-          //password textfield
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: "Password",
-              ),
-            ),
-          ),
-
-          //Sign in / Sign up button
-          ElevatedButton(
-            onPressed: () {
-              if (signUp) {
-                //Provider sign up method
-                context.read<AuthenticationProvider>().signUp(
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
-              } else {
-                //Provider sign in method
-                context.read<AuthenticationProvider>().signIn(
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
-              }
-            },
-            child: signUp ? const Text("Sign Up") : const Text("Sign In"),
-          ),
-
-          //Sign up / Sign In toggler
-          OutlinedButton(
-            onPressed: () {
-              setState(() {
-                signUp = !signUp;
-              });
-            },
-            child: signUp
-                ? const Text("Have an account? Sign In")
-                : const Text("Create an account"),
-          )
         ],
       ),
     );
