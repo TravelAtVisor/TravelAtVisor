@@ -112,11 +112,11 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () => signinHandler(context),
                         isElevated: true,
                       ),
-                      const DividerWithText(text: "ODER"),
                       FullWidthButton(
                           text: "Noch kein Konto? Registrieren",
                           onPressed: () {},
                           isElevated: false),
+                      const DividerWithText(text: "ODER"),
                       FullWidthButton(
                         text: "Weiter mit Google",
                         onPressed: () {},
