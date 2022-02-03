@@ -76,11 +76,16 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: TextField(
                           controller: emailController,
-                          decoration: const InputDecoration(
-                              labelText: "E-Mail",
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(16.0)))),
+                          decoration: InputDecoration(
+                            labelText: "E-Mail",
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                            ),
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
+                          ),
                         ),
                       ),
                       Padding(
@@ -90,11 +95,15 @@ class _LoginPageState extends State<LoginPage> {
                           enableSuggestions: false,
                           autocorrect: false,
                           controller: passwordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: "Password",
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16.0))),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                            ),
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
                           ),
                         ),
                       ),
