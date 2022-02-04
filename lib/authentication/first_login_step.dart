@@ -8,10 +8,12 @@ import 'authentication_provider.dart';
 import 'authentication_result.dart';
 
 class FirstLoginStep extends StatelessWidget {
+  final AnimationController animationController;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  FirstLoginStep({Key? key}) : super(key: key);
+  FirstLoginStep({Key? key, required this.animationController})
+      : super(key: key);
 
   Future<void> signinHandler(BuildContext context) async {
     final authenticationResult =
@@ -48,7 +50,7 @@ class FirstLoginStep extends StatelessWidget {
         ),
         FullWidthButton(
             text: "Noch kein Konto? Registrieren",
-            onPressed: () {},
+            onPressed: () => animationController.forward(),
             isElevated: false),
         const DividerWithText(text: "ODER"),
         FullWidthButton(

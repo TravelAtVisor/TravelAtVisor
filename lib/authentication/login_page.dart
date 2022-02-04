@@ -9,7 +9,23 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 150));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,9 +60,27 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 color: Colors.white,
               ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 40.0),
-                child: CompleteProfileView(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 40.0),
+                child: Stack(children: [
+                  SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(1.5, 0),
+                      end: Offset.zero,
+                    ).animate(_animationController),
+                    child: const CompleteProfileView(),
+                  ),
+                  SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset.zero,
+                      end: const Offset(-1.5, 0),
+                    ).animate(_animationController),
+                    child: FirstLoginStep(
+                      animationController: _animationController,
+                    ),
+                  ),
+                ]),
               ),
             ))
           ],
