@@ -1,12 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/authentication/authentication_result.dart';
+import 'package:travel_atvisor/authentication/authentication_state.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
 
   AuthenticationProvider(this.firebaseAuth);
 
-  Stream<User?> get authState => firebaseAuth.idTokenChanges();
+  Stream<AuthenticationState> get authState =>
+      firebaseAuth.idTokenChanges().map((currentUser) {
+        return AuthenticationState(currentUser, currentUser != null);
+      });
 
   Future<AuthenticationResult> signUp(
       {required String email, required String password}) async {

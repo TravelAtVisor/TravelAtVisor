@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/authentication/authentication_state.dart';
 
 class AuthenticationGuard extends StatelessWidget {
   final WidgetBuilder loginBuilder;
@@ -12,9 +12,8 @@ class AuthenticationGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    return Consumer<User?>(builder: (context, firebaseUser, _) {
-      if (firebaseUser != null) {
+    return Consumer<AuthenticationState>(builder: (context, authState, _) {
+      if (authState.hasCompleteProfile) {
         return userSafeBuilder(context);
       }
       return loginBuilder(context);

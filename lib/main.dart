@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/authentication/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/firebase_options.dart';
 
 import 'authentication/authentication_guard.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         StreamProvider(
             create: (context) =>
                 context.read<AuthenticationProvider>().authState,
-            initialData: null),
+            initialData: AuthenticationState.initialState),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
