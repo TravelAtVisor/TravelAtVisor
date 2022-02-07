@@ -1,15 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travel_atvisor/authentication/authentication_dataservice.dart';
 import 'package:travel_atvisor/authentication/authentication_result.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
+  final AuthenticationDataService _dataService;
 
-  AuthenticationProvider(this.firebaseAuth);
+  AuthenticationProvider(this.firebaseAuth, this._dataService);
 
   Stream<AuthenticationState> get authState =>
-      firebaseAuth.idTokenChanges().map((currentUser) {
-        return AuthenticationState(currentUser, currentUser != null);
+      firebaseAuth.idTokenChanges().asyncMap((currentUser) async {
+        final customData = currentUser != null
+            ? await _dataService.getCustomUserDataByIdAsync(currentUser.uid)
+            : null;
+
+        return AuthenticationState(currentUser, customData);
       });
 
   Future<AuthenticationResult> signUp(

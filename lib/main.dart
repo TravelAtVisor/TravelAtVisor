@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/authentication/authentication_provider.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/firebase_options.dart';
+import 'package:travel_atvisor/persistence/firebase_dataservice.dart';
 
 import 'authentication/authentication_guard.dart';
 import 'home_page.dart';
@@ -23,8 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<FirebaseDataservice>(
+            create: (_) => FirebaseDataservice(FirebaseFirestore.instance)),
         Provider<AuthenticationProvider>(
-          create: (_) => AuthenticationProvider(FirebaseAuth.instance),
+          create: (context) {
+            final authenticationDataService =
+                context.read<FirebaseDataservice>();
+            return AuthenticationProvider(
+                FirebaseAuth.instance, authenticationDataService);
+          },
         ),
         StreamProvider(
             create: (context) =>
