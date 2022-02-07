@@ -9,6 +9,11 @@ class FirebaseDataservice implements AuthenticationDataService {
 
   @override
   Future<CustomUserData?> getCustomUserDataByIdAsync(String userId) async {
-    return null;
+    final snapshot = await _firestore.collection("users").doc(userId).get();
+    if (!snapshot.exists) return null;
+
+    final data = snapshot.data()!;
+    return CustomUserData(data["nickname"], data["fullName"], data["photoUrl"],
+        data["biography"]);
   }
 }

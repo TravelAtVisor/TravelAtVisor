@@ -12,7 +12,7 @@ class AuthenticationState {
     hasCompleteProfile = baseData != null && customData != null;
 
     currentUser = baseData != null
-        ? UserModel(baseData.uid, baseData.uid, customData)
+        ? UserModel(baseData.uid, baseData.email!, customData)
         : null;
   }
 }
