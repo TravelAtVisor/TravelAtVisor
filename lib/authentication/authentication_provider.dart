@@ -8,23 +8,25 @@ class AuthenticationProvider {
 
   Stream<User?> get authState => firebaseAuth.idTokenChanges();
 
-  Future<String> signUp(
+  Future<AuthenticationResult> signUp(
       {required String email, required String password}) async {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return "Signed up!";
+      return AuthenticationResult.successIncompleteProfile;
     } on FirebaseAuthException catch (e) {
-      return e.message ?? "Unknown error occured";
+      return parseErrorCode(e.code);
     }
   }
 
   Future<AuthenticationResult> signIn(
       {required String email, required String password}) async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
+      final credential = await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return AuthenticationResult.success;
+      return isProfileCompleted(credential.user!)
+          ? AuthenticationResult.success
+          : AuthenticationResult.successIncompleteProfile;
     } on FirebaseAuthException catch (e) {
       return parseErrorCode(e.code);
     }
@@ -32,6 +34,13 @@ class AuthenticationProvider {
 
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+  }
+
+  bool isProfileCompleted(User user) {
+    return user.displayName != null &&
+        user.email != null &&
+        user.emailVerified &&
+        user.photoURL != null;
   }
 
   AuthenticationResult parseErrorCode(String code) {

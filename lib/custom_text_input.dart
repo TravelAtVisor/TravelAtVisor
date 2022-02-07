@@ -5,6 +5,8 @@ class CustomTextInput extends StatelessWidget {
   final String labelText;
   final bool isPassword;
   final int maxLines;
+  final void Function(String)? onChanged;
+  final String? errorText;
 
   const CustomTextInput({
     Key? key,
@@ -12,6 +14,8 @@ class CustomTextInput extends StatelessWidget {
     required this.labelText,
     this.isPassword = false,
     this.maxLines = 1,
+    this.onChanged,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,7 @@ class CustomTextInput extends StatelessWidget {
           controller: controller,
           decoration: InputDecoration(
             labelText: labelText,
+            errorText: errorText,
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -33,6 +38,7 @@ class CustomTextInput extends StatelessWidget {
             fillColor: Colors.grey.shade200,
             filled: true,
           ),
+          onChanged: onChanged,
         ));
   }
 }

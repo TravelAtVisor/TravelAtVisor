@@ -12,6 +12,7 @@ class AuthenticationGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Consumer<User?>(builder: (context, firebaseUser, _) {
       if (firebaseUser != null) {
         return userSafeBuilder(context);
