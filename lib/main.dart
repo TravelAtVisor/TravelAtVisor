@@ -44,7 +44,11 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: AuthenticationGuard(
-          loginBuilder: (_) => const LoginPage(),
+          loginBuilder: (_) => Consumer<AuthenticationState>(
+            builder: (context, value, child) => LoginPage(
+              authenticationState: value,
+            ),
+          ),
           userSafeBuilder: (_) => const HomePage(),
         ),
       ),

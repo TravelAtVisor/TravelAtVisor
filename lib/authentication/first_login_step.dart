@@ -45,6 +45,27 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
               email: emailController.text.trim(),
               password: passwordController.text.trim(),
             );
+
+    if (authenticationResult == AuthenticationResult.success) {
+      return;
+    }
+
+    if (authenticationResult == AuthenticationResult.successIncompleteProfile) {
+      widget.animationController.forward();
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Error")));
+  }
+
+  Future<void> signupHandler(BuildContext context) async {
+    final authenticationResult =
+        await context.read<AuthenticationProvider>().signUp(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim(),
+            );
+
     if (authenticationResult == AuthenticationResult.success) {
       return;
     }
@@ -87,9 +108,7 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
         ),
         FullWidthButton(
             text: "Noch kein Konto? Registrieren",
-            onPressed: _isFormValid()
-                ? () => widget.animationController.forward()
-                : null,
+            onPressed: _isFormValid() ? () => signupHandler(context) : null,
             isElevated: false),
         const DividerWithText(text: "ODER"),
         FullWidthButton(

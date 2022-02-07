@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/authentication/complete_profile.dart';
 import 'first_login_step.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final AuthenticationState authenticationState;
+  const LoginPage({Key? key, required this.authenticationState})
+      : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -17,6 +20,11 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
+    if (widget.authenticationState.currentUser != null &&
+        !widget.authenticationState.hasCompleteProfile) {
+      _animationController.forward();
+    }
+
     super.initState();
   }
 
