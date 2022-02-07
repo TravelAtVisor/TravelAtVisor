@@ -16,4 +16,17 @@ class FirebaseDataservice implements AuthenticationDataService {
     return CustomUserData(data["nickname"], data["fullName"], data["photoUrl"],
         data["biography"]);
   }
+
+  @override
+  Future<void> updateCustomUserDataAsync(
+      String userId, CustomUserData customUserData) async {
+    final data = {
+      "nickname": customUserData.nickname,
+      "fullName": customUserData.fullName,
+      "photoUrl": customUserData.photoUrl,
+      "biography": customUserData.biography
+    };
+
+    await _firestore.collection("users").doc(userId).set(data);
+  }
 }

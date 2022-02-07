@@ -1,9 +1,16 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/src/provider.dart';
+import 'package:travel_atvisor/authentication/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/custom_user_data.dart';
 import 'package:travel_atvisor/custom_text_input.dart';
 import 'package:travel_atvisor/full_width_button.dart';
 
 class CompleteProfileView extends StatelessWidget {
-  const CompleteProfileView({Key? key}) : super(key: key);
+  final _fullNameController = TextEditingController();
+  final _nicknameController = TextEditingController();
+  final _biographyController = TextEditingController();
+
+  CompleteProfileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +36,27 @@ class CompleteProfileView extends StatelessWidget {
             ),
             Flexible(
               child: CustomTextInput(
-                  controller: TextEditingController(),
-                  labelText: "Voller Name"),
+                  controller: _fullNameController, labelText: "Voller Name"),
             )
           ],
         ),
         CustomTextInput(
-            controller: TextEditingController(), labelText: "Benutzername"),
+            controller: _nicknameController, labelText: "Benutzername"),
         CustomTextInput(
-          controller: TextEditingController(),
+          controller: _biographyController,
           labelText: "Biographie",
           maxLines: 5,
         ),
-        FullWidthButton(text: "Abschließen", onPressed: () {}, isElevated: true)
+        FullWidthButton(
+            text: "Abschließen",
+            onPressed: () {
+              final customUserData = CustomUserData(_nicknameController.text,
+                  _fullNameController.text, null, _biographyController.text);
+              context
+                  .read<AuthenticationProvider>()
+                  .updateUserProfile(customUserData);
+            },
+            isElevated: true)
       ],
     );
   }
