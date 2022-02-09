@@ -45,5 +45,7 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wir brauchen Zugriff auf deine Fotomediathek damit du dein Profilbild auswählen kannst.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Wir brauchen Zugriff auf deine Kamera damit du dein Profilbild aufnehmen kannst.</string>
 </dict>
 </plist>

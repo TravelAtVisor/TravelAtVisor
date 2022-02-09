@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage>
                       begin: const Offset(1.5, 0),
                       end: Offset.zero,
                     ).animate(_animationController),
-                    child: CompleteProfileView(),
+                    child: const CompleteProfileView(),
                   ),
                   SlideTransition(
                     position: Tween<Offset>(
