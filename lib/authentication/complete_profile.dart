@@ -25,7 +25,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
   String? profilePicturePath;
 
-  Future<void> updateProfilePicture() async {
+  void updateProfilePicture() {
     showModalBottomSheet(
         context: context,
         builder: (context) => SafeArea(
@@ -126,8 +126,11 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         FullWidthButton(
             text: "Abschließen",
             onPressed: () {
-              final customUserData = CustomUserData(_nicknameController.text,
-                  _fullNameController.text, null, _biographyController.text);
+              final customUserData = CustomUserData(
+                  _nicknameController.text,
+                  _fullNameController.text,
+                  profilePicturePath,
+                  _biographyController.text);
               context
                   .read<AuthenticationProvider>()
                   .updateUserProfile(customUserData);
