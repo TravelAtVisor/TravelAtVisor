@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/authentication/complete_profile.dart';
 import 'first_login_step.dart';
@@ -20,12 +21,19 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
-    if (widget.authenticationState.currentUser != null &&
-        !widget.authenticationState.hasCompleteProfile) {
-      _animationController.forward();
-    }
 
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(LoginPage oldWidget) {
+    final authState = context.watch<AuthenticationState>();
+    if (authState.currentUser != null && !authState.hasCompleteProfile) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

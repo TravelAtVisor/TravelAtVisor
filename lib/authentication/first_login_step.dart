@@ -50,11 +50,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
       return;
     }
 
-    if (authenticationResult == AuthenticationResult.successIncompleteProfile) {
-      widget.animationController.forward();
-      return;
-    }
-
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text("Error")));
   }
@@ -67,11 +62,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
             );
 
     if (authenticationResult == AuthenticationResult.success) {
-      return;
-    }
-
-    if (authenticationResult == AuthenticationResult.successIncompleteProfile) {
-      widget.animationController.forward();
       return;
     }
 
@@ -113,7 +103,8 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
         const DividerWithText(text: "ODER"),
         FullWidthButton(
           text: "Weiter mit Google",
-          onPressed: () {},
+          onPressed: () =>
+              context.read<AuthenticationProvider>().signInWithGoogle(),
           isElevated: false,
         )
       ],

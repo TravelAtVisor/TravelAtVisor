@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/authentication/authentication_provider.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
-import 'package:travel_atvisor/firebase_options.dart';
 import 'package:travel_atvisor/persistence/firebase_dataservice.dart';
 
 import 'authentication/authentication_guard.dart';
@@ -15,7 +14,7 @@ import 'authentication/login_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

@@ -35,7 +35,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       icon: Icons.camera_alt,
                       label: "Profilbild aufnehmen",
                       onPressed: () async {
-                        final pickedFile = await _imagePicker.pickImage(
+                        final pickedFile = await _imagePicker.getImage(
                             source: ImageSource.camera);
                         cropImage(pickedFile?.path);
                       }),
@@ -43,7 +43,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       icon: Icons.browse_gallery,
                       label: "Profilbild auswählen",
                       onPressed: () async {
-                        final pickedFile = await _imagePicker.pickImage(
+                        final pickedFile = await _imagePicker.getImage(
                             source: ImageSource.gallery);
                         cropImage(pickedFile?.path);
                       }),
@@ -87,9 +87,18 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 32.0),
-          child: Text("Bitte erzähl uns noch etwas über dich"),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 32.0),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () =>
+                    context.read<AuthenticationProvider>().signOut(),
+                icon: const Icon(Icons.backpack),
+              ),
+              const Text("Bitte erzähl uns noch etwas über dich"),
+            ],
+          ),
         ),
         Row(
           children: [

@@ -4,6 +4,7 @@ import 'package:travel_atvisor/authentication/authentication_result.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/authentication/custom_user_data.dart';
 import 'dart:async';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
@@ -31,7 +32,7 @@ class AuthenticationProvider {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return AuthenticationResult.successIncompleteProfile;
+      return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
       return parseErrorCode(e.code);
     }
@@ -40,11 +41,26 @@ class AuthenticationProvider {
   Future<AuthenticationResult> signIn(
       {required String email, required String password}) async {
     try {
-      final credential = await firebaseAuth.signInWithEmailAndPassword(
+      await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return isProfileCompleted(credential.user!)
-          ? AuthenticationResult.success
-          : AuthenticationResult.successIncompleteProfile;
+      return AuthenticationResult.success;
+    } on FirebaseAuthException catch (e) {
+      return parseErrorCode(e.code);
+    }
+  }
+
+  Future<AuthenticationResult> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      await firebaseAuth.signInWithCredential(credential);
+      return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
       return parseErrorCode(e.code);
     }
@@ -58,13 +74,6 @@ class AuthenticationProvider {
     await _dataService.updateCustomUserDataAsync(
         firebaseAuth.currentUser!.uid, customUserData);
     _manualAuthStateEmitter.add(firebaseAuth.currentUser);
-  }
-
-  bool isProfileCompleted(User user) {
-    return user.displayName != null &&
-        user.email != null &&
-        user.emailVerified &&
-        user.photoURL != null;
   }
 
   AuthenticationResult parseErrorCode(String code) {
