@@ -15,13 +15,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
+  late final AnimationController _slideController;
+
+  double topPadding = 100;
 
   @override
   void initState() {
-    _animationController = AnimationController(
+    _slideController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
-
     super.initState();
   }
 
@@ -29,17 +30,26 @@ class _LoginPageState extends State<LoginPage>
   void didUpdateWidget(LoginPage oldWidget) {
     final authState = context.watch<AuthenticationState>();
     if (authState.currentUser != null && !authState.hasCompleteProfile) {
-      _animationController.forward();
+      _slideController.forward();
     } else {
-      _animationController.reverse();
+      _slideController.reverse();
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _slideController.dispose();
     super.dispose();
+  }
+
+  void updateTopPadding(bool isKeyboardPresent) {
+    if (!isKeyboardPresent) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+    setState(() {
+      topPadding = isKeyboardPresent ? 0 : 100;
+    });
   }
 
   @override
@@ -55,50 +65,53 @@ class _LoginPageState extends State<LoginPage>
         ),
         Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
+            AnimatedPadding(
+              duration: const Duration(milliseconds: 100),
+              padding: EdgeInsets.symmetric(
                 horizontal: 16.0,
-                vertical: 100.0,
+                vertical: topPadding,
               ),
-              child: Column(children: [
-                Text(
-                  "Travel@visor",
-                  style: Theme.of(context).textTheme.headline2,
-                ),
-              ]),
             ),
             Expanded(
-                child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
-                ),
-                color: Colors.white,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 40.0),
-                child: Stack(children: [
-                  SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(1.5, 0),
-                      end: Offset.zero,
-                    ).animate(_animationController),
-                    child: const CompleteProfileView(),
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
                   ),
-                  SlideTransition(
-                    position: Tween<Offset>(
-                      begin: Offset.zero,
-                      end: const Offset(-1.5, 0),
-                    ).animate(_animationController),
-                    child: FirstLoginStep(
-                      animationController: _animationController,
+                  color: Colors.white,
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 40.0),
+                    child: AnimatedBuilder(
+                      animation: _slideController,
+                      builder: (context, child) => Stack(children: [
+                        SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.5, 0),
+                            end: Offset.zero,
+                          ).animate(_slideController),
+                          child: CompleteProfileView(
+                              onKeyboardEvent: updateTopPadding),
+                        ),
+                        SlideTransition(
+                          position: Tween<Offset>(
+                            begin: Offset.zero,
+                            end: const Offset(-1.5, 0),
+                          ).animate(_slideController),
+                          child: FirstLoginStep(
+                            animationController: _slideController,
+                            onKeyboardEvent: updateTopPadding,
+                          ),
+                        ),
+                      ]),
                     ),
                   ),
-                ]),
+                ),
               ),
-            ))
+            ),
           ],
         ),
       ]),

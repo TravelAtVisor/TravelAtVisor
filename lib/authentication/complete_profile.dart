@@ -11,7 +11,10 @@ import 'package:travel_atvisor/full_width_button.dart';
 import '../bottom_sheet_action.dart';
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({Key? key}) : super(key: key);
+  const CompleteProfileView({Key? key, required this.onKeyboardEvent})
+      : super(key: key);
+
+  final void Function(bool isKeyboardPresent) onKeyboardEvent;
 
   @override
   _CompleteProfileViewState createState() => _CompleteProfileViewState();
@@ -87,18 +90,17 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 32.0),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () =>
-                    context.read<AuthenticationProvider>().signOut(),
-                icon: const Icon(Icons.backpack),
-              ),
-              const Text("Bitte erzähl uns noch etwas über dich"),
-            ],
-          ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                widget.onKeyboardEvent(false);
+                context.read<AuthenticationProvider>().signOut();
+              },
+              icon: const Icon(Icons.chevron_left),
+            ),
+            const Text("Bitte erzähl uns noch etwas über dich"),
+          ],
         ),
         Row(
           children: [
@@ -121,20 +123,31 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
             ),
             Flexible(
               child: CustomTextInput(
-                  controller: _fullNameController, labelText: "Voller Name"),
+                controller: _fullNameController,
+                labelText: "Voller Name",
+                onEntered: () => widget.onKeyboardEvent(true),
+                onLeave: () => widget.onKeyboardEvent(false),
+              ),
             )
           ],
         ),
         CustomTextInput(
-            controller: _nicknameController, labelText: "Benutzername"),
+          controller: _nicknameController,
+          labelText: "Benutzername",
+          onEntered: () => widget.onKeyboardEvent(true),
+          onLeave: () => widget.onKeyboardEvent(false),
+        ),
         CustomTextInput(
           controller: _biographyController,
           labelText: "Biographie",
           maxLines: 5,
+          onEntered: () => widget.onKeyboardEvent(true),
+          onLeave: () => widget.onKeyboardEvent(false),
         ),
         FullWidthButton(
             text: "Abschließen",
             onPressed: () {
+              widget.onKeyboardEvent(false);
               final customUserData = CustomUserData(
                   _nicknameController.text,
                   _fullNameController.text,

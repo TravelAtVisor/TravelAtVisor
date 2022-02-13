@@ -7,6 +7,8 @@ class CustomTextInput extends StatefulWidget {
   final int maxLines;
   final void Function(String)? onChanged;
   final String? errorText;
+  final void Function()? onEntered;
+  final void Function()? onLeave;
 
   const CustomTextInput({
     Key? key,
@@ -16,6 +18,8 @@ class CustomTextInput extends StatefulWidget {
     this.maxLines = 1,
     this.onChanged,
     this.errorText,
+    this.onEntered,
+    this.onLeave,
   }) : super(key: key);
 
   @override
@@ -30,6 +34,13 @@ class _CustomTextInputState extends State<CustomTextInput> {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextField(
+          onEditingComplete: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            if (widget.onLeave != null) {
+              widget.onLeave!();
+            }
+          },
+          onTap: widget.onEntered,
           obscureText: widget.isPassword,
           enableSuggestions: !widget.isPassword,
           autocorrect: !widget.isPassword,
