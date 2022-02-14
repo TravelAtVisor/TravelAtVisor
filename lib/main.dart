@@ -15,11 +15,11 @@ import 'authentication/components/login_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(const TravelAtVisorApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class TravelAtVisorApp extends StatelessWidget {
+  const TravelAtVisorApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
