@@ -50,6 +50,7 @@ class _CustomTextInputState extends State<CustomTextInput> {
           maxLines: widget.maxLines,
           controller: widget.controller,
           decoration: InputDecoration(
+            alignLabelWithHint: true,
             labelText: widget.labelText,
             errorText: isDirty ? widget.errorText : null,
             border: const OutlineInputBorder(

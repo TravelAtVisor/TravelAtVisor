@@ -7,6 +7,7 @@ import 'package:travel_atvisor/authentication/authentication_provider.dart';
 import 'package:travel_atvisor/authentication/custom_user_data.dart';
 import 'package:travel_atvisor/custom_text_input.dart';
 import 'package:travel_atvisor/full_width_button.dart';
+import 'package:travel_atvisor/loading_overlay.dart';
 
 import '../bottom_sheet_action.dart';
 
@@ -170,15 +171,17 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         FullWidthButton(
             text: "Abschließen",
             onPressed: _isFormValid()
-                ? () {
+                ? () async {
+                    LoadingOverlay.show(context);
                     final customUserData = CustomUserData(
                         _nicknameController.text,
                         _fullNameController.text,
                         profilePicturePath,
                         _biographyController.text);
-                    context
+                    await context
                         .read<AuthenticationProvider>()
                         .updateUserProfile(customUserData);
+                    Navigator.pop(context);
                   }
                 : null,
             isElevated: true)

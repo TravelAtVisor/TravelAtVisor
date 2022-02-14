@@ -23,15 +23,15 @@ class FullWidthButton extends StatelessWidget {
         ),
       ),
     );
-    final description = Text(text);
+    final child = Text(text);
+
     final button = isElevated
         ? ElevatedButton(
             onPressed: onPressed,
-            child: description,
+            child: child,
             style: style,
           )
-        : OutlinedButton(
-            onPressed: onPressed, child: description, style: style);
+        : OutlinedButton(onPressed: onPressed, child: child, style: style);
 
     return SizedBox(
       width: double.infinity,

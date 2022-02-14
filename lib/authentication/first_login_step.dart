@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/authentication/password_input.dart';
+import 'package:travel_atvisor/loading_overlay.dart';
 
 import '../custom_text_input.dart';
 import '../divider_with_text.dart';
@@ -35,11 +36,13 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
   _FirstLoginStepState();
 
   Future<void> signinHandler(BuildContext context) async {
+    LoadingOverlay.show(context);
     final authenticationResult =
         await context.read<AuthenticationProvider>().signIn(
               email: emailController.text.trim(),
               password: passwordController.text.trim(),
             );
+    Navigator.pop(context);
 
     if (authenticationResult == AuthenticationResult.success) {
       return;
@@ -50,11 +53,13 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
   }
 
   Future<void> signupHandler(BuildContext context) async {
+    LoadingOverlay.show(context);
     final authenticationResult =
         await context.read<AuthenticationProvider>().signUp(
               email: emailController.text.trim(),
               password: passwordController.text.trim(),
             );
+    Navigator.pop(context);
 
     if (authenticationResult == AuthenticationResult.success) {
       return;
