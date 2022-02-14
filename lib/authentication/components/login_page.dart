@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/authentication/models/authentication_state.dart';
-import 'package:travel_atvisor/authentication/components/complete_profile.dart';
+import 'package:travel_atvisor/authentication/components/complete_profile_step.dart';
 import 'package:travel_atvisor/keyboard_aware_builder.dart';
-import 'first_login_step.dart';
+import 'login_step.dart';
 
 class LoginPage extends StatefulWidget {
   final AuthenticationState authenticationState;
@@ -84,14 +84,14 @@ class _LoginPageState extends State<LoginPage>
                               begin: const Offset(1.5, 0),
                               end: Offset.zero,
                             ).animate(_slideController),
-                            child: const CompleteProfileView(),
+                            child: CompleteProfileStep(),
                           ),
                           SlideTransition(
                             position: Tween<Offset>(
                               begin: Offset.zero,
                               end: const Offset(-1.5, 0),
                             ).animate(_slideController),
-                            child: FirstLoginStep(
+                            child: LoginStep(
                               animationController: _slideController,
                             ),
                           ),

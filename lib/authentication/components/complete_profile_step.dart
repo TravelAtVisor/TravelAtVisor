@@ -11,28 +11,31 @@ import 'package:travel_atvisor/loading_overlay.dart';
 
 import '../../bottom_sheet_action.dart';
 
-class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({Key? key}) : super(key: key);
+class CompleteProfileStep extends StatefulWidget {
+  final fullNameController = TextEditingController();
+  final nicknameController = TextEditingController();
+  final biographyController = TextEditingController();
+  final imagePicker = ImagePicker();
+
+  CompleteProfileStep({Key? key}) : super(key: key);
 
   @override
-  _CompleteProfileViewState createState() => _CompleteProfileViewState();
+  _CompleteProfileStepState createState() => _CompleteProfileStepState();
 }
 
-class _CompleteProfileViewState extends State<CompleteProfileView> {
-  final _fullNameController = TextEditingController();
-  final _nicknameController = TextEditingController();
-  final _biographyController = TextEditingController();
-  final _imagePicker = ImagePicker();
+class _CompleteProfileStepState extends State<CompleteProfileStep> {
+  bool _isUserNameValid = false;
+  bool _isUserNameValidationFinished = false;
+  bool _isFullNameValid = false;
+  String? _profilePicturePath;
 
   bool _isFormValid() =>
       _isUserNameValidationFinished && _isUserNameValid && _isFullNameValid;
 
-  bool _isUserNameValid = false;
-  bool _isUserNameValidationFinished = false;
-  bool _isFullNameValid = false;
-
   Future<void> _validateUserName(
-      String username, AuthenticationProvider authenticationProvider) async {
+    String username,
+    AuthenticationProvider authenticationProvider,
+  ) async {
     setState(() {
       _isUserNameValidationFinished = false;
     });
@@ -47,13 +50,11 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
 
   void _validateFullName(String fullName) {
     setState(() {
-      _isFullNameValid = _fullNameController.text.contains(RegExp(r"\w"));
+      _isFullNameValid = widget.fullNameController.text.contains(RegExp(r"\w"));
     });
   }
 
-  String? profilePicturePath;
-
-  void updateProfilePicture() {
+  void triggerPofilePictureWorkflow() {
     showModalBottomSheet(
         context: context,
         builder: (context) => SafeArea(
@@ -63,23 +64,23 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       icon: Icons.camera_alt,
                       label: "Profilbild aufnehmen",
                       onPressed: () async {
-                        final pickedFile = await _imagePicker.getImage(
-                            source: ImageSource.camera);
+                        final pickedFile = await widget.imagePicker
+                            .getImage(source: ImageSource.camera);
                         cropImage(pickedFile?.path);
                       }),
                   BottomSheetAction(
                       icon: Icons.browse_gallery,
                       label: "Profilbild auswählen",
                       onPressed: () async {
-                        final pickedFile = await _imagePicker.getImage(
-                            source: ImageSource.gallery);
+                        final pickedFile = await widget.imagePicker
+                            .getImage(source: ImageSource.gallery);
                         cropImage(pickedFile?.path);
                       }),
                   BottomSheetAction(
                     icon: Icons.delete_forever,
                     label: "Profilbild entfernen",
                     onPressed: () => setState(() {
-                      profilePicturePath = null;
+                      _profilePicturePath = null;
                     }),
                   )
                 ],
@@ -107,7 +108,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     );
 
     setState(() {
-      profilePicturePath = croppedFile?.path;
+      _profilePicturePath = croppedFile?.path;
     });
   }
 
@@ -131,14 +132,14 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: updateProfilePicture,
+                onTap: triggerPofilePictureWorkflow,
                 child: SizedBox(
                   height: 59,
                   width: 59,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(32),
-                    child: profilePicturePath != null
-                        ? Image.file(File(profilePicturePath!))
+                    child: _profilePicturePath != null
+                        ? Image.file(File(_profilePicturePath!))
                         : Image.network(
                             "https://lwkstuttgart.de/images/no-user-image.jpg"),
                   ),
@@ -147,7 +148,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
             ),
             Flexible(
               child: CustomTextInput(
-                controller: _fullNameController,
+                controller: widget.fullNameController,
                 labelText: "Voller Name",
                 textInputAction: TextInputAction.next,
                 onChanged: (fullName) => _validateFullName(fullName),
@@ -156,14 +157,14 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           ],
         ),
         CustomTextInput(
-          controller: _nicknameController,
+          controller: widget.nicknameController,
           labelText: "Benutzername",
           textInputAction: TextInputAction.next,
           onChanged: (username) => _validateUserName(
               username, context.read<AuthenticationProvider>()),
         ),
         CustomTextInput(
-          controller: _biographyController,
+          controller: widget.biographyController,
           labelText: "Biographie",
           maxLines: 5,
           textInputAction: TextInputAction.done,
@@ -174,10 +175,10 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                 ? () async {
                     LoadingOverlay.show(context);
                     final customUserData = CustomUserData(
-                        _nicknameController.text,
-                        _fullNameController.text,
-                        profilePicturePath,
-                        _biographyController.text);
+                        widget.nicknameController.text,
+                        widget.fullNameController.text,
+                        _profilePicturePath,
+                        widget.biographyController.text);
                     await context
                         .read<AuthenticationProvider>()
                         .updateUserProfile(customUserData);
