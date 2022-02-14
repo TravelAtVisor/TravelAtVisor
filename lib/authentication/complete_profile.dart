@@ -121,6 +121,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
               child: CustomTextInput(
                 controller: _fullNameController,
                 labelText: "Voller Name",
+                textInputAction: TextInputAction.next,
               ),
             )
           ],
@@ -128,11 +129,13 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         CustomTextInput(
           controller: _nicknameController,
           labelText: "Benutzername",
+          textInputAction: TextInputAction.next,
         ),
         CustomTextInput(
           controller: _biographyController,
           labelText: "Biographie",
           maxLines: 5,
+          textInputAction: TextInputAction.done,
         ),
         FullWidthButton(
             text: "Abschließen",

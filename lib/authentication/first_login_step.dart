@@ -77,6 +77,7 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
           onChanged: _validateEmail,
           errorText:
               _isEmailValid ? null : "Bitte geben Sie eine gültige E-Mail an",
+          textInputAction: TextInputAction.next,
         ),
         PasswordInput(
           controller: passwordController,

@@ -9,6 +9,7 @@ class CustomTextInput extends StatefulWidget {
   final String? errorText;
   final void Function()? onEntered;
   final void Function()? onLeave;
+  final TextInputAction? textInputAction;
 
   const CustomTextInput({
     Key? key,
@@ -20,6 +21,7 @@ class CustomTextInput extends StatefulWidget {
     this.errorText,
     this.onEntered,
     this.onLeave,
+    this.textInputAction,
   }) : super(key: key);
 
   @override
@@ -34,6 +36,7 @@ class _CustomTextInputState extends State<CustomTextInput> {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextField(
+          textInputAction: widget.textInputAction,
           onEditingComplete: () {
             FocusManager.instance.primaryFocus?.unfocus();
             if (widget.onLeave != null) {

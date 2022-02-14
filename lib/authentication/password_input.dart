@@ -60,6 +60,7 @@ class _PasswordInputState extends State<PasswordInput> {
               hasFocus = false;
             });
           },
+          textInputAction: TextInputAction.done,
         ),
         ...buildRequirements()
       ],
