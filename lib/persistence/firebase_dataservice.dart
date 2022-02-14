@@ -67,4 +67,18 @@ class FirebaseDataservice implements AuthenticationDataService {
 
     return url ?? _defaultProfilePicture;
   }
+
+  // This method should ideally be executed server-side as the client-side
+  // implementation requires all user records to be available.
+  // This means, that the whole user database can be accesed via the publicly
+  // available Firestore REST-API
+  @override
+  Future<bool> isUsernameAvailableAsync(String username) async {
+    final snapshot = await _firestore
+        .collection("users")
+        .where("nickname", isEqualTo: username)
+        .get();
+
+    return snapshot.size == 0;
+  }
 }

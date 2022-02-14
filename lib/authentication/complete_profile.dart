@@ -23,6 +23,33 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   final _biographyController = TextEditingController();
   final _imagePicker = ImagePicker();
 
+  bool _isFormValid() =>
+      _isUserNameValidationFinished && _isUserNameValid && _isFullNameValid;
+
+  bool _isUserNameValid = false;
+  bool _isUserNameValidationFinished = false;
+  bool _isFullNameValid = false;
+
+  Future<void> _validateUserName(
+      String username, AuthenticationProvider authenticationProvider) async {
+    setState(() {
+      _isUserNameValidationFinished = false;
+    });
+
+    _isUserNameValid = username.contains(RegExp(r"\w")) &&
+        await authenticationProvider.isUsernameAvailable(username);
+
+    setState(() {
+      _isUserNameValidationFinished = true;
+    });
+  }
+
+  void _validateFullName(String fullName) {
+    setState(() {
+      _isFullNameValid = _fullNameController.text.contains(RegExp(r"\w"));
+    });
+  }
+
   String? profilePicturePath;
 
   void updateProfilePicture() {
@@ -122,6 +149,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                 controller: _fullNameController,
                 labelText: "Voller Name",
                 textInputAction: TextInputAction.next,
+                onChanged: (fullName) => _validateFullName(fullName),
               ),
             )
           ],
@@ -130,6 +158,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           controller: _nicknameController,
           labelText: "Benutzername",
           textInputAction: TextInputAction.next,
+          onChanged: (username) => _validateUserName(
+              username, context.read<AuthenticationProvider>()),
         ),
         CustomTextInput(
           controller: _biographyController,
@@ -139,16 +169,18 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         ),
         FullWidthButton(
             text: "Abschließen",
-            onPressed: () {
-              final customUserData = CustomUserData(
-                  _nicknameController.text,
-                  _fullNameController.text,
-                  profilePicturePath,
-                  _biographyController.text);
-              context
-                  .read<AuthenticationProvider>()
-                  .updateUserProfile(customUserData);
-            },
+            onPressed: _isFormValid()
+                ? () {
+                    final customUserData = CustomUserData(
+                        _nicknameController.text,
+                        _fullNameController.text,
+                        profilePicturePath,
+                        _biographyController.text);
+                    context
+                        .read<AuthenticationProvider>()
+                        .updateUserProfile(customUserData);
+                  }
+                : null,
             isElevated: true)
       ],
     );

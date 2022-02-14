@@ -4,4 +4,6 @@ abstract class AuthenticationDataService {
   Future<CustomUserData?> getCustomUserDataByIdAsync(String userId);
   Future<void> updateCustomUserDataAsync(
       String userId, CustomUserData customUserData);
+
+  Future<bool> isUsernameAvailableAsync(String username);
 }

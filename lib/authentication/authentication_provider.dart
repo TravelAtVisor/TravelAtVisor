@@ -88,4 +88,8 @@ class AuthenticationProvider {
         return AuthenticationResult.unexpected;
     }
   }
+
+  Future<bool> isUsernameAvailable(String username) {
+    return _dataService.isUsernameAvailableAsync(username);
+  }
 }
