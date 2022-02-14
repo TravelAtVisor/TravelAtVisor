@@ -82,7 +82,7 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
           controller: passwordController,
           requirements: [
             PasswordRequirement(
-                predicate: (password) => password.length > 8,
+                predicate: (password) => password.length >= 8,
                 description: "Mindestens acht Zeichen"),
             PasswordRequirement(
                 predicate: (password) => password.contains(RegExp(r"[a-z]")),

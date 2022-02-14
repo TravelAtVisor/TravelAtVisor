@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:travel_atvisor/authentication/authentication_dataservice.dart';
 import 'package:travel_atvisor/authentication/custom_user_data.dart';
 
@@ -47,7 +48,21 @@ class FirebaseDataservice implements AuthenticationDataService {
       await ref.putFile(File(profilePicturePath));
       url = await ref.getDownloadURL();
     } else {
-      await _storage.ref("users/$userId").delete();
+      try {
+        await _storage.ref("users/$userId").delete();
+      } on FirebaseException catch (e) {
+        // Unfortunately FlutterFire does not support a way to determine
+        // whether a file exists so we will ignore a possible exception
+        // in this place but log it to the console if in debug mode.
+
+        if (e.code != "object-not-found") {
+          rethrow;
+        }
+
+        if (kDebugMode) {
+          print(e);
+        }
+      }
     }
 
     return url ?? _defaultProfilePicture;
