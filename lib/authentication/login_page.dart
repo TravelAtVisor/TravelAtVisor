@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/authentication/authentication_state.dart';
 import 'package:travel_atvisor/authentication/complete_profile.dart';
+import 'package:travel_atvisor/keyboard_aware_builder.dart';
 import 'first_login_step.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,8 +17,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _slideController;
-
-  double topPadding = 100;
 
   @override
   void initState() {
@@ -43,15 +42,6 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
-  void updateTopPadding(bool isKeyboardPresent) {
-    if (!isKeyboardPresent) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-    setState(() {
-      topPadding = isKeyboardPresent ? 0 : 100;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,56 +53,56 @@ class _LoginPageState extends State<LoginPage>
             fit: BoxFit.fitHeight,
           ),
         ),
-        Column(
-          children: [
-            AnimatedPadding(
-              duration: const Duration(milliseconds: 100),
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: topPadding,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                  color: Colors.white,
+        KeyboardVisibilityBuilder(
+          builder: (context, isKeyboardVisible) => Column(
+            children: [
+              AnimatedPadding(
+                duration: const Duration(milliseconds: 100),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: isKeyboardVisible ? 0 : 100,
                 ),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 40.0),
-                    child: AnimatedBuilder(
-                      animation: _slideController,
-                      builder: (context, child) => Stack(children: [
-                        SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(1.5, 0),
-                            end: Offset.zero,
-                          ).animate(_slideController),
-                          child: CompleteProfileView(
-                              onKeyboardEvent: updateTopPadding),
-                        ),
-                        SlideTransition(
-                          position: Tween<Offset>(
-                            begin: Offset.zero,
-                            end: const Offset(-1.5, 0),
-                          ).animate(_slideController),
-                          child: FirstLoginStep(
-                            animationController: _slideController,
-                            onKeyboardEvent: updateTopPadding,
+              ),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
+                    color: Colors.white,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 40.0),
+                      child: AnimatedBuilder(
+                        animation: _slideController,
+                        builder: (context, child) => Stack(children: [
+                          SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1.5, 0),
+                              end: Offset.zero,
+                            ).animate(_slideController),
+                            child: const CompleteProfileView(),
                           ),
-                        ),
-                      ]),
+                          SlideTransition(
+                            position: Tween<Offset>(
+                              begin: Offset.zero,
+                              end: const Offset(-1.5, 0),
+                            ).animate(_slideController),
+                            child: FirstLoginStep(
+                              animationController: _slideController,
+                            ),
+                          ),
+                        ]),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ]),
     );

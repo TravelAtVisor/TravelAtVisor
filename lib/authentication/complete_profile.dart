@@ -11,10 +11,7 @@ import 'package:travel_atvisor/full_width_button.dart';
 import '../bottom_sheet_action.dart';
 
 class CompleteProfileView extends StatefulWidget {
-  const CompleteProfileView({Key? key, required this.onKeyboardEvent})
-      : super(key: key);
-
-  final void Function(bool isKeyboardPresent) onKeyboardEvent;
+  const CompleteProfileView({Key? key}) : super(key: key);
 
   @override
   _CompleteProfileViewState createState() => _CompleteProfileViewState();
@@ -94,7 +91,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
           children: [
             IconButton(
               onPressed: () {
-                widget.onKeyboardEvent(false);
                 context.read<AuthenticationProvider>().signOut();
               },
               icon: const Icon(Icons.chevron_left),
@@ -125,8 +121,6 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
               child: CustomTextInput(
                 controller: _fullNameController,
                 labelText: "Voller Name",
-                onEntered: () => widget.onKeyboardEvent(true),
-                onLeave: () => widget.onKeyboardEvent(false),
               ),
             )
           ],
@@ -134,20 +128,15 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
         CustomTextInput(
           controller: _nicknameController,
           labelText: "Benutzername",
-          onEntered: () => widget.onKeyboardEvent(true),
-          onLeave: () => widget.onKeyboardEvent(false),
         ),
         CustomTextInput(
           controller: _biographyController,
           labelText: "Biographie",
           maxLines: 5,
-          onEntered: () => widget.onKeyboardEvent(true),
-          onLeave: () => widget.onKeyboardEvent(false),
         ),
         FullWidthButton(
             text: "Abschließen",
             onPressed: () {
-              widget.onKeyboardEvent(false);
               final customUserData = CustomUserData(
                   _nicknameController.text,
                   _fullNameController.text,

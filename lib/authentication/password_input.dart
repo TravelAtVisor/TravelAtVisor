@@ -13,7 +13,6 @@ class PasswordRequirement {
 }
 
 class PasswordInput extends StatefulWidget {
-  final void Function(bool isKeyboardPresent) onKeyboardEvent;
   final void Function(bool isValid) onValidStateChanged;
   final TextEditingController controller;
   final List<PasswordRequirement> requirements;
@@ -22,7 +21,6 @@ class PasswordInput extends StatefulWidget {
     Key? key,
     required this.controller,
     required this.requirements,
-    required this.onKeyboardEvent,
     required this.onValidStateChanged,
   }) : super(key: key);
 
@@ -56,13 +54,11 @@ class _PasswordInputState extends State<PasswordInput> {
             setState(() {
               hasFocus = true;
             });
-            widget.onKeyboardEvent(true);
           },
           onLeave: () {
             setState(() {
               hasFocus = false;
             });
-            widget.onKeyboardEvent(false);
           },
         ),
         ...buildRequirements()

@@ -10,13 +10,11 @@ import 'authentication_result.dart';
 
 class FirstLoginStep extends StatefulWidget {
   final AnimationController animationController;
-  final void Function(bool isKeyboardPresent) onKeyboardEvent;
 
-  const FirstLoginStep(
-      {Key? key,
-      required this.animationController,
-      required this.onKeyboardEvent})
-      : super(key: key);
+  const FirstLoginStep({
+    Key? key,
+    required this.animationController,
+  }) : super(key: key);
 
   @override
   _FirstLoginStepState createState() => _FirstLoginStepState();
@@ -37,7 +35,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
   _FirstLoginStepState();
 
   Future<void> signinHandler(BuildContext context) async {
-    widget.onKeyboardEvent(false);
     final authenticationResult =
         await context.read<AuthenticationProvider>().signIn(
               email: emailController.text.trim(),
@@ -53,7 +50,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
   }
 
   Future<void> signupHandler(BuildContext context) async {
-    widget.onKeyboardEvent(false);
     final authenticationResult =
         await context.read<AuthenticationProvider>().signUp(
               email: emailController.text.trim(),
@@ -81,8 +77,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
           onChanged: _validateEmail,
           errorText:
               _isEmailValid ? null : "Bitte geben Sie eine gültige E-Mail an",
-          onEntered: () => widget.onKeyboardEvent(true),
-          onLeave: () => widget.onKeyboardEvent(false),
         ),
         PasswordInput(
           controller: passwordController,
@@ -103,7 +97,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
                 predicate: (password) => password.contains(RegExp(r"\W")),
                 description: "Mindestens ein Sonderzeichen"),
           ],
-          onKeyboardEvent: widget.onKeyboardEvent,
           onValidStateChanged: (isValid) => setState(() {
             _isPasswordValid = isValid;
           }),
@@ -121,7 +114,6 @@ class _FirstLoginStepState extends State<FirstLoginStep> {
         FullWidthButton(
           text: "Weiter mit Google",
           onPressed: () {
-            widget.onKeyboardEvent(false);
             context.read<AuthenticationProvider>().signInWithGoogle();
           },
           isElevated: false,
