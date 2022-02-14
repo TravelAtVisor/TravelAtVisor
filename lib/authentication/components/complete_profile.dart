@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/authentication/authentication_provider.dart';
-import 'package:travel_atvisor/authentication/custom_user_data.dart';
+import 'package:travel_atvisor/authentication/behaviour/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
 import 'package:travel_atvisor/custom_text_input.dart';
 import 'package:travel_atvisor/full_width_button.dart';
 import 'package:travel_atvisor/loading_overlay.dart';
 
-import '../bottom_sheet_action.dart';
+import '../../bottom_sheet_action.dart';
 
 class CompleteProfileView extends StatefulWidget {
   const CompleteProfileView({Key? key}) : super(key: key);

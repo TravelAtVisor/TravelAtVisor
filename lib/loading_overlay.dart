@@ -8,7 +8,7 @@ class LoadingOverlay extends StatelessWidget {
   static void show(BuildContext context) {
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (context, _, _s) => LoadingOverlay(),
+        pageBuilder: (context, _, _s) => const LoadingOverlay(),
         opaque: false,
       ),
     );
@@ -29,7 +29,7 @@ class LoadingOverlay extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
-                color: Color.fromARGB(100, 34, 34, 34),
+                color: const Color.fromARGB(100, 34, 34, 34),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16.0),

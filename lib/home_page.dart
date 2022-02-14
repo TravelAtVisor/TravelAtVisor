@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/authentication/authentication_state.dart';
-
-import 'authentication/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/behaviour/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/models/authentication_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);

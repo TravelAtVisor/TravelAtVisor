@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/authentication/authentication_dataservice.dart';
-import 'package:travel_atvisor/authentication/authentication_result.dart';
-import 'package:travel_atvisor/authentication/authentication_state.dart';
-import 'package:travel_atvisor/authentication/custom_user_data.dart';
+import 'package:travel_atvisor/authentication/models/authentication_state.dart';
+import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../models/authentication_result.dart';
+import 'authentication_dataservice.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;

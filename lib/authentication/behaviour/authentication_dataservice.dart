@@ -1,4 +1,4 @@
-import 'package:travel_atvisor/authentication/custom_user_data.dart';
+import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
 
 abstract class AuthenticationDataService {
   Future<CustomUserData?> getCustomUserDataByIdAsync(String userId);

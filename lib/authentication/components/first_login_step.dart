@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/authentication/password_input.dart';
+import 'package:travel_atvisor/authentication/behaviour/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/components/password_input.dart';
 import 'package:travel_atvisor/loading_overlay.dart';
 
-import '../custom_text_input.dart';
-import '../divider_with_text.dart';
-import '../full_width_button.dart';
-import 'authentication_provider.dart';
-import 'authentication_result.dart';
+import '../../custom_text_input.dart';
+import '../../divider_with_text.dart';
+import '../../full_width_button.dart';
+import '../models/authentication_result.dart';
 
 class FirstLoginStep extends StatefulWidget {
   final AnimationController animationController;

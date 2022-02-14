@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/authentication/authentication_state.dart';
+import 'package:travel_atvisor/authentication/models/authentication_state.dart';
 
 class AuthenticationGuard extends StatelessWidget {
   final WidgetBuilder loginBuilder;

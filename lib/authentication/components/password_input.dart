@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../custom_text_input.dart';
+import '../../custom_text_input.dart';
 
 class PasswordRequirement {
   final bool Function(String textValue) predicate;
