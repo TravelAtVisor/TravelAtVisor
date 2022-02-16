@@ -49,7 +49,7 @@ class _PasswordInputState extends State<PasswordInput> {
           controller: widget.controller,
           isPassword: true,
           labelText: "Passwort",
-          // onChanged: onTextChanged,
+          onChanged: onTextChanged,
           autofillHints: const [AutofillHints.password],
           onEntered: () {
             setState(() {
@@ -73,11 +73,11 @@ class _PasswordInputState extends State<PasswordInput> {
   void onTextChanged(text) {
     final willBeValid = widget.requirements.fold<bool>(true,
         (previousValue, element) => previousValue && element.predicate(text));
+    if (isValid != willBeValid) widget.onValidStateChanged(willBeValid);
+
     setState(() {
       isValid = willBeValid;
     });
-
-    if (isValid != willBeValid) widget.onValidStateChanged(willBeValid);
   }
 }
 
