@@ -13,6 +13,7 @@ class CustomTextInput extends StatefulWidget {
   final bool autocorrect;
   final bool enableSuggestions;
   final List<String>? autofillHints;
+  final bool readOnly;
 
   const CustomTextInput(
       {Key? key,
@@ -27,7 +28,8 @@ class CustomTextInput extends StatefulWidget {
       this.textInputAction,
       this.autocorrect = true,
       this.enableSuggestions = true,
-      this.autofillHints})
+      this.autofillHints,
+      this.readOnly = false})
       : super(key: key);
 
   @override
@@ -49,6 +51,7 @@ class _CustomTextInputState extends State<CustomTextInput> {
               widget.onLeave!();
             }
           },
+          readOnly: widget.readOnly,
           onTap: widget.onEntered,
           obscureText: widget.isPassword,
           enableSuggestions: widget.enableSuggestions,
