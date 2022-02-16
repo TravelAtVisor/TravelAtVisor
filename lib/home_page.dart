@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'authentication.dart';
+import 'package:travel_atvisor/authentication/behaviour/authentication_provider.dart';
+import 'package:travel_atvisor/authentication/models/authentication_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,8 +10,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Consumer<User?>(
-          builder: (context, value, child) => Column(
+        child: Consumer<AuthenticationState>(
+          builder: (context, state, child) => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("WELCOME HOME", style: TextStyle(fontSize: 30)),
@@ -20,7 +19,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   context.read<AuthenticationProvider>().signOut();
                 },
-                child: Text("Sign out ${value?.email}"),
+                child: Text("Sign out ${state.currentUser?.email}"),
               ),
             ],
           ),
