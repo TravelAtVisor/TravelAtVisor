@@ -55,6 +55,7 @@ class _LoginStepState extends State<LoginStep> {
   Future<void> authenticationHandler(BuildContext context,
       Future<AuthenticationResult> Function() authCall) async {
     LoadingOverlay.show(context);
+    FocusManager.instance.primaryFocus?.unfocus();
     final authenticationResult = await authCall();
     Navigator.pop(context);
 
@@ -70,58 +71,62 @@ class _LoginStepState extends State<LoginStep> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text("Bitte melde dich an, um die App zu verwenden"),
-        CustomTextInput(
-          controller: widget.emailController,
-          labelText: "E-Mail",
-          onChanged: _validateEmail,
-          errorText:
-              _isEmailValid ? null : "Bitte geben Sie eine gültige E-Mail an",
-          textInputAction: TextInputAction.next,
-        ),
-        PasswordInput(
-          controller: widget.passwordController,
-          requirements: widget.passwordRequirements,
-          onValidStateChanged: (isValid) => setState(() {
-            _isPasswordValid = isValid;
-          }),
-        ),
-        FullWidthButton(
-          text: "Anmelden",
-          onPressed: _isFormValid()
-              ? () => authenticationHandler(
-                    context,
-                    () => context.read<AuthenticationProvider>().signIn(
-                          email: widget.emailController.text.trim(),
-                          password: widget.passwordController.text.trim(),
-                        ),
-                  )
-              : null,
-          isElevated: true,
-        ),
-        FullWidthButton(
-            text: "Noch kein Konto? Registrieren",
+    return AutofillGroup(
+      child: Column(
+        children: [
+          const Text("Bitte melde dich an, um die App zu verwenden"),
+          CustomTextInput(
+            controller: widget.emailController,
+            labelText: "E-Mail",
+            onChanged: _validateEmail,
+            errorText:
+                _isEmailValid ? null : "Bitte geben Sie eine gültige E-Mail an",
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.email],
+          ),
+          PasswordInput(
+            controller: widget.passwordController,
+            requirements: widget.passwordRequirements,
+            onValidStateChanged: (isValid) => setState(() {
+              _isPasswordValid = isValid;
+            }),
+          ),
+          FullWidthButton(
+            text: "Anmelden",
             onPressed: _isFormValid()
                 ? () => authenticationHandler(
                       context,
-                      () => context.read<AuthenticationProvider>().signUp(
+                      () => context.read<AuthenticationProvider>().signIn(
                             email: widget.emailController.text.trim(),
                             password: widget.passwordController.text.trim(),
                           ),
                     )
                 : null,
-            isElevated: false),
-        const DividerWithText(text: "ODER"),
-        FullWidthButton(
-          text: "Weiter mit Google",
-          onPressed: () {
-            context.read<AuthenticationProvider>().signInWithGoogle();
-          },
-          isElevated: false,
-        )
-      ],
+            isElevated: true,
+          ),
+          FullWidthButton(
+              text: "Noch kein Konto? Registrieren",
+              onPressed: _isFormValid()
+                  ? () => authenticationHandler(
+                        context,
+                        () => context.read<AuthenticationProvider>().signUp(
+                              email: widget.emailController.text.trim(),
+                              password: widget.passwordController.text.trim(),
+                            ),
+                      )
+                  : null,
+              isElevated: false),
+          const DividerWithText(text: "ODER"),
+          FullWidthButton(
+            text: "Weiter mit Google",
+            onPressed: () => authenticationHandler(
+                context,
+                () =>
+                    context.read<AuthenticationProvider>().signInWithGoogle()),
+            isElevated: false,
+          )
+        ],
+      ),
     );
   }
 }

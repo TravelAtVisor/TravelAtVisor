@@ -42,6 +42,7 @@ class LoadingOverlay extends StatelessWidget {
                     padding: EdgeInsets.all(32.0),
                     child: CircularProgressIndicator(
                       strokeWidth: 8,
+                      color: Colors.white,
                     ),
                   ),
                 ),

@@ -120,6 +120,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
           children: [
             IconButton(
               onPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
                 context.read<AuthenticationProvider>().signOut();
               },
               icon: const Icon(Icons.chevron_left),
@@ -150,6 +151,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
               child: CustomTextInput(
                 controller: widget.fullNameController,
                 labelText: "Voller Name",
+                autofillHints: const [AutofillHints.name],
                 textInputAction: TextInputAction.next,
                 onChanged: (fullName) => _validateFullName(fullName),
               ),
@@ -159,6 +161,8 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
         CustomTextInput(
           controller: widget.nicknameController,
           labelText: "Benutzername",
+          autofillHints: const [AutofillHints.newUsername],
+          autocorrect: false,
           textInputAction: TextInputAction.next,
           onChanged: (username) => _validateUserName(
               username, context.read<AuthenticationProvider>()),

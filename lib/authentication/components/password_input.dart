@@ -29,15 +29,15 @@ class PasswordInput extends StatefulWidget {
 }
 
 class _PasswordInputState extends State<PasswordInput> {
-  String currentText = "";
   bool hasFocus = false;
+  bool isValid = false;
 
   Iterable<Widget> buildRequirements() {
     if (!hasFocus) return [];
 
     return widget.requirements.map((r) => PasswordRequirementIndicator(
           description: r.description,
-          isSatified: r.predicate(currentText),
+          isSatified: r.predicate(widget.controller.text),
         ));
   }
 
@@ -49,7 +49,8 @@ class _PasswordInputState extends State<PasswordInput> {
           controller: widget.controller,
           isPassword: true,
           labelText: "Passwort",
-          onChanged: onTextChanged,
+          // onChanged: onTextChanged,
+          autofillHints: const [AutofillHints.password],
           onEntered: () {
             setState(() {
               hasFocus = true;
@@ -61,6 +62,8 @@ class _PasswordInputState extends State<PasswordInput> {
             });
           },
           textInputAction: TextInputAction.done,
+          autocorrect: false,
+          enableSuggestions: false,
         ),
         ...buildRequirements()
       ],
@@ -68,14 +71,13 @@ class _PasswordInputState extends State<PasswordInput> {
   }
 
   void onTextChanged(text) {
-    final isValid = widget.requirements.fold<bool>(true,
+    final willBeValid = widget.requirements.fold<bool>(true,
         (previousValue, element) => previousValue && element.predicate(text));
-
-    widget.onValidStateChanged(isValid);
-
     setState(() {
-      currentText = text;
+      isValid = willBeValid;
     });
+
+    if (isValid != willBeValid) widget.onValidStateChanged(willBeValid);
   }
 }
 
