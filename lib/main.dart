@@ -9,6 +9,7 @@ import 'package:travel_atvisor/authentication/models/authentication_state.dart';
 import 'package:travel_atvisor/persistence/firebase_dataservice.dart';
 
 import 'authentication/components/authentication_guard.dart';
+import 'home.dart';
 import 'home_page.dart';
 import 'authentication/components/login_page.dart';
 
@@ -52,7 +53,7 @@ class TravelAtVisorApp extends StatelessWidget {
               authenticationState: value,
             ),
           ),
-          userSafeBuilder: (_) => const HomePage(),
+          userSafeBuilder: (_) => Home(),
         ),
       ),
     );
