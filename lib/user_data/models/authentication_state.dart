@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
-import 'package:travel_atvisor/authentication/models/user_model.dart';
+
+import 'custom_user_data.dart';
+import 'user_model.dart';
 
 class AuthenticationState {
   static final AuthenticationState initialState =
