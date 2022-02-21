@@ -1,6 +1,6 @@
-import 'package:travel_atvisor/trip_management/activity.dart';
+import 'activity.dart';
 
-class Trip{
+class Trip {
   String tripId;
   String title;
   DateTime begin;

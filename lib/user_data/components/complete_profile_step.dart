@@ -182,7 +182,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
                         widget.nicknameController.text,
                         widget.fullNameController.text,
                         _profilePicturePath,
-                        widget.biographyController.text);
+                        widget.biographyController.text, []);
                     await context
                         .read<UserDataProvider>()
                         .updateUserProfile(customUserData);

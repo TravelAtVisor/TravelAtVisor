@@ -21,8 +21,12 @@ class FirebaseDataservice implements AuthenticationDataService {
     if (!snapshot.exists) return null;
 
     final data = snapshot.data()!;
-    return CustomUserData(data["nickname"], data["fullName"],
-        data["photoUrl"] ?? _defaultProfilePicture, data["biography"]);
+    return CustomUserData(
+        data["nickname"],
+        data["fullName"],
+        data["photoUrl"] ?? _defaultProfilePicture,
+        data["biography"],
+        CustomUserData.dummyTrips);
   }
 
   @override
