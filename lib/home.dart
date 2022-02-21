@@ -1,7 +1,7 @@
-import 'package:first_mockup/views/new_trip_screen.dart';
-import 'package:first_mockup/views/userScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/userScreen.dart';
 
+import 'new_trip_screen.dart';
 import 'tripScreen.dart';
 
 class Home extends StatefulWidget {

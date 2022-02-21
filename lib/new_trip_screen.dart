@@ -1,9 +1,10 @@
-import 'package:first_mockup/views/widgets/companions_friends.dart';
-import 'package:first_mockup/views/widgets/design_select.dart';
-import 'package:first_mockup/views/widgets/full_width_button.dart';
 import 'package:flutter/material.dart';
-import 'widgets/custom_text_input.dart';
+import 'companions_friends.dart';
+import 'custom_text_input.dart';
 import 'package:intl/intl.dart';
+
+import 'design_select.dart';
+import 'full_width_button.dart';
 
 class NewTripScreen extends StatefulWidget {
   const NewTripScreen({Key? key}) : super(key: key);

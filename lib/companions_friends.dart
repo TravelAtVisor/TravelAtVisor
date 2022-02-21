@@ -1,5 +1,5 @@
-import 'package:first_mockup/views/widgets/profile_picture.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/profile_picture.dart';
 
 class CompanionsFriends extends StatefulWidget {
   final String header;

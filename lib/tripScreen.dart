@@ -1,7 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:first_mockup/views/trip_details_screen.dart';
-import 'package:first_mockup/views/widgets/companions_friends.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/trip_details_screen.dart';
+
+import 'companions_friends.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({Key? key}) : super(key: key);
