@@ -1,18 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/authentication/models/authentication_state.dart';
-import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/authentication_result.dart';
+import '../models/authentication_state.dart';
+import '../models/custom_user_data.dart';
 import 'authentication_dataservice.dart';
 
-class AuthenticationProvider {
+class UserDataProvider {
   final FirebaseAuth firebaseAuth;
   final AuthenticationDataService _dataService;
   final StreamController<User?> _manualAuthStateEmitter =
       StreamController<User?>();
 
-  AuthenticationProvider(this.firebaseAuth, this._dataService) {
+  UserDataProvider(this.firebaseAuth, this._dataService) {
     firebaseAuth
         .idTokenChanges()
         .listen((event) => _manualAuthStateEmitter.add(event));

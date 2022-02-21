@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/authentication/models/authentication_state.dart';
-import 'package:travel_atvisor/authentication/components/complete_profile_step.dart';
 import 'package:travel_atvisor/keyboard_aware_builder.dart';
+import '../models/authentication_state.dart';
+import 'complete_profile_step.dart';
 import 'login_step.dart';
 
 class LoginPage extends StatefulWidget {

@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/authentication/behaviour/authentication_provider.dart';
-import 'package:travel_atvisor/authentication/models/authentication_state.dart';
 import 'package:travel_atvisor/persistence/firebase_dataservice.dart';
 
-import 'authentication/components/authentication_guard.dart';
 import 'home.dart';
-import 'home_page.dart';
-import 'authentication/components/login_page.dart';
+import 'user_data/behaviour/user_data_provider.dart';
+import 'user_data/components/authentication_guard.dart';
+import 'user_data/components/login_page.dart';
+import 'user_data/models/authentication_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,17 +30,16 @@ class TravelAtVisorApp extends StatelessWidget {
                   FirebaseFirestore.instance,
                   FirebaseStorage.instance,
                 )),
-        Provider<AuthenticationProvider>(
+        Provider<UserDataProvider>(
           create: (context) {
             final authenticationDataService =
                 context.read<FirebaseDataservice>();
-            return AuthenticationProvider(
+            return UserDataProvider(
                 FirebaseAuth.instance, authenticationDataService);
           },
         ),
         StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationProvider>().authState,
+            create: (context) => context.read<UserDataProvider>().authState,
             initialData: AuthenticationState.initialState),
       ],
       child: MaterialApp(

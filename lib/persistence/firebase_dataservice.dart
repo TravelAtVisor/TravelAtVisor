@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:travel_atvisor/authentication/behaviour/authentication_dataservice.dart';
-import 'package:travel_atvisor/authentication/models/custom_user_data.dart';
+
+import '../user_data/behaviour/authentication_dataservice.dart';
+import '../user_data/models/custom_user_data.dart';
 
 class FirebaseDataservice implements AuthenticationDataService {
   static const String _defaultProfilePicture =
@@ -20,8 +21,12 @@ class FirebaseDataservice implements AuthenticationDataService {
     if (!snapshot.exists) return null;
 
     final data = snapshot.data()!;
-    return CustomUserData(data["nickname"], data["fullName"],
-        data["photoUrl"] ?? _defaultProfilePicture, data["biography"]);
+    return CustomUserData(
+        data["nickname"],
+        data["fullName"],
+        data["photoUrl"] ?? _defaultProfilePicture,
+        data["biography"],
+        CustomUserData.dummyTrips);
   }
 
   @override
