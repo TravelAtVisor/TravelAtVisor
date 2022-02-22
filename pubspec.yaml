@@ -22,6 +22,7 @@ dependencies:
   google_sign_in: ^5.2.3
   carousel_slider: ^4.0.0
   syncfusion_flutter_datepicker: ^19.4.52
+  cloud_functions: ^3.2.7
 
 dev_dependencies:
   flutter_test:

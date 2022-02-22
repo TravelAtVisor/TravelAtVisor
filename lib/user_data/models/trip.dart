@@ -20,7 +20,7 @@ class Trip {
     end = DynamicMappers.fromTimestamp(data["end"]);
     var companionData = data["companions"] as List<dynamic>;
     companions = companionData.map((e) => e.toString()).toList();
-    final activityData = data["activities"] as Map<String, dynamic>;
+    final activityData = data["activities"] as Map<dynamic, dynamic>;
     activities = activityData.entries
         .map((e) => Activity.fromDynamic(e.key, e.value))
         .toList();

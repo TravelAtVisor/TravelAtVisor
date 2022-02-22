@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/persistence/firebase_dataservice.dart';
+import 'package:travel_atvisor/persistence/cloudfunction_dataservice.dart';
 
 import 'home.dart';
 import 'user_data/behaviour/user_data_provider.dart';
@@ -25,15 +26,16 @@ class TravelAtVisorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<FirebaseDataservice>(
-            create: (_) => FirebaseDataservice(
-                  FirebaseFirestore.instance,
-                  FirebaseStorage.instance,
-                )),
+        Provider(
+          create: (_) => CloudFunctionDataService(
+            FirebaseFunctions.instance,
+            FirebaseStorage.instance,
+          ),
+        ),
         Provider<UserDataProvider>(
           create: (context) {
             final authenticationDataService =
-                context.read<FirebaseDataservice>();
+                context.read<CloudFunctionDataService>();
             return UserDataProvider(
                 FirebaseAuth.instance, authenticationDataService);
           },

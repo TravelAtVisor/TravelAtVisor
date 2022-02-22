@@ -18,7 +18,7 @@ class CustomUserData {
     photoUrl = data["photoUrl"];
     biography = data["biography"];
 
-    final tripData = data["trips"] as Map<String, dynamic>;
+    final tripData = data["trips"] as Map<dynamic, dynamic>;
     trips =
         tripData.entries.map((e) => Trip.fromDynamic(e.key, e.value)).toList();
   }

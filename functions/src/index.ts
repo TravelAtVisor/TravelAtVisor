@@ -1,13 +1,14 @@
 import { useAuthenticatedFunction } from "./utils/authentication-utilities";
 import { CustomUserData } from "./models/custom-user-data";
 import { useUserCollection, useUserRecord } from "./utils/firestore-utilities";
-import { https } from "firebase-functions";
+import { config, https } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
-import { firestore } from "firebase-admin";
+import { firestore, initializeApp } from "firebase-admin";
 import { SetActivityRequest } from "./models/set-activity-request";
 import { DeleteActivityRequest } from "./models/delete-activity-request";
+initializeApp(config().firebase);
 
 
 export const getCustomUserData = useAuthenticatedFunction<void>(async (_, { uid }) => {
