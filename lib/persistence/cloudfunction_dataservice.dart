@@ -43,13 +43,16 @@ class CloudFunctionDataService implements AuthenticationDataService {
   @override
   Future<CustomUserData?> getCustomUserDataByIdAsync(String userId) async {
     final data = await _getCustomUserData.call();
+
+    if (data.data == null) return null;
+
     return CustomUserData.fromDynamic(data.data);
   }
 
   @override
   Future<bool> isUsernameAvailableAsync(String username) async {
     final data = await _isUserNameAvailable.call({"username": username});
-    return false;
+    return data.data;
   }
 
   @override

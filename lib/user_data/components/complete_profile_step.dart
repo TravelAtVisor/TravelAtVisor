@@ -34,14 +34,14 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
 
   Future<void> _validateUserName(
     String username,
-    UserDataProvider UserDataProvider,
+    UserDataProvider userDataProvider,
   ) async {
     setState(() {
       _isUserNameValidationFinished = false;
     });
 
     _isUserNameValid = username.contains(RegExp(r"\w")) &&
-        await UserDataProvider.isUsernameAvailable(username);
+        await userDataProvider.isUsernameAvailable(username);
 
     setState(() {
       _isUserNameValidationFinished = true;
