@@ -1,13 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class DynamicMappers {
-  static DateTime fromTimestamp(dynamic data) {
-    if (data is Timestamp) {
-      return data.toDate();
-    }
-
-    final millisecondsSinceEpoch = data as int;
-    return DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+  static DateTime fromString(dynamic data) {
+    final dateString = data as String;
+    return DateTime.parse(dateString);
   }
 }
 

@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../utils/mappers.dart';
 
 class Activity {
@@ -15,7 +13,7 @@ class Activity {
 
   Activity.fromDynamic(this.activityId, dynamic data) {
     foursqareId = data["foursquareId"];
-    timestamp = DynamicMappers.fromTimestamp(data["timestamp"]);
+    timestamp = DynamicMappers.fromString(data["timestamp"]);
     title = data["title"];
     description = data["description"];
     photoUrl = data["photoUrl"];

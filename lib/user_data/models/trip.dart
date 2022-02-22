@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:travel_atvisor/utils/mappers.dart';
 
 import 'activity.dart';
@@ -16,8 +15,8 @@ class Trip {
 
   Trip.fromDynamic(this.tripId, dynamic data) {
     title = data["title"];
-    begin = DynamicMappers.fromTimestamp(data["begin"]);
-    end = DynamicMappers.fromTimestamp(data["end"]);
+    begin = DynamicMappers.fromString(data["begin"]);
+    end = DynamicMappers.fromString(data["end"]);
     var companionData = data["companions"] as List<dynamic>;
     companions = companionData.map((e) => e.toString()).toList();
     final activityData = data["activities"] as Map<dynamic, dynamic>;
