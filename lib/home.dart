@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
         //       DateTime.now(), "title", "description", "photoUrl"),
         // ])),
         onPressed: () =>
-            dataProvider.deleteTrip("ae79aaea-f312-4d28-aa10-1e5ae1d79c86"),
+            dataProvider.deleteTrip("09a37987-fd56-4416-8b39-e6895a75166e"),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(

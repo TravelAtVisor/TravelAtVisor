@@ -45,11 +45,11 @@ export const setTrip = useAuthenticatedFunction<SetTripRequest>(async ({ trip, t
 export const deleteTrip = useAuthenticatedFunction<DeleteTripRequest>(async ({ tripId }, { uid }) => {
     const ref = useUserRecord(uid);
 
-    await ref.update({
+    await ref.set({
         trips: {
             [tripId]: firestore.FieldValue.delete()
         }
-    });
+    }, { merge: true });
 });
 
 export const setActivity = useAuthenticatedFunction<SetActivityRequest>(async ({ activity, activityId, tripId }, { uid }) => {
@@ -69,7 +69,7 @@ export const setActivity = useAuthenticatedFunction<SetActivityRequest>(async ({
 export const deleteActivity = useAuthenticatedFunction<DeleteActivityRequest>(async ({ tripId, activityId }, { uid }) => {
     const ref = useUserRecord(uid);
 
-    await ref.update({
+    await ref.set({
         trips: {
             [tripId]: {
                 activities: {
@@ -77,5 +77,5 @@ export const deleteActivity = useAuthenticatedFunction<DeleteActivityRequest>(as
                 }
             }
         }
-    });
+    }, { merge: true });
 });
