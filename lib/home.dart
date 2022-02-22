@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/userScreen.dart';
+import 'package:travel_atvisor/user_data/behaviour/user_data_provider.dart';
 import 'package:travel_atvisor/user_data/models/authentication_state.dart';
 
 import 'new_trip_screen.dart';
@@ -19,8 +20,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final trips =
-        context.read<AuthenticationState>().currentUser!.customData!.trips;
+    final trips = context
+        .read<AuthenticationState>()
+        .currentUser!
+        .customData!
+        .trips
+        .first;
+    final dataProvider = context.read<UserDataProvider>();
     return Scaffold(
       body: PageStorage(
         child: currentScreen,

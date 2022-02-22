@@ -22,12 +22,7 @@ class FirebaseDataservice implements AuthenticationDataService {
     if (!snapshot.exists) return null;
 
     final data = snapshot.data()!;
-    return CustomUserData(
-        data["nickname"],
-        data["fullName"],
-        data["photoUrl"] ?? _defaultProfilePicture,
-        data["biography"],
-        _parseTrips(data["trips"]));
+    return CustomUserData.fromDynamic(data);
   }
 
   @override
@@ -35,12 +30,8 @@ class FirebaseDataservice implements AuthenticationDataService {
       String userId, CustomUserData customUserData) async {
     final photoUrl =
         await _updateProfilePicture(userId, customUserData.photoUrl);
-    final data = {
-      "nickname": customUserData.nickname,
-      "fullName": customUserData.fullName,
-      "photoUrl": photoUrl,
-      "biography": customUserData.biography
-    };
+    customUserData.photoUrl = photoUrl;
+    final data = customUserData.toMap();
 
     await _firestore.collection("users").doc(userId).set(data);
   }
@@ -86,9 +77,5 @@ class FirebaseDataservice implements AuthenticationDataService {
         .get();
 
     return snapshot.size == 0;
-  }
-
-  List<Trip> _parseTrips(List<dynamic> data) {
-    return data.map((e) => Trip.fromDynamic(e)).toList();
   }
 }
