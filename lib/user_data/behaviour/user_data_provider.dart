@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:travel_atvisor/user_data/models/activity.dart';
 import 'package:travel_atvisor/user_data/models/trip.dart';
 import '../models/authentication_result.dart';
 import '../models/authentication_state.dart';
@@ -94,7 +95,21 @@ class UserDataProvider {
     return _dataService.isUsernameAvailableAsync(username);
   }
 
-  Future<void> addOrUpdateTrip(Trip trip) async {}
+  Future<void> addOrUpdateTrip(Trip trip) {
+    return _dataService.setTripAsync(firebaseAuth.currentUser!.uid, trip);
+  }
 
-  Future<void> deleteTrip(String tripId) async {}
+  Future<void> deleteTrip(String tripId) {
+    return _dataService.deleteTripAsync(firebaseAuth.currentUser!.uid, tripId);
+  }
+
+  Future<void> addOrUpdateActivity(String tripId, Activity activity) {
+    return _dataService.setActivityAsync(
+        firebaseAuth.currentUser!.uid, tripId, activity);
+  }
+
+  Future<void> deleteActivity(String tripId, String activityId) {
+    return _dataService.deleteActivityAsync(
+        firebaseAuth.currentUser!.uid, tripId, activityId);
+  }
 }
