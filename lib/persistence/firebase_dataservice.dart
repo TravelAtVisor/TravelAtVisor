@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../user_data/behaviour/authentication_dataservice.dart';
 import '../user_data/models/custom_user_data.dart';
+import '../user_data/models/trip.dart';
 
 class FirebaseDataservice implements AuthenticationDataService {
   static const String _defaultProfilePicture =
@@ -26,7 +27,7 @@ class FirebaseDataservice implements AuthenticationDataService {
         data["fullName"],
         data["photoUrl"] ?? _defaultProfilePicture,
         data["biography"],
-        CustomUserData.dummyTrips);
+        _parseTrips(data["trips"]));
   }
 
   @override
@@ -85,5 +86,9 @@ class FirebaseDataservice implements AuthenticationDataService {
         .get();
 
     return snapshot.size == 0;
+  }
+
+  List<Trip> _parseTrips(List<dynamic> data) {
+    return data.map((e) => Trip.fromDynamic(e)).toList();
   }
 }
