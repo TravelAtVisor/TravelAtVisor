@@ -29,8 +29,8 @@ class Trip {
   Map<String, dynamic> toMap() {
     return {
       "title": title,
-      "begin": Timestamp.fromDate(begin),
-      "end": Timestamp.fromDate(end),
+      "begin": begin.toString(),
+      "end": begin.toString(),
       "companions": companions,
       "activities":
           activities.toMap((item) => item.activityId, (item) => item.toMap())

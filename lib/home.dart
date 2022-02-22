@@ -22,12 +22,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final trips = context
-        .read<AuthenticationState>()
-        .currentUser!
-        .customData!
-        .trips
-        .first;
     final dataProvider = context.read<UserDataProvider>();
     return Scaffold(
       body: PageStorage(
@@ -37,18 +31,18 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add),
-        // onPressed: () => dataProvider.addOrUpdateTrip(Trip(
-        //     "ae79aaea-f312-4d28-aa10-1e5ae1d79c86",
-        //     "title",
-        //     DateTime.now(),
-        //     DateTime.now(), [], [
-        //   Activity("379c4d99-90a0-485b-a721-d4735d238840", "jlk",
-        //       DateTime.now(), "title", "description", "photoUrl"),
-        //   Activity("fc506b7e-dcb2-48a5-a592-816d939610a8", "jlk",
-        //       DateTime.now(), "title", "description", "photoUrl"),
-        // ])),
-        onPressed: () =>
-            dataProvider.deleteTrip("09a37987-fd56-4416-8b39-e6895a75166e"),
+        onPressed: () => dataProvider.addOrUpdateTrip(Trip(
+            "ae79aaea-f312-4d28-aa10-1e5ae1d79c86",
+            "title",
+            DateTime.now(),
+            DateTime.now(), [], [
+          Activity("379c4d99-90a0-485b-a721-d4735d238840", "jlk",
+              DateTime.now(), "title", "description", "photoUrl"),
+          Activity("fc506b7e-dcb2-48a5-a592-816d939610a8", "jlk",
+              DateTime.now(), "title", "description", "photoUrl"),
+        ])),
+        // onPressed: () =>
+        //     dataProvider.deleteTrip("ae79aaea-f312-4d28-aa10-1e5ae1d79c86"),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(

@@ -24,7 +24,7 @@ class Activity {
   Map<String, dynamic> toMap() {
     return {
       "foursquareId": foursqareId,
-      "timestamp": Timestamp.fromDate(timestamp),
+      "timestamp": timestamp.toString(),
       "title": title,
       "description": description,
       "photoUrl": photoUrl,

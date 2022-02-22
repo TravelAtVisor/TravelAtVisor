@@ -22,7 +22,7 @@ class CloudFunctionDataService implements AuthenticationDataService {
       _functions.httpsCallable("updateCustomUserData");
   late final _isUserNameAvailable =
       _functions.httpsCallable("isUsernameAvailable");
-  late final _setTrip = _functions.httpsCallable("setStrip");
+  late final _setTrip = _functions.httpsCallable("setTrip");
   late final _deleteTrip = _functions.httpsCallable("deleteTrip");
   late final _setActivity = _functions.httpsCallable("setActivity");
   late final _deleteActivity = _functions.httpsCallable("deleteActivity");
