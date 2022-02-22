@@ -1,28 +1,35 @@
-import 'package:travel_atvisor/user_data/models/activity.dart';
+import 'package:travel_atvisor/utils/mappers.dart';
 
 import 'trip.dart';
 
 class CustomUserData {
-  final String nickname;
-  final String fullName;
-  final String? photoUrl;
-  final String? biography;
-  final List<Trip> trips;
+  late String nickname;
+  late String fullName;
+  late String? photoUrl;
+  late String? biography;
+  late List<Trip> trips;
 
-  static final dummyTrips = [
-    Trip("3b64f847-9c57-48a7-9f2a-5514f857565d", "Meine geile Reise",
-        DateTime.now(), DateTime.now(), [
-      "972VlnX1oHWBeSLhWiTNocUhTGF3 "
-    ], [
-      Activity(
-          "76159d12-4783-41ff-87a4-c6d5ef9d8204",
-          "5412dadb498e2f6ce24e2653",
-          DateTime.now(),
-          "Hans im Glück",
-          "Burger",
-          "https://fastly.4sqi.net/img/general/original/87388367_z4tKpfgmZ2jS2cMDTsu2gQ0t5aS6qS9rOvqdcaXq9-Q.jpg")
-    ])
-  ];
   CustomUserData(
       this.nickname, this.fullName, this.photoUrl, this.biography, this.trips);
+
+  CustomUserData.fromDynamic(dynamic data) {
+    nickname = data["nickname"];
+    fullName = data["fullName"];
+    photoUrl = data["photoUrl"];
+    biography = data["biography"];
+
+    final tripData = data["trips"] as Map<dynamic, dynamic>;
+    trips =
+        tripData.entries.map((e) => Trip.fromDynamic(e.key, e.value)).toList();
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "nickname": nickname,
+      "fullName": fullName,
+      "photoUrl": photoUrl,
+      "biography": biography,
+      "trips": trips.toMap((item) => item.tripId, (item) => item.toMap()),
+    };
+  }
 }

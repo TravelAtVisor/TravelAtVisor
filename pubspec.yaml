@@ -15,13 +15,13 @@ dependencies:
   firebase_auth: ^3.3.6
   firebase_core: ^1.12.0
   cupertino_icons: ^1.0.2
-  cloud_firestore: ^3.1.7
   firebase_storage: ^10.2.6
   image_picker: 0.7.4
   image_cropper: ^1.4.1
   google_sign_in: ^5.2.3
   carousel_slider: ^4.0.0
   syncfusion_flutter_datepicker: ^19.4.52
+  cloud_functions: ^3.2.7
 
 dev_dependencies:
   flutter_test:
