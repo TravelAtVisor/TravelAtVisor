@@ -61,7 +61,17 @@ shared_module/
 
 ## Modules
 * Shared-Module
-  *  
+  * Application State
+  * Globally used custom widgets (button, textinput)
+  * dynamic to class mappers for remotely sourced data
+  * Data- and NavigationService implementation
 * User-Module
+  * Login / Register Views
+  * Manage Friends
+  * My Profile View
 * Trip-Module
+  * List Trips Page (incl. Activity Preview)
+  * Create / Edit Trip Page
 * Activity-Module
+  * Create / Edit Activity Page
+  * View Activity Page  
