@@ -32,10 +32,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add),
-        onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: ((context) => LocalityChooserPage()))),
-        // onPressed: () =>
-        //     dataProvider.deleteTrip("ae79aaea-f312-4d28-aa10-1e5ae1d79c86"),
+        onPressed: () => _navigateToNewTripScreen(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
