@@ -14,3 +14,13 @@ export function useAuthenticatedFunction<TPayload>(guardedHandler: (payload: TPa
         return guardedHandler(data as TPayload, context.auth!);
     });
 }
+
+export const useSecret = (secretName: string) => {
+    const value = process.env[secretName];
+
+    if (value === undefined) {
+        throw new https.HttpsError("internal", "Unkown secret", { secretName });
+    }
+
+    return value;
+};
