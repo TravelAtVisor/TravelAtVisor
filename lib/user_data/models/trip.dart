@@ -15,8 +15,8 @@ class Trip {
 
   Trip.fromDynamic(this.tripId, dynamic data) {
     title = data["title"];
-    begin = DynamicMappers.fromString(data["begin"]);
-    end = DynamicMappers.fromString(data["end"]);
+    begin = DynamicMappers.getDateTime(data["begin"]);
+    end = DynamicMappers.getDateTime(data["end"]);
     var companionData = data["companions"] as List<dynamic>;
     companions = companionData.map((e) => e.toString()).toList();
     final activityData = data["activities"] as Map<dynamic, dynamic>;

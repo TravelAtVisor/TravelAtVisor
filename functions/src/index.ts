@@ -1,7 +1,7 @@
 import { useAuthenticatedFunction, useSecret } from "./utils/security-utilities";
 import { CustomUserData } from "./models/custom-user-data";
 import { useUserCollection, useUserRecord } from "./utils/firestore-utilities";
-import { config, https } from "firebase-functions";
+import { config } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
@@ -11,6 +11,9 @@ import { DeleteActivityRequest } from "./models/delete-activity-request";
 import { SearchLocalityRequest } from "./models/search-locality-request";
 import { SearchPlacesRequest } from "./models/search-places-request";
 import { GetPlaceDetailsRequest } from "./models/get-place-details-request.ts";
+import { useCallableFunction } from "./utils/functions-utilities";
+import axios from 'axios';
+
 initializeApp(config().firebase);
 
 
@@ -25,7 +28,7 @@ export const updateCustomUserData = useAuthenticatedFunction<CustomUserData>((us
     return ref.set(userData);
 });
 
-export const isUsernameAvailable = https.onCall(async ({ username }: CheckUsernameAvailabilityRequest, _) => {
+export const isUsernameAvailable = useCallableFunction<CheckUsernameAvailabilityRequest>(async ({ username }, _) => {
     const userCollection = useUserCollection();
 
     const snapshot = await userCollection
@@ -84,7 +87,7 @@ export const deleteActivity = useAuthenticatedFunction<DeleteActivityRequest>(as
 });
 
 export const searchLocalityProxy = useAuthenticatedFunction<SearchLocalityRequest>(async ({ input, sessionToken: sesstionToken }, _) => {
-    const mapsKey = useSecret("MAPS_KEY");
+    const mapsKey = useSecret("maps");
 
     const requestUrl = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json");
     requestUrl.searchParams.append("key", mapsKey);
@@ -93,13 +96,13 @@ export const searchLocalityProxy = useAuthenticatedFunction<SearchLocalityReques
     requestUrl.searchParams.append("types", "(cities)");
 
 
-    const response = await fetch(requestUrl.href);
+    const response = await axios.get(requestUrl.href);
 
-    return await response.json();
+    return await response.data;
 });
 
 export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(async ({ input, locality }, _) => {
-    const foursquareKey = useSecret("FOURSQUARE_KEY");
+    const foursquareKey = useSecret("foursquare");
 
     const requestUrl = new URL("https://api.foursquare.com/v3/places/search");
     requestUrl.searchParams.append("query", input);
@@ -108,29 +111,28 @@ export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(as
     requestUrl.searchParams.append("sort", "popularity");
 
 
-    const response = await fetch(requestUrl.href, {
+    const response = await axios.get(requestUrl.href, {
         headers: {
             "Authorization": foursquareKey,
             "Accept": "application/json"
         }
     });
 
-    return await response.json();
+    return await response.data;
 });
 
 export const getPlaceDetailsProxy = useAuthenticatedFunction<GetPlaceDetailsRequest>(async ({ foursquareId }, _) => {
-    const foursquareKey = useSecret("FOURSQUARE_KEY");
+    const foursquareKey = useSecret("foursquare");
 
     const requestUrl = new URL(`https://api.foursquare.com/v3/places/${foursquareId}`);
     requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos,description,tel,website,social_media,hours,hours_popular,rating,price");
 
-
-    const response = await fetch(requestUrl.href, {
+    const response = await axios.get(requestUrl.href, {
         headers: {
             "Authorization": foursquareKey,
             "Accept": "application/json"
         }
     });
 
-    return await response.json();
+    return await response.data;
 });

@@ -2,6 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:travel_atvisor/trip_data/models/place_core_data.dart';
+import 'package:travel_atvisor/trip_data/models/locality_suggestion.dart';
+import 'package:travel_atvisor/trip_data/models/extended_place_data.dart';
+import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
 import 'package:travel_atvisor/user_data/models/trip.dart';
 
 import 'package:travel_atvisor/user_data/models/custom_user_data.dart';
@@ -11,7 +16,8 @@ import 'package:travel_atvisor/user_data/models/activity.dart';
 import '../user_data/behaviour/authentication_dataservice.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
-class CloudFunctionDataService implements AuthenticationDataService {
+class CloudFunctionDataService
+    implements AuthenticationDataService, TripDataservice {
   static const String _defaultProfilePicture =
       "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283";
   final FirebaseFunctions _functions;
@@ -26,6 +32,11 @@ class CloudFunctionDataService implements AuthenticationDataService {
   late final _deleteTrip = _functions.httpsCallable("deleteTrip");
   late final _setActivity = _functions.httpsCallable("setActivity");
   late final _deleteActivity = _functions.httpsCallable("deleteActivity");
+  late final _searchLocalityProxy =
+      _functions.httpsCallable("searchLocalityProxy");
+  late final _searchPlaceProxy = _functions.httpsCallable("searchPlaceProxy");
+  late final _getPlaceDetailsProxy =
+      _functions.httpsCallable("getPlaceDetailsProxy");
 
   CloudFunctionDataService(this._functions, this._storage);
 
@@ -108,5 +119,37 @@ class CloudFunctionDataService implements AuthenticationDataService {
     }
 
     return url ?? _defaultProfilePicture;
+  }
+
+  @override
+  Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) async {
+    final response =
+        await _getPlaceDetailsProxy.call({"foursquareId": foursquareId});
+
+    return ExtendedPlaceData.fromDynamic(response.data);
+  }
+
+  @override
+  Future<List<LocalitySuggestion>> searchLocalitiesAsync(
+      String input, String sessionKey) async {
+    final response = await _searchLocalityProxy
+        .call({"input": input, "sessionToken": sessionKey});
+
+    final dynamicData = response.data["predictions"] as List<dynamic>;
+
+    return dynamicData.map((e) => LocalitySuggestion.fromDynamic(e)).toList();
+  }
+
+  @override
+  Future<List<PlaceCoreData>> searchPlacesAsync(
+      String input, String locality) async {
+    final response =
+        await _searchPlaceProxy.call({"input": input, "locality": locality});
+
+    final dynamicData = response.data["results"] as List<dynamic>;
+
+    return dynamicData
+        .map((e) => PlaceCoreData.fromDynamic(e, const Size(130, 130)))
+        .toList();
   }
 }

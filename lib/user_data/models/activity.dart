@@ -13,7 +13,7 @@ class Activity {
 
   Activity.fromDynamic(this.activityId, dynamic data) {
     foursqareId = data["foursquareId"];
-    timestamp = DynamicMappers.fromString(data["timestamp"]);
+    timestamp = DynamicMappers.getDateTime(data["timestamp"]);
     title = data["title"];
     description = data["description"];
     photoUrl = data["photoUrl"];

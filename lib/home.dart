@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/trip_data/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/userScreen.dart';
 import 'package:travel_atvisor/user_data/behaviour/user_data_provider.dart';
 import 'package:travel_atvisor/user_data/models/activity.dart';
@@ -31,16 +32,8 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add),
-        onPressed: () => dataProvider.addOrUpdateTrip(Trip(
-            "ae79aaea-f312-4d28-aa10-1e5ae1d79c86",
-            "title",
-            DateTime.now(),
-            DateTime.now(), [], [
-          Activity("379c4d99-90a0-485b-a721-d4735d238840", "jlk",
-              DateTime.now(), "title", "description", "photoUrl"),
-          Activity("fc506b7e-dcb2-48a5-a592-816d939610a8", "jlk",
-              DateTime.now(), "title", "description", "photoUrl"),
-        ])),
+        onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: ((context) => LocalityChooserPage()))),
         // onPressed: () =>
         //     dataProvider.deleteTrip("ae79aaea-f312-4d28-aa10-1e5ae1d79c86"),
       ),

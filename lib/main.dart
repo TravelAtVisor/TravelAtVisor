@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/persistence/cloudfunction_dataservice.dart';
+import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
 
 import 'home.dart';
 import 'user_data/behaviour/user_data_provider.dart';
@@ -23,13 +24,17 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cloudFunctionDataService = CloudFunctionDataService(
+      FirebaseFunctions.instanceFor(region: "europe-west6"),
+      FirebaseStorage.instance,
+    );
     return MultiProvider(
       providers: [
         Provider(
-          create: (_) => CloudFunctionDataService(
-            FirebaseFunctions.instance,
-            FirebaseStorage.instance,
-          ),
+          create: (_) => cloudFunctionDataService,
+        ),
+        Provider<TripDataservice>(
+          create: (_) => cloudFunctionDataService,
         ),
         Provider<UserDataProvider>(
           create: (context) {
