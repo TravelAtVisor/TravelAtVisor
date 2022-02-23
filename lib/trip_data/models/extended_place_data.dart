@@ -52,8 +52,8 @@ class ExtendedPlaceData extends PlaceCoreData {
           regularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
       popularHours:
           popularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
-      priceRating: data["price"] != null ? data["price"] as int : null,
-      rating: data["rating"] != null ? data["rating"] as double : null,
+      priceRating: DynamicMappers.getInt(data["price"]),
+      rating: DynamicMappers.getDouble(data["rating"]),
     );
   }
 }

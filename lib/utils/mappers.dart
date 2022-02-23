@@ -18,6 +18,30 @@ class DynamicMappers {
     final minutes = int.parse(timeString.substring(2, 4));
     return TimeOfDay(hour: hours, minute: minutes);
   }
+
+  static int? getInt(dynamic data) {
+    if (data == null) return null;
+
+    if (data is int) {
+      return data;
+    }
+
+    if (data is double) {
+      return data.toInt();
+    }
+  }
+
+  static double? getDouble(dynamic data) {
+    if (data == null) return null;
+
+    if (data is int) {
+      return data.toDouble();
+    }
+
+    if (data is double) {
+      return data;
+    }
+  }
 }
 
 extension ListExtension<TData> on List<TData> {
