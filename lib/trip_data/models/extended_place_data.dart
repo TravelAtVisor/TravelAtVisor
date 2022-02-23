@@ -13,6 +13,7 @@ class ExtendedPlaceData extends PlaceCoreData {
   final int? priceRating;
   final double? rating;
   final Address? address;
+  final Geocodes geocodes;
 
   ExtendedPlaceData(
       {required String foursquareId,
@@ -26,6 +27,7 @@ class ExtendedPlaceData extends PlaceCoreData {
       required this.openingHours,
       required this.popularHours,
       required this.priceRating,
+      required this.geocodes,
       this.rating,
       this.address})
       : super(
@@ -40,21 +42,22 @@ class ExtendedPlaceData extends PlaceCoreData {
     final popularHours = data["hours_popular"] as List<dynamic>?;
 
     return ExtendedPlaceData(
-      foursquareId: data["fsq_id"],
-      name: baseData.name,
-      categories: baseData.categories,
-      photoUrls: baseData.photoUrls,
-      description: data["description"],
-      phoneNumber: data["tel"],
-      website: data["website"],
-      socialMediaLinks: SocialMediaLinks.fromDynamic(data["social_media"]),
-      openingHours:
-          regularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
-      popularHours:
-          popularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
-      priceRating: DynamicMappers.getInt(data["price"]),
-      rating: DynamicMappers.getDouble(data["rating"]),
-    );
+        foursquareId: data["fsq_id"],
+        name: baseData.name,
+        categories: baseData.categories,
+        photoUrls: baseData.photoUrls,
+        description: data["description"],
+        phoneNumber: data["tel"],
+        website: data["website"],
+        socialMediaLinks: SocialMediaLinks.fromDynamic(data["social_media"]),
+        openingHours:
+            regularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
+        popularHours:
+            popularHours?.map((e) => OpeningHour.fromDynamic(e)).toList(),
+        priceRating: DynamicMappers.getInt(data["price"]),
+        rating: DynamicMappers.getDouble(data["rating"]),
+        geocodes: Geocodes.fromDynamic(data["geocodes"]["main"]),
+        address: Address.fromDynamic(data["location"]));
   }
 }
 
@@ -86,8 +89,13 @@ class Address {
       required this.address,
       required this.locality});
 
-  static Address fromDynamix(dynamic data) {
-    throw UnimplementedError();
+  static Address? fromDynamic(dynamic data) {
+    if (data == null) return null;
+    return Address(
+        formatted: data["formatted_address"],
+        postcode: data["postcode"],
+        address: data["address"],
+        locality: data["locality"]);
   }
 }
 
@@ -105,5 +113,19 @@ class SocialMediaLinks {
         facebookId: links["facebook_id"],
         instagram: links["instagram"],
         twitter: links["twitter"]);
+  }
+}
+
+class Geocodes {
+  final double latitude;
+  final double longitude;
+
+  Geocodes(this.latitude, this.longitude);
+
+  static Geocodes fromDynamic(dynamic data) {
+    return Geocodes(
+      DynamicMappers.getDouble(data["latitude"])!,
+      DynamicMappers.getDouble(data["longitude"])!,
+    );
   }
 }

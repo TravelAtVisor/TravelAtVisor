@@ -125,7 +125,7 @@ export const getPlaceDetailsProxy = useAuthenticatedFunction<GetPlaceDetailsRequ
     const foursquareKey = useSecret("foursquare");
 
     const requestUrl = new URL(`https://api.foursquare.com/v3/places/${foursquareId}`);
-    requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos,description,tel,website,social_media,hours,hours_popular,rating,price");
+    requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos,description,tel,website,social_media,hours,hours_popular,rating,price,location,geocodes");
 
     const response = await axios.get(requestUrl.href, {
         headers: {
