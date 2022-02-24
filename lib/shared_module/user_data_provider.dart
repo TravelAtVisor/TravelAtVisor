@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:travel_atvisor/user_data/models/activity.dart';
 import 'package:travel_atvisor/user_data/models/trip.dart';
-import '../models/authentication_result.dart';
-import '../models/authentication_state.dart';
-import '../models/custom_user_data.dart';
-import 'authentication_dataservice.dart';
+import '../user_data/models/authentication_result.dart';
+import '../user_data/models/authentication_state.dart';
+import '../user_data/models/custom_user_data.dart';
+import '../user_module/authentication_dataservice.dart';
 
 class UserDataProvider {
   final FirebaseAuth firebaseAuth;

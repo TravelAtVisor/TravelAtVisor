@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/full_width_button.dart';
-import 'package:travel_atvisor/user_data/behaviour/user_data_provider.dart';
+import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
+import 'package:travel_atvisor/shared_module/user_data_provider.dart';
 import 'package:travel_atvisor/user_data/models/authentication_state.dart';
 
 class UserScreen extends StatefulWidget {

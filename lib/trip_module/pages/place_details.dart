@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
+import 'package:travel_atvisor/trip_module/trip_dataservice.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/extended_place_data.dart';

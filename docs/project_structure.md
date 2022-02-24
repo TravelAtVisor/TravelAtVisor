@@ -74,4 +74,4 @@ shared_module/
   * Create / Edit Trip Page
 * Activity-Module
   * Create / Edit Activity Page
-  * View Activity Page  
+  * View Activity Page

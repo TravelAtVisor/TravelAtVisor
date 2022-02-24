@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
+import 'package:travel_atvisor/trip_module/trip_dataservice.dart';
 
 import '../models/place_core_data.dart';
 import '../utils/debouncer.dart';

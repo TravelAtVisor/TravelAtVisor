@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/trip_data/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/userScreen.dart';
-import 'package:travel_atvisor/user_data/behaviour/user_data_provider.dart';
+import 'package:travel_atvisor/shared_module/user_data_provider.dart';
 import 'package:travel_atvisor/user_data/models/activity.dart';
 import 'package:travel_atvisor/user_data/models/authentication_state.dart';
 import 'package:travel_atvisor/user_data/models/trip.dart';
