@@ -62,7 +62,7 @@ class TravelAtVisorApp extends StatelessWidget {
               authenticationState: value,
             ),
           ),
-          userSafeBuilder: (_) => Home(),
+          userSafeBuilder: (_) => const Home(),
         ),
       ),
     );

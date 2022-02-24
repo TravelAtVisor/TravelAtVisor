@@ -6,15 +6,20 @@ import 'new_trip_screen.dart';
 import 'tripScreen.dart';
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   int currentTab = 0;
-  final List<Widget> screens = [TripScreen(), UserScreen()];
+  final List<Widget> screens = [
+    const TripScreen(),
+    const UserScreen()
+  ];
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = TripScreen();
+  Widget currentScreen = const TripScreen();
 
   @override
   Widget build(BuildContext context) {
@@ -30,44 +35,35 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: MediaQuery.of(context).size.height * 0.01,
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.06,
           //height: 50,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.07),
-                      child: MaterialButton(
-                        onPressed: () {
-                          setState(() {
-                            currentScreen =
-                                TripScreen(); // if user taps on this dashboard tab will be active
-                            currentTab = 0;
-                          });
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.explore,
-                              color: currentTab == 0
-                                  ? Colors.blueGrey
-                                  : Colors.grey,
-                            ),
-                            Text(
-                              'Reisen',
-                              style: TextStyle(
-                                color: currentTab == 0
-                                    ? Colors.blueGrey
-                                    : Colors.grey,
+
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.07),
+                        child: MaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              currentScreen =
+                                  const TripScreen(); // if user taps on this dashboard tab will be active
+                              currentTab = 0;
+                            });
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.explore,
+                                color: currentTab == 0 ? Colors.blueGrey : Colors.grey,
                               ),
                             ),
                           ],
@@ -88,7 +84,7 @@ class _HomeState extends State<Home> {
                         onPressed: () {
                           setState(() {
                             currentScreen =
-                                UserScreen(); // if user taps on this dashboard tab will be active
+                                const UserScreen(); // if user taps on this dashboard tab will be active
                             currentTab = 1;
                           });
                         },
@@ -124,7 +120,7 @@ class _HomeState extends State<Home> {
   }
 
   void _navigateToNewTripScreen(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => NewTripScreen()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const NewTripScreen()));
   }
 }

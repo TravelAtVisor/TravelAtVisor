@@ -30,10 +30,10 @@ class _DesignSelectState extends State<DesignSelect> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border1
-                      ? BorderSide(width: 5, color: Colors.green)
-                      : BorderSide(width: 0, color: Colors.blueGrey),
+                      ? const BorderSide(width: 5, color: Colors.green)
+                      : const BorderSide(width: 0, color: Colors.blueGrey),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: cardText(),
@@ -52,10 +52,10 @@ class _DesignSelectState extends State<DesignSelect> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border2
-                      ? BorderSide(width: 5, color: Colors.green)
-                      : BorderSide(width: 0, color: Colors.blueGrey),
+                      ? const BorderSide(width: 5, color: Colors.green)
+                      : const BorderSide(width: 0, color: Colors.blueGrey),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: cardText(),
@@ -78,10 +78,10 @@ class _DesignSelectState extends State<DesignSelect> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border3
-                      ? BorderSide(width: 5, color: Colors.green)
-                      : BorderSide(width: 0, color: Colors.blueGrey),
+                      ? const BorderSide(width: 5, color: Colors.green)
+                      : const BorderSide(width: 0, color: Colors.blueGrey),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: cardText(),
@@ -100,10 +100,10 @@ class _DesignSelectState extends State<DesignSelect> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border4
-                      ? BorderSide(width: 5, color: Colors.green)
-                      : BorderSide(width: 0, color: Colors.blueGrey),
+                      ? const BorderSide(width: 5, color: Colors.green)
+                      : const BorderSide(width: 0, color: Colors.blueGrey),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: cardText(),

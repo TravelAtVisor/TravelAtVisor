@@ -22,8 +22,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
           heightFactor: 0.9, // Adjust those two for the white space
           widthFactor: 0.9,
           child: Container(
-            decoration: BoxDecoration(
-              image: const DecorationImage(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
                 image: AssetImage("assets/ph_profile.png"),
               ),
             ),
