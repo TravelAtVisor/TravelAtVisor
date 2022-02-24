@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/shared_module/user_data_provider.dart';
+import 'package:travel_atvisor/shared_module/authentication_provider.dart';
 import 'package:travel_atvisor/shared_module/views/custom_text_input.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
