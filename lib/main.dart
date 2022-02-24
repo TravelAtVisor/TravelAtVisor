@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:travel_atvisor/shared_module/data_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
@@ -35,6 +36,9 @@ class TravelAtVisorApp extends StatelessWidget {
           create: (_) => cloudFunctionDataService,
         ),
         Provider<UserDataService>(
+          create: (_) => cloudFunctionDataService,
+        ),
+        Provider<ActivityDataService>(
           create: (_) => cloudFunctionDataService,
         ),
         Provider<AuthenticationProvider>(
