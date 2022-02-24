@@ -8,7 +8,7 @@ import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:travel_atvisor/shared_module/data_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
-import 'package:travel_atvisor/trip_module/trip_dataservice.dart';
+import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
 import 'home.dart';

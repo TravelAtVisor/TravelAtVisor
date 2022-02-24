@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_module/trip_dataservice.dart';
+import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/locality_suggestion.dart';
