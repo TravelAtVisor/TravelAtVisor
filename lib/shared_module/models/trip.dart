@@ -1,5 +1,4 @@
-import 'package:travel_atvisor/utils/mappers.dart';
-
+import '../utils/mappers.dart';
 import 'activity.dart';
 
 class Trip {

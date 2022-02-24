@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'companions_friends.dart';
-import 'custom_text_input.dart';
+import 'shared_module/views/custom_text_input.dart';
 import 'package:intl/intl.dart';
 
 import 'design_select.dart';
-import 'full_width_button.dart';
+import 'shared_module/views/full_width_button.dart';
 
 class NewTripScreen extends StatefulWidget {
   const NewTripScreen({Key? key}) : super(key: key);
@@ -35,48 +35,47 @@ class _NewTripScreenState extends State<NewTripScreen> {
               height: MediaQuery.of(context).size.height * 0.02,
             ),
             Column(
-                children: [
-                  CustomTextInput(
-                      controller: _tripTitleController,
-                      labelText: 'Name der Reise'),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          'Reisezeitraum',
-                          style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045),
-                        ),
-                      )),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInput(
-                          controller: _startDateController,
-                          labelText: 'Beginn',
-                          onEntered: () {
-                            _selectDate(context, _startDateController);
-                          },
-                        ),
+              children: [
+                CustomTextInput(
+                    controller: _tripTitleController,
+                    labelText: 'Name der Reise'),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        'Reisezeitraum',
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.width * 0.045),
                       ),
-                      Expanded(
-                        child: CustomTextInput(
-                          controller: _endDateController,
-                          labelText: 'Ende',
-                          onEntered: () {
-                            _selectDate(context, _endDateController);
-                          },
-                        ),
+                    )),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextInput(
+                        controller: _startDateController,
+                        labelText: 'Beginn',
+                        onEntered: () {
+                          _selectDate(context, _startDateController);
+                        },
                       ),
-                    ],
-                  ),
-                ],
-
+                    ),
+                    Expanded(
+                      child: CustomTextInput(
+                        controller: _endDateController,
+                        labelText: 'Ende',
+                        onEntered: () {
+                          _selectDate(context, _endDateController);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
@@ -152,7 +151,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
     }
   }
 
-  Widget DesignCard({required bool showBorder}){
+  Widget DesignCard({required bool showBorder}) {
     Color _color = Colors.blueGrey;
     return GestureDetector(
       onTap: () {
@@ -163,8 +162,8 @@ class _NewTripScreenState extends State<NewTripScreen> {
       child: Card(
         color: _color,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-            //side: BorderSide(width: 5, color: Colors.green),
+          borderRadius: BorderRadius.circular(15.0),
+          //side: BorderSide(width: 5, color: Colors.green),
         ),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.45,
@@ -174,13 +173,13 @@ class _NewTripScreenState extends State<NewTripScreen> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                    'Reisetitel',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width * 0.05,
-                    ),
+                  'Reisetitel',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
                   ),
+                ),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
+import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/locality_suggestion.dart';
@@ -22,7 +22,7 @@ class _LocalityChooserPageState extends State<LocalityChooserPage> {
 
   @override
   Widget build(BuildContext context) {
-    final placeDataService = context.read<TripDataservice>();
+    final placeDataService = context.read<ActivityDataService>();
     return SearchMask<LocalitySuggestion>(
       searchAction: (text) =>
           placeDataService.searchLocalitiesAsync(text, sessionToken),

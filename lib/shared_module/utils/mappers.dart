@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_atvisor/trip_data/models/extended_place_data.dart';
+
+import '../../activity_module/models/extended_place_data.dart';
 
 class DynamicMappers {
   static DateTime getDateTime(dynamic data) {
@@ -29,6 +30,8 @@ class DynamicMappers {
     if (data is double) {
       return data.toInt();
     }
+
+    return null;
   }
 
   static double? getDouble(dynamic data) {
@@ -41,6 +44,8 @@ class DynamicMappers {
     if (data is double) {
       return data;
     }
+
+    return null;
   }
 }
 

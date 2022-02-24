@@ -1,4 +1,4 @@
-import 'package:travel_atvisor/utils/mappers.dart';
+import 'package:travel_atvisor/shared_module/utils/mappers.dart';
 
 import 'trip.dart';
 

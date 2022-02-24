@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/mappers.dart';
+import '../../shared_module/utils/mappers.dart';
 import 'place_core_data.dart';
 
 class ExtendedPlaceData extends PlaceCoreData {

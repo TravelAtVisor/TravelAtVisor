@@ -1,23 +1,22 @@
 import 'dart:io';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_atvisor/trip_data/models/place_core_data.dart';
-import 'package:travel_atvisor/trip_data/models/locality_suggestion.dart';
-import 'package:travel_atvisor/trip_data/models/extended_place_data.dart';
-import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
-import 'package:travel_atvisor/user_data/models/trip.dart';
+import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 
-import 'package:travel_atvisor/user_data/models/custom_user_data.dart';
+import '../activity_module/models/extended_place_data.dart';
+import '../activity_module/models/locality_suggestion.dart';
+import '../activity_module/models/place_core_data.dart';
+import '../trip_module/trip.data_service.dart';
+import '../user_module/user.data_service.dart';
+import 'models/activity.dart';
+import 'models/custom_user_data.dart';
+import 'models/trip.dart';
 
-import 'package:travel_atvisor/user_data/models/activity.dart';
-
-import '../user_data/behaviour/authentication_dataservice.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-
-class CloudFunctionDataService
-    implements AuthenticationDataService, TripDataservice {
+class DataService
+    implements UserDataService, TripDataservice, ActivityDataService {
   static const String _defaultProfilePicture =
       "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283";
   final FirebaseFunctions _functions;
@@ -38,7 +37,7 @@ class CloudFunctionDataService
   late final _getPlaceDetailsProxy =
       _functions.httpsCallable("getPlaceDetailsProxy");
 
-  CloudFunctionDataService(this._functions, this._storage);
+  DataService(this._functions, this._storage);
 
   @override
   Future<void> deleteActivityAsync(
@@ -107,7 +106,6 @@ class CloudFunctionDataService
         // Unfortunately FlutterFire does not support a way to determine
         // whether a file exists so we will ignore a possible exception
         // in this place but log it to the console if in debug mode.
-
         if (e.code != "object-not-found") {
           rethrow;
         }

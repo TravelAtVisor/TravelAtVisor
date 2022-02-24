@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/full_width_button.dart';
-import 'package:travel_atvisor/user_data/behaviour/user_data_provider.dart';
-import 'package:travel_atvisor/user_data/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/authentication_provider.dart';
+import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
-    final userDataProvider = context.read<UserDataProvider>();
+    final userDataProvider = context.read<AuthenticationProvider>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,

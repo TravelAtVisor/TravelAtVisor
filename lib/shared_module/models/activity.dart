@@ -1,4 +1,4 @@
-import '../../utils/mappers.dart';
+import '../utils/mappers.dart';
 
 class Activity {
   String activityId;

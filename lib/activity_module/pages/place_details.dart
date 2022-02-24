@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_data/trip_dataservice.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../models/place_categories.dart';
 import '../views/opening_hour_visualizer.dart';
@@ -30,7 +30,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
     if (_details != null) return;
 
     final details = await context
-        .read<TripDataservice>()
+        .read<ActivityDataService>()
         .getPlaceDetailsAsync(widget.foursquareId);
 
     setState(() {
