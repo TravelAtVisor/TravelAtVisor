@@ -13,9 +13,9 @@ class _UserScreenState extends State<UserScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
-        title: Text('Benuter'),
+        title: const Text('Benuter'),
       ),
-      body: Center(
+      body: const Center(
         child: Text("Benutzer Screen"),
       ),
     );

@@ -1,4 +1,4 @@
-import 'package:travel_atvisor/user_data/models/activity.dart';
+  import 'package:travel_atvisor/user_data/models/activity.dart';
 
 import 'trip.dart';
 

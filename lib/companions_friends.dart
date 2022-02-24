@@ -56,7 +56,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                                   ),
                                 ),
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
                         widget.addPerson
                             ? Opacity(
                                 opacity: 0.2,
@@ -68,7 +68,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                                   indent: 5,
                                   endIndent: 5,
                                 ))
-                            : SizedBox(),
+                            : const SizedBox(),
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -76,27 +76,27 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 // for widget.person
-                                ProfilePicture(),
+                                const ProfilePicture(),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.025,
                                 ),
-                                ProfilePicture(),
+                                const ProfilePicture(),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.025,
                                 ),
-                                ProfilePicture(),
+                                const ProfilePicture(),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.025,
                                 ),
-                                ProfilePicture(),
+                                const ProfilePicture(),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.025,
                                 ),
-                                ProfilePicture(),
+                                const ProfilePicture(),
                               ],
                             ),
                           ),

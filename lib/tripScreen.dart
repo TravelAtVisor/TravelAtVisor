@@ -1,6 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_atvisor/trip_details_screen.dart';
+import 'package:travel_atvisor/user_data/models/authentication_state.dart';
+import 'package:travel_atvisor/user_data/models/custom_user_data.dart';
+import 'package:travel_atvisor/user_data/models/trip.dart';
 
 import 'companions_friends.dart';
 
@@ -14,6 +19,8 @@ class TripScreen extends StatefulWidget {
 class _TripScreenState extends State<TripScreen> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
+  final GlobalKey<ExpansionTileCardState> cardA = new GlobalKey();
+  final GlobalKey<ExpansionTileCardState> cardB = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +31,8 @@ class _TripScreenState extends State<TripScreen> {
       TripCard('31. Januar - 14. Februar', 'New York City'),
       TripCard('31. Januar - 14. Februar', 'New York City'),
     ];
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +84,7 @@ class _TripScreenState extends State<TripScreen> {
                                 ? MediaQuery.of(context).size.width * 0.0125
                                 : 0.0)),
                     margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                        const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: (Theme.of(context).brightness == Brightness.dark
@@ -107,11 +116,11 @@ class _TripScreenState extends State<TripScreen> {
                               color: Colors.grey.withOpacity(0.25),
                               spreadRadius: 1,
                               blurRadius: 5,
-                              offset: Offset(0, 3), // changes position of shadow
+                              offset: const Offset(0, 3), // changes position of shadow
                             ),
                           ],
                         ),
-                        child: CompanionsFriends(
+                        child: const CompanionsFriends(
                             header: 'Begleiter', addPerson: true)),
                   ),
             ),
@@ -119,11 +128,46 @@ class _TripScreenState extends State<TripScreen> {
               height: MediaQuery.of(context).size.height * 0.015,
             ),
 
+            Consumer<AuthenticationState>(
+                builder: (context, state, child){
+                  return ExpansionTile(
+
+                    collapsedTextColor: Colors.black,
+                    collapsedIconColor: Colors.black,
+                    title: Row(children: [
+                      Image.network(
+                        state.currentUser!.customData!.trips[0].activities[0].photoUrl,
+                        height: MediaQuery.of(context).size.width * 0.25,
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.035,
+                      ),
+                      Flexible(
+                        child: Text(state.currentUser!.customData!.trips[0].activities[0].title,
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width * 0.04,
+                            )),
+                      )
+                    ]),
+                    children: [
+                      Text(state.currentUser!.customData!.trips[0].activities[0].description),
+                      Row(
+                        children: [
+
+                        ],
+                      )
+                    ],
+                  );
+                }),
+
+
             Expanded(
               flex: 3,
               child: ShaderMask(
                 shaderCallback: (rect) {
-                  return LinearGradient(
+                  return const LinearGradient(
                     begin: Alignment(0.0, 0.65),
                     end: Alignment(0.0, 1.0),
                     colors: [Colors.black, Colors.transparent],
@@ -149,7 +193,7 @@ class _TripScreenState extends State<TripScreen> {
                           color: Colors.grey.withOpacity(0.25),
                           spreadRadius: 1,
                           blurRadius: 5,
-                          offset: Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
@@ -171,7 +215,7 @@ class _TripScreenState extends State<TripScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.95,
           height: MediaQuery.of(context).size.height * 0.19,
           child: Column(
@@ -185,7 +229,7 @@ class _TripScreenState extends State<TripScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: 0.1),
+                padding: const EdgeInsets.only(right: 0.1),
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
@@ -201,9 +245,9 @@ class _TripScreenState extends State<TripScreen> {
       ),
     );
   }
-  
+
   Widget TripActiviesList() {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.46,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -223,64 +267,66 @@ class _TripScreenState extends State<TripScreen> {
   Widget TripDayActivites(String day) {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.015),
-      child: Container(
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(day,
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.045,
-                  )),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.015,
-            ),
-            TripActivity('assets/empire.jpg', 'Empire State Building'),
-            TripActivity('assets/empire.jpg', 'Empire State Building'),
-            Opacity(
-                opacity: 0.2,
-                child: const Divider(
-                  color: Colors.blueGrey,
-                  thickness: 1.5,
-                  indent: 20,
-                  endIndent: 20,
-                ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget TripActivity(String path, String name) {
-    return Container(
       child: Column(
         children: [
-          Row(children: [
-            Image.asset(
-              path,
-              //height: MediaQuery.of(context).size.width * 0.25,
-              width: MediaQuery.of(context).size.width * 0.25,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.035,
-            ),
-            Text(name,
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(day,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.04,
-                ))
-          ]),
+                  fontSize: MediaQuery.of(context).size.width * 0.045,
+                )),
+          ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.015,
-          )
+          ),
+          TripActivity('assets/empire.jpg', 'Empire State Building'),
+          TripActivity('assets/empire.jpg', 'Empire State Building'),
+          const Opacity(
+              opacity: 0.2,
+              child: Divider(
+                color: Colors.blueGrey,
+                thickness: 1.5,
+                indent: 20,
+                endIndent: 20,
+              ))
         ],
       ),
     );
   }
 
+  Widget TripActivity(String path, String name) {
+
+    return ExpansionTile(
+
+      collapsedTextColor: Colors.black,
+      collapsedIconColor: Colors.black,
+      title: Row(children: [
+        Image.asset(
+          path,
+          height: MediaQuery.of(context).size.width * 0.25,
+          width: MediaQuery.of(context).size.width * 0.25,
+          fit: BoxFit.contain,
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.035,
+        ),
+        Flexible(
+          child: Text(name,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+              )),
+        )
+      ]),
+      children: [
+        Text('Big Bang'),
+        Text('Birth of the Sun'),
+        Text('Earth is Born'),
+      ],
+    );
+  }
+
   void _navigateToTripDetailsScreen(BuildContext context) {
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => TripDetailsScreen()));
+        MaterialPageRoute(builder: (context) => const TripDetailsScreen()));
   }
 }

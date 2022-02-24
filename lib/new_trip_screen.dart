@@ -25,7 +25,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
-        title: Text("Neue Reise"),
+        title: const Text("Neue Reise"),
         //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: Center(
@@ -92,7 +92,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                   ),
                 )),
             Row(
-              children: [
+              children: const [
                 DesignSelect(),
                 //DesignCard(showBorder: false),
               ],
@@ -110,7 +110,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
               padding: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.03,
                   right: MediaQuery.of(context).size.width * 0.03),
-              child: CompanionsFriends(header: 'Freunde', addPerson: true),
+              child: const CompanionsFriends(header: 'Freunde', addPerson: true),
             ),
             Expanded(
               child: Align(
