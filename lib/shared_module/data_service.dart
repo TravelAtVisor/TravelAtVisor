@@ -10,7 +10,7 @@ import '../trip_module/models/extended_place_data.dart';
 import '../trip_module/models/locality_suggestion.dart';
 import '../trip_module/models/place_core_data.dart';
 import '../trip_module/trip_dataservice.dart';
-import '../user_module/authentication_dataservice.dart';
+import '../user_module/user.data_service.dart';
 import 'models/activity.dart';
 import 'models/custom_user_data.dart';
 import 'models/trip.dart';

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../user_module/authentication_dataservice.dart';
+import '../user_module/user.data_service.dart';
 import 'models/authentication_result.dart';
 import 'models/authentication_state.dart';
 import 'models/custom_user_data.dart';
