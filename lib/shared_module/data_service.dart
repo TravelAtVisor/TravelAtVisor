@@ -6,9 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 
-import '../trip_module/models/extended_place_data.dart';
-import '../trip_module/models/locality_suggestion.dart';
-import '../trip_module/models/place_core_data.dart';
+import '../activity_module/models/extended_place_data.dart';
+import '../activity_module/models/locality_suggestion.dart';
+import '../activity_module/models/place_core_data.dart';
 import '../trip_module/trip.data_service.dart';
 import '../user_module/user.data_service.dart';
 import 'models/activity.dart';

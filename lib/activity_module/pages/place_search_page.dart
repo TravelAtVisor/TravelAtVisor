@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 
 import '../models/place_core_data.dart';
 import '../utils/debouncer.dart';
@@ -20,7 +20,7 @@ class PlaceSearchPage extends StatefulWidget {
 class _PlaceSearchPageState extends State<PlaceSearchPage> {
   @override
   Widget build(BuildContext context) {
-    final placeDataService = context.read<TripDataservice>();
+    final placeDataService = context.read<ActivityDataService>();
 
     return SearchMask<PlaceCoreData>(
       title: Text("Plätze in ${widget.locality}"),
