@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'companions_friends.dart';
-import 'shared_module/views/custom_text_input.dart';
 import 'package:intl/intl.dart';
 
-import 'design_select.dart';
-import 'shared_module/views/full_width_button.dart';
+import '../../shared_module/views/companions_friends.dart';
+import '../../shared_module/views/custom_text_input.dart';
+import '../../shared_module/views/full_width_button.dart';
+import '../views/design_select.dart';
 
-class NewTripScreen extends StatefulWidget {
-  const NewTripScreen({Key? key}) : super(key: key);
+class NewTrip extends StatefulWidget {
+  const NewTrip({Key? key}) : super(key: key);
 
   @override
-  _NewTripScreenState createState() => _NewTripScreenState();
+  _NewTripState createState() => _NewTripState();
 }
 
-class _NewTripScreenState extends State<NewTripScreen> {
+class _NewTripState extends State<NewTrip> {
   final _tripTitleController = TextEditingController();
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
@@ -109,7 +109,8 @@ class _NewTripScreenState extends State<NewTripScreen> {
               padding: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.03,
                   right: MediaQuery.of(context).size.width * 0.03),
-              child: const CompanionsFriends(header: 'Freunde', addPerson: true),
+              child:
+                  const CompanionsFriends(header: 'Freunde', addPerson: true),
             ),
             Expanded(
               child: Align(
@@ -136,7 +137,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
       BuildContext context, TextEditingController textController) async {
     DateTime? newSelectedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
+      initialDate: _selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 10),
     );
@@ -151,7 +152,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
     }
   }
 
-  Widget DesignCard({required bool showBorder}) {
+  Widget buildDesignCard({required bool showBorder}) {
     Color _color = Colors.blueGrey;
     return GestureDetector(
       onTap: () {
@@ -165,7 +166,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
           borderRadius: BorderRadius.circular(15.0),
           //side: BorderSide(width: 5, color: Colors.green),
         ),
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.45,
           height: MediaQuery.of(context).size.height * 0.09,
           child: Column(

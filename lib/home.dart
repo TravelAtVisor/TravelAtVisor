@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
+import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
 import 'package:travel_atvisor/userScreen.dart';
-
-import 'new_trip_screen.dart';
-import 'tripScreen.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,9 +12,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentTab = 0;
-  final List<Widget> screens = [const TripScreen(), const UserScreen()];
+  final List<Widget> screens = [const TripList(), const UserScreen()];
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = const TripScreen();
+  Widget currentScreen = const TripList();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,7 @@ class _HomeState extends State<Home> {
                   child: MaterialButton(
                     onPressed: () => setState(() {
                       currentScreen =
-                          const TripScreen(); // if user taps on this dashboard tab will be active
+                          const TripList(); // if user taps on this dashboard tab will be active
                       currentTab = 0;
                     }),
                     child: Icon(
@@ -84,6 +83,6 @@ class _HomeState extends State<Home> {
 
   void _navigateToNewTripScreen(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const NewTripScreen()));
+        .push(MaterialPageRoute(builder: (context) => const NewTrip()));
   }
 }

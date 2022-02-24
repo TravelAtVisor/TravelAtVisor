@@ -2,18 +2,17 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
-import 'package:travel_atvisor/trip_details_screen.dart';
 
-import 'companions_friends.dart';
+import '../../shared_module/views/companions_friends.dart';
 
-class TripScreen extends StatefulWidget {
-  const TripScreen({Key? key}) : super(key: key);
+class TripList extends StatefulWidget {
+  const TripList({Key? key}) : super(key: key);
 
   @override
-  _TripScreenState createState() => _TripScreenState();
+  _TripListState createState() => _TripListState();
 }
 
-class _TripScreenState extends State<TripScreen> {
+class _TripListState extends State<TripList> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
 
@@ -200,40 +199,37 @@ class _TripScreenState extends State<TripScreen> {
   }
 
   Widget buildTripCard(String date, String title) {
-    return GestureDetector(
-      onTap: () => {_navigateToTripDetailsScreen(context)},
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        color: Colors.blueGrey,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.95,
-          height: MediaQuery.of(context).size.height * 0.19,
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(
-                  date,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 0.1),
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      color: Colors.blueGrey,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.95,
+        height: MediaQuery.of(context).size.height * 0.19,
+        child: Column(
+          children: [
+            ListTile(
+              title: Text(
+                date,
+                style: TextStyle(
                     color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.11,
-                  ),
+                    fontSize: MediaQuery.of(context).size.width * 0.035),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 0.1),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: MediaQuery.of(context).size.width * 0.11,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -314,10 +310,5 @@ class _TripScreenState extends State<TripScreen> {
         Text('Earth is Born'),
       ],
     );
-  }
-
-  void _navigateToTripDetailsScreen(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const TripDetailsScreen()));
   }
 }

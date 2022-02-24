@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travel_atvisor/profile_picture.dart';
+import 'package:travel_atvisor/shared_module/views/profile_picture.dart';
 
 class CompanionsFriends extends StatefulWidget {
   final String header;
@@ -42,7 +42,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                     child: Row(
                       children: [
                         widget.addPerson
-                            ? Container(
+                            ? SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.125,
                                 child: Center(
