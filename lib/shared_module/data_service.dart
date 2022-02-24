@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +14,7 @@ import 'models/activity.dart';
 import 'models/custom_user_data.dart';
 import 'models/trip.dart';
 
-class DataService implements AuthenticationDataService, TripDataservice {
+class DataService implements UserDataService, TripDataservice {
   static const String _defaultProfilePicture =
       "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283";
   final FirebaseFunctions _functions;
@@ -102,7 +104,6 @@ class DataService implements AuthenticationDataService, TripDataservice {
         // Unfortunately FlutterFire does not support a way to determine
         // whether a file exists so we will ignore a possible exception
         // in this place but log it to the console if in debug mode.
-
         if (e.code != "object-not-found") {
           rethrow;
         }

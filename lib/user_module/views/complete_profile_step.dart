@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/user_data_provider.dart';
 import 'package:travel_atvisor/shared_module/views/custom_text_input.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 
+import '../../shared_module/models/custom_user_data.dart';
 import '../../shared_module/views/bottom_sheet_action.dart';
-import '../behaviour/user_data_provider.dart';
-import '../models/custom_user_data.dart';
 
 class CompleteProfileStep extends StatefulWidget {
   final fullNameController = TextEditingController();
@@ -34,14 +34,14 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
 
   Future<void> _validateUserName(
     String username,
-    UserDataProvider userDataProvider,
+    AuthenticationProvider authenticationProvider,
   ) async {
     setState(() {
       _isUserNameValidationFinished = false;
     });
 
     _isUserNameValid = username.contains(RegExp(r"\w")) &&
-        await userDataProvider.isUsernameAvailable(username);
+        await authenticationProvider.isUsernameAvailable(username);
 
     setState(() {
       _isUserNameValidationFinished = true;
@@ -121,7 +121,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
             IconButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
-                context.read<UserDataProvider>().signOut();
+                context.read<AuthenticationProvider>().signOut();
               },
               icon: const Icon(Icons.chevron_left),
             ),
@@ -164,8 +164,8 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
           autofillHints: const [AutofillHints.newUsername],
           autocorrect: false,
           textInputAction: TextInputAction.next,
-          onChanged: (username) =>
-              _validateUserName(username, context.read<UserDataProvider>()),
+          onChanged: (username) => _validateUserName(
+              username, context.read<AuthenticationProvider>()),
         ),
         CustomTextInput(
           controller: widget.biographyController,
@@ -184,7 +184,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
                         _profilePicturePath,
                         widget.biographyController.text, []);
                     await context
-                        .read<UserDataProvider>()
+                        .read<AuthenticationProvider>()
                         .updateUserProfile(customUserData);
                     Navigator.pop(context);
                   }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/user_data_provider.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 
+import '../../shared_module/models/authentication_result.dart';
 import '../../shared_module/views/custom_text_input.dart';
 import '../../shared_module/views/divider_with_text.dart';
 import '../../shared_module/views/full_width_button.dart';
-import '../behaviour/user_data_provider.dart';
-import '../models/authentication_result.dart';
-import 'password_input.dart';
+import '../../shared_module/views/password_input.dart';
 
 class LoginStep extends StatefulWidget {
   final AnimationController animationController;
@@ -96,7 +96,7 @@ class _LoginStepState extends State<LoginStep> {
             onPressed: _isFormValid()
                 ? () => authenticationHandler(
                       context,
-                      () => context.read<UserDataProvider>().signIn(
+                      () => context.read<AuthenticationProvider>().signIn(
                             email: widget.emailController.text.trim(),
                             password: widget.passwordController.text.trim(),
                           ),
@@ -109,7 +109,7 @@ class _LoginStepState extends State<LoginStep> {
               onPressed: _isFormValid()
                   ? () => authenticationHandler(
                         context,
-                        () => context.read<UserDataProvider>().signUp(
+                        () => context.read<AuthenticationProvider>().signUp(
                               email: widget.emailController.text.trim(),
                               password: widget.passwordController.text.trim(),
                             ),
@@ -119,8 +119,10 @@ class _LoginStepState extends State<LoginStep> {
           const DividerWithText(text: "ODER"),
           FullWidthButton(
             text: "Weiter mit Google",
-            onPressed: () => authenticationHandler(context,
-                () => context.read<UserDataProvider>().signInWithGoogle()),
+            onPressed: () => authenticationHandler(
+                context,
+                () =>
+                    context.read<AuthenticationProvider>().signInWithGoogle()),
             isElevated: false,
           )
         ],

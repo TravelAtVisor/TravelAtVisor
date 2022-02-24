@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/trip_data/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/userScreen.dart';
-import 'package:travel_atvisor/shared_module/user_data_provider.dart';
-import 'package:travel_atvisor/user_data/models/activity.dart';
-import 'package:travel_atvisor/user_data/models/authentication_state.dart';
-import 'package:travel_atvisor/user_data/models/trip.dart';
 
 import 'new_trip_screen.dart';
 import 'tripScreen.dart';
@@ -23,7 +18,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final dataProvider = context.read<UserDataProvider>();
     return Scaffold(
       body: PageStorage(
         child: currentScreen,

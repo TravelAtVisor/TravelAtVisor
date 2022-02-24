@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_atvisor/persistence/cloudfunction_dataservice.dart';
+import 'package:travel_atvisor/shared_module/data_service.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
 import 'package:travel_atvisor/trip_module/trip_dataservice.dart';
+import 'package:travel_atvisor/user_module/authentication_dataservice.dart';
 
 import 'home.dart';
 import 'shared_module/user_data_provider.dart';
-import 'user_data/components/authentication_guard.dart';
 import 'user_module/pages/login_page.dart';
-import 'user_data/models/authentication_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,28 +25,28 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cloudFunctionDataService = CloudFunctionDataService(
+    final cloudFunctionDataService = DataService(
       FirebaseFunctions.instanceFor(region: "europe-west6"),
       FirebaseStorage.instance,
     );
     return MultiProvider(
       providers: [
-        Provider(
-          create: (_) => cloudFunctionDataService,
-        ),
         Provider<TripDataservice>(
           create: (_) => cloudFunctionDataService,
         ),
-        Provider<UserDataProvider>(
+        Provider<UserDataService>(
+          create: (_) => cloudFunctionDataService,
+        ),
+        Provider<AuthenticationProvider>(
           create: (context) {
-            final authenticationDataService =
-                context.read<CloudFunctionDataService>();
-            return UserDataProvider(
+            final authenticationDataService = cloudFunctionDataService;
+            return AuthenticationProvider(
                 FirebaseAuth.instance, authenticationDataService);
           },
         ),
         StreamProvider(
-            create: (context) => context.read<UserDataProvider>().authState,
+            create: (context) =>
+                context.read<AuthenticationProvider>().authState,
             initialData: AuthenticationState.initialState),
       ],
       child: MaterialApp(
