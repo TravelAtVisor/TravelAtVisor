@@ -14,8 +14,8 @@ const document = {
   trips: {
     "09a37987-fd56-4416-8b39-e6895a75166e": {
       title: "Meine geile Reise",
-      begin: Date.parse("01 Mar 2022 00:00:00 UTC+1"),
-      end: Date.parse("06 Mar 2022 00:00:00 UTC+1"),
+      begin: "2022-03-01 00:00:00.000Z",
+      end: "2022-03-06 00:00:00.000Z",
       companions: [],
       activities: {
         "3b4a97f7-c93f-4063-a683-7c740388121a": {
@@ -25,7 +25,7 @@ const document = {
           photoUrl:
             "https://fastly.4sqi.net/img/general/original/87388367_z4tKpfgmZ2jS2cMDTsu2gQ0t5aS6qS9rOvqdcaXq9-Q.jpg",
           title: "HANS IM GLÜCK Burgergrill & Bar",
-          timestamp: Date.parse("01 Mar 2022 12:00:00 UTC+1"),
+          timestamp: "2022-03-01 06:00:00.000Z",
         },
       },
     },
