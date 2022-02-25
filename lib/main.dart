@@ -47,14 +47,18 @@ class TravelAtVisorApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue.shade400,
+          ),
+        ),
         home: AuthenticationGuard(
           loginBuilder: (_) => Consumer<ApplicationState>(
             builder: (context, value, child) => LoginPage(
               authenticationState: value,
             ),
           ),
-          userSafeBuilder: (_) => const Home(),
+          userSafeBuilder: (_) => GlobalTabController(),
         ),
       ),
     );
