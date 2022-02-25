@@ -52,7 +52,9 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.15,
-                                        color: Colors.blueGrey),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
                                   ),
                                 ),
                               )
@@ -61,7 +63,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                             ? Opacity(
                                 opacity: 0.2,
                                 child: VerticalDivider(
-                                  color: Colors.blueGrey,
+                                  color: Theme.of(context).colorScheme.primary,
                                   width:
                                       MediaQuery.of(context).size.width * 0.06,
                                   thickness: 1.5,

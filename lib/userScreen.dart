@@ -17,7 +17,7 @@ class _UserScreenState extends State<UserScreen> {
     final userDataProvider = context.read<UserDataService>();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text('Benutzer'),
       ),
       body: Consumer<ApplicationState>(builder: (context, state, _) {

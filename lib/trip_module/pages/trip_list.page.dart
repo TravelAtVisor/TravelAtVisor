@@ -29,7 +29,7 @@ class _TripListState extends State<TripList> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: Center(
@@ -164,7 +164,7 @@ class _TripListState extends State<TripList> {
   Widget buildTripCard(String date, String title) {
     return Card(
       clipBehavior: Clip.antiAlias,
-      color: Colors.blueGrey,
+      color: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -233,10 +233,10 @@ class _TripListState extends State<TripList> {
           ),
           buildTripActivity('assets/empire.jpg', 'Empire State Building'),
           buildTripActivity('assets/empire.jpg', 'Empire State Building'),
-          const Opacity(
+          Opacity(
               opacity: 0.2,
               child: Divider(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 thickness: 1.5,
                 indent: 20,
                 endIndent: 20,
