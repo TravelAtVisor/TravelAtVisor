@@ -12,7 +12,6 @@ import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
 import 'home.dart';
-import 'shared_module/authentication_provider.dart';
 import 'user_module/pages/login_page.dart';
 
 Future<void> main() async {
@@ -29,6 +28,7 @@ class TravelAtVisorApp extends StatelessWidget {
     final cloudFunctionDataService = DataService(
       FirebaseFunctions.instanceFor(region: "europe-west6"),
       FirebaseStorage.instance,
+      FirebaseAuth.instance,
     );
     return MultiProvider(
       providers: [
@@ -41,16 +41,8 @@ class TravelAtVisorApp extends StatelessWidget {
         Provider<ActivityDataService>(
           create: (_) => cloudFunctionDataService,
         ),
-        Provider<AuthenticationProvider>(
-          create: (context) {
-            final authenticationDataService = cloudFunctionDataService;
-            return AuthenticationProvider(
-                FirebaseAuth.instance, authenticationDataService);
-          },
-        ),
         StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationProvider>().authState,
+            create: (context) => context.read<DataService>().authState,
             initialData: AuthenticationState.initialState),
       ],
       child: MaterialApp(
