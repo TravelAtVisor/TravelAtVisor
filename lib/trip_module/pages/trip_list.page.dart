@@ -120,40 +120,33 @@ class _TripListState extends State<TripList> {
               height: MediaQuery.of(context).size.height * 0.015,
             ),
 
-            // Consumer<ApplicationState>(builder: (context, state, child) {
-            //   return ExpansionTile(
-            //     collapsedTextColor: Colors.black,
-            //     collapsedIconColor: Colors.black,
-            //     title: Row(children: [
-            //       Image.network(
-            //         state.currentUser!.customData!.trips[0].activities[0]
-            //             .photoUrl,
-            //         height: MediaQuery.of(context).size.width * 0.25,
-            //         width: MediaQuery.of(context).size.width * 0.25,
-            //         fit: BoxFit.contain,
-            //       ),
-            //       SizedBox(
-            //         width: MediaQuery.of(context).size.width * 0.035,
-            //       ),
-            //       Flexible(
-            //         child: Text(
-            //             state.currentUser!.customData!.trips[0].activities[0]
-            //                 .title,
-            //             style: TextStyle(
-            //               fontSize: MediaQuery.of(context).size.width * 0.04,
-            //             )),
-            //       )
-            //     ]),
-            //     children: [
-            //       Text(state.currentUser!.customData!.trips[0].activities[0]
-            //               .description ??
-            //           "KEINE BESCHREIBUNG"),
-            //       Row(
-            //         children: const [],
-            //       )
-            //     ],
-            //   );
-            // }),
+            Consumer<ApplicationState>(builder: (context, state, child) {
+              return ExpansionTile(
+                collapsedTextColor: Colors.black,
+                collapsedIconColor: Colors.black,
+                title: Row(children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.035,
+                  ),
+                  Flexible(
+                    child: Text(
+                        state.currentUser!.customData!.trips[0].activities[0]
+                            .title,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                        )),
+                  )
+                ]),
+                children: [
+                  Text(state.currentUser!.customData!.trips[0].activities[0]
+                          .description ??
+                      "KEINE BESCHREIBUNG"),
+                  Row(
+                    children: const [],
+                  )
+                ],
+              );
+            }),
 
             Expanded(
               flex: 3,

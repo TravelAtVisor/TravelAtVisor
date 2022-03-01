@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PlaceCoreData {
+  static const String defaultImageUrl =
+      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/no-image.jpg?alt=media&token=8b0b0ecb-cc43-4831-b80c-2929f81c5853";
   final String foursquareId;
   final String name;
   final Set<int> categories;
@@ -27,7 +29,7 @@ class PlaceCoreData {
       }).toSet();
 
   static Set<String> _parsePhotos(List<dynamic>? photos, Size? size) {
-    if (photos == null) return <String>{};
+    if (photos == null || photos.isEmpty) return <String>{defaultImageUrl};
 
     final sizeModifier = size != null
         ? "${size.width.toInt()}x${size.height.toInt()}"
