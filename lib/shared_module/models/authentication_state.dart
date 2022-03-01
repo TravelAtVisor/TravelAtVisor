@@ -1,18 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'custom_user_data.dart';
 import 'user_model.dart';
 
 class ApplicationState {
   static final ApplicationState initialState = ApplicationState(null, null);
+
   late final UserModel? currentUser;
-  late final bool hasCompleteProfile;
+  final String? currentTripId;
+  bool get hasCompleteProfile => currentUser?.customData != null;
 
-  ApplicationState(User? baseData, CustomUserData? customData) {
-    hasCompleteProfile = baseData != null && customData != null;
-
-    currentUser = baseData != null
-        ? UserModel(baseData.uid, baseData.email!, customData)
-        : null;
-  }
+  ApplicationState(this.currentUser, this.currentTripId);
 }

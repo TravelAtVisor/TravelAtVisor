@@ -6,11 +6,9 @@ import 'package:travel_atvisor/activity_module/models/place_core_data.dart';
 import 'package:travel_atvisor/activity_module/models/locality_suggestion.dart';
 import 'package:travel_atvisor/activity_module/models/extended_place_data.dart';
 
-import '../activity_module/activity.data_service.dart';
-import '../trip_module/trip.data_service.dart';
 import 'models/custom_user_data.dart';
 
-class FunctionsDataService implements TripDataservice, ActivityDataService {
+class FunctionsDataService {
   final FirebaseFunctions _functions;
 
   late final _getCustomUserData = _functions.httpsCallable("getCustomUserData");
@@ -30,14 +28,11 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
 
   FunctionsDataService(this._functions);
 
-  @override
   Future<void> deleteActivityAsync(String tripId, String activityId) =>
       _deleteActivity.call();
 
-  @override
   Future<void> deleteTripAsync(String tripId) => _deleteTrip.call();
 
-  @override
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) async {
     final response =
         await _getPlaceDetailsProxy.call({"foursquareId": foursquareId});
@@ -45,7 +40,6 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
     return ExtendedPlaceData.fromDynamic(response.data);
   }
 
-  @override
   Future<List<LocalitySuggestion>> searchLocalitiesAsync(
       String input, String sessionKey) async {
     final response = await _searchLocalityProxy
@@ -56,7 +50,6 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
     return dynamicData.map((e) => LocalitySuggestion.fromDynamic(e)).toList();
   }
 
-  @override
   Future<List<PlaceCoreData>> searchPlacesAsync(
       String input, String locality) async {
     final response =
@@ -69,11 +62,9 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
         .toList();
   }
 
-  @override
   Future<void> addActivityAsync(String tripId, Activity activity) =>
       _setActivity.call();
 
-  @override
   Future<void> setTripAsync(Trip trip) => _setTrip.call();
 
   Future<CustomUserData?> getCustomUserData() async {

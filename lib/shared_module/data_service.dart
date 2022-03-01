@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:travel_atvisor/shared_module/authentication.data_service.dart';
 import 'package:travel_atvisor/shared_module/functions.data_service.dart';
+import 'package:travel_atvisor/shared_module/models/user_model.dart';
 import 'package:travel_atvisor/shared_module/storage.data_service.dart';
 
 import '../activity_module/models/extended_place_data.dart';
@@ -25,25 +26,37 @@ class DataService
   late final StorageDataService _storageDataService;
   late final AuthenticationDataService _authenticationDataService;
 
-  final StreamController<User?> _manualAppStateEmitter =
-      StreamController<User?>();
-
+  ApplicationState currentApplicationState = ApplicationState.initialState;
+  final StreamController<ApplicationState> _applicationStateEmitter =
+      StreamController<ApplicationState>();
   Stream<ApplicationState> get applicationState =>
-      _manualAppStateEmitter.stream.asyncMap((currentUser) async {
-        final customData =
-            currentUser != null ? await getCustomUserDataByIdAsync() : null;
-
-        return ApplicationState(currentUser, customData);
-      });
+      _applicationStateEmitter.stream;
 
   DataService(FirebaseFunctions functions, FirebaseStorage storage,
       FirebaseAuth authentication) {
     _functionsDataService = FunctionsDataService(functions);
     _storageDataService = StorageDataService(storage);
-    _authenticationDataService = AuthenticationDataService(
-      authentication,
-      _manualAppStateEmitter.add,
-    );
+    _authenticationDataService =
+        AuthenticationDataService(authentication, refreshCurrentUser);
+  }
+
+  Future<void> refreshCurrentUser(User? currentUser) async {
+    var applicationState = currentApplicationState;
+
+    if (currentUser == null) {
+      applicationState = ApplicationState(null, applicationState.currentTripId);
+    } else {
+      applicationState = ApplicationState(
+        UserModel(
+          currentUser.uid,
+          currentUser.email!,
+          await getCustomUserDataByIdAsync(),
+        ),
+        currentApplicationState.currentTripId,
+      );
+    }
+
+    _applicationStateEmitter.add(applicationState);
   }
 
   @override
@@ -123,9 +136,16 @@ class DataService
   Future<TResult> _useStateMutatingFunction<TResult>(
       Future<TResult> Function() mutatingFunction) async {
     final result = await mutatingFunction();
-
-    _manualAppStateEmitter.add(_authenticationDataService.currentUser);
+    await refreshCurrentUser(_authenticationDataService.currentUser);
 
     return result;
+  }
+
+  @override
+  void setActiveTripId(String tripId) {
+    _applicationStateEmitter.add(ApplicationState(
+      currentApplicationState.currentUser,
+      tripId,
+    ));
   }
 }
