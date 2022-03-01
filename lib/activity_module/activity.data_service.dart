@@ -10,6 +10,6 @@ abstract class ActivityDataService {
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId);
   Future<void> deleteActivityAsync(
       String userId, String tripId, String activityId);
-  Future<void> setActivityAsync(
+  Future<void> addActivityAsync(
       String userId, String tripId, Activity activity);
 }

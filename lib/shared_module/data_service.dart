@@ -64,9 +64,9 @@ class DataService
           ));
 
   @override
-  Future<void> setActivityAsync(
+  Future<void> addActivityAsync(
           String userId, String tripId, Activity activity) =>
-      _useStateMutatingFunction(() => _functionsDataService.setActivityAsync(
+      _useStateMutatingFunction(() => _functionsDataService.addActivityAsync(
             userId,
             tripId,
             activity,

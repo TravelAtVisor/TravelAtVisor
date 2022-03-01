@@ -72,7 +72,7 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
   }
 
   @override
-  Future<void> setActivityAsync(
+  Future<void> addActivityAsync(
           String userId, String tripId, Activity activity) =>
       _setActivity.call();
 
