@@ -25,7 +25,7 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cloudFunctionDataService = DataService(
+    final dataService = DataService(
       FirebaseFunctions.instanceFor(region: "europe-west6"),
       FirebaseStorage.instance,
       FirebaseAuth.instance,
@@ -33,16 +33,16 @@ class TravelAtVisorApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<TripDataservice>(
-          create: (_) => cloudFunctionDataService,
+          create: (_) => dataService,
         ),
         Provider<UserDataService>(
-          create: (_) => cloudFunctionDataService,
+          create: (_) => dataService,
         ),
         Provider<ActivityDataService>(
-          create: (_) => cloudFunctionDataService,
+          create: (_) => dataService,
         ),
         StreamProvider(
-            create: (context) => context.read<DataService>().applicationState,
+            create: (_) => dataService.applicationState,
             initialData: ApplicationState.initialState),
       ],
       child: MaterialApp(
