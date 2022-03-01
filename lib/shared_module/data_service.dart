@@ -30,9 +30,8 @@ class DataService
 
   Stream<ApplicationState> get applicationState =>
       _manualAppStateEmitter.stream.asyncMap((currentUser) async {
-        final customData = currentUser != null
-            ? await getCustomUserDataByIdAsync(currentUser.uid)
-            : null;
+        final customData =
+            currentUser != null ? await getCustomUserDataByIdAsync() : null;
 
         return ApplicationState(currentUser, customData);
       });
@@ -48,34 +47,28 @@ class DataService
   }
 
   @override
-  Future<void> deleteActivityAsync(
-          String userId, String tripId, String activityId) =>
+  Future<void> deleteActivityAsync(String tripId, String activityId) =>
       _useStateMutatingFunction(() => _functionsDataService.deleteActivityAsync(
-            userId,
             tripId,
             activityId,
           ));
 
   @override
-  Future<void> deleteTripAsync(String userId, String tripId) =>
+  Future<void> deleteTripAsync(String tripId) =>
       _useStateMutatingFunction(() => _functionsDataService.deleteTripAsync(
-            userId,
             tripId,
           ));
 
   @override
-  Future<void> addActivityAsync(
-          String userId, String tripId, Activity activity) =>
+  Future<void> addActivityAsync(String tripId, Activity activity) =>
       _useStateMutatingFunction(() => _functionsDataService.addActivityAsync(
-            userId,
             tripId,
             activity,
           ));
 
   @override
-  Future<void> setTripAsync(String userId, Trip trip) =>
+  Future<void> setTripAsync(Trip trip) =>
       _useStateMutatingFunction(() => _functionsDataService.setTripAsync(
-            userId,
             trip,
           ));
 
@@ -94,7 +87,7 @@ class DataService
       _functionsDataService.searchPlacesAsync(input, locality);
 
   @override
-  Future<CustomUserData?> getCustomUserDataByIdAsync(String userId) =>
+  Future<CustomUserData?> getCustomUserDataByIdAsync() =>
       _functionsDataService.getCustomUserData();
 
   @override

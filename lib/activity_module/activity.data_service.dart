@@ -8,8 +8,6 @@ abstract class ActivityDataService {
       String input, String sessionKey);
   Future<List<PlaceCoreData>> searchPlacesAsync(String input, String locality);
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId);
-  Future<void> deleteActivityAsync(
-      String userId, String tripId, String activityId);
-  Future<void> addActivityAsync(
-      String userId, String tripId, Activity activity);
+  Future<void> deleteActivityAsync(String tripId, String activityId);
+  Future<void> addActivityAsync(String tripId, Activity activity);
 }

@@ -31,13 +31,11 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
   FunctionsDataService(this._functions);
 
   @override
-  Future<void> deleteActivityAsync(
-          String userId, String tripId, String activityId) =>
+  Future<void> deleteActivityAsync(String tripId, String activityId) =>
       _deleteActivity.call();
 
   @override
-  Future<void> deleteTripAsync(String userId, String tripId) =>
-      _deleteTrip.call();
+  Future<void> deleteTripAsync(String tripId) => _deleteTrip.call();
 
   @override
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) async {
@@ -72,12 +70,11 @@ class FunctionsDataService implements TripDataservice, ActivityDataService {
   }
 
   @override
-  Future<void> addActivityAsync(
-          String userId, String tripId, Activity activity) =>
+  Future<void> addActivityAsync(String tripId, Activity activity) =>
       _setActivity.call();
 
   @override
-  Future<void> setTripAsync(String userId, Trip trip) => _setTrip.call();
+  Future<void> setTripAsync(Trip trip) => _setTrip.call();
 
   Future<CustomUserData?> getCustomUserData() async {
     final data = await _getCustomUserData.call();
