@@ -42,14 +42,14 @@ class TravelAtVisorApp extends StatelessWidget {
           create: (_) => cloudFunctionDataService,
         ),
         StreamProvider(
-            create: (context) => context.read<DataService>().authState,
-            initialData: AuthenticationState.initialState),
+            create: (context) => context.read<DataService>().applicationState,
+            initialData: ApplicationState.initialState),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: AuthenticationGuard(
-          loginBuilder: (_) => Consumer<AuthenticationState>(
+          loginBuilder: (_) => Consumer<ApplicationState>(
             builder: (context, value, child) => LoginPage(
               authenticationState: value,
             ),

@@ -120,7 +120,7 @@ class _TripListState extends State<TripList> {
               height: MediaQuery.of(context).size.height * 0.015,
             ),
 
-            Consumer<AuthenticationState>(builder: (context, state, child) {
+            Consumer<ApplicationState>(builder: (context, state, child) {
               return ExpansionTile(
                 collapsedTextColor: Colors.black,
                 collapsedIconColor: Colors.black,

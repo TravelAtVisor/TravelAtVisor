@@ -20,7 +20,7 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: Colors.blueGrey,
         title: const Text('Benutzer'),
       ),
-      body: Consumer<AuthenticationState>(builder: (context, state, _) {
+      body: Consumer<ApplicationState>(builder: (context, state, _) {
         return Center(
           child: FullWidthButton(
             isElevated: true,

@@ -25,8 +25,17 @@ class DataService
   late final StorageDataService _storageDataService;
   late final AuthenticationDataService _authenticationDataService;
 
-  final StreamController<User?> _manualAuthStateEmitter =
+  final StreamController<User?> _manualAppStateEmitter =
       StreamController<User?>();
+
+  Stream<ApplicationState> get applicationState =>
+      _manualAppStateEmitter.stream.asyncMap((currentUser) async {
+        final customData = currentUser != null
+            ? await getCustomUserDataByIdAsync(currentUser.uid)
+            : null;
+
+        return ApplicationState(currentUser, customData);
+      });
 
   DataService(FirebaseFunctions functions, FirebaseStorage storage,
       FirebaseAuth authentication) {
@@ -34,26 +43,41 @@ class DataService
     _storageDataService = StorageDataService(storage);
     _authenticationDataService = AuthenticationDataService(
       authentication,
-      _manualAuthStateEmitter.add,
+      _manualAppStateEmitter.add,
     );
   }
 
   @override
   Future<void> deleteActivityAsync(
           String userId, String tripId, String activityId) =>
-      _functionsDataService.deleteActivityAsync(userId, tripId, activityId);
+      _useStateMutatingFunction(() => _functionsDataService.deleteActivityAsync(
+            userId,
+            tripId,
+            activityId,
+          ));
 
   @override
   Future<void> deleteTripAsync(String userId, String tripId) =>
-      _functionsDataService.deleteTripAsync(userId, tripId);
+      _useStateMutatingFunction(() => _functionsDataService.deleteTripAsync(
+            userId,
+            tripId,
+          ));
+
   @override
   Future<void> setActivityAsync(
           String userId, String tripId, Activity activity) =>
-      _functionsDataService.setActivityAsync(userId, tripId, activity);
+      _useStateMutatingFunction(() => _functionsDataService.setActivityAsync(
+            userId,
+            tripId,
+            activity,
+          ));
 
   @override
   Future<void> setTripAsync(String userId, Trip trip) =>
-      _functionsDataService.setTripAsync(userId, trip);
+      _useStateMutatingFunction(() => _functionsDataService.setTripAsync(
+            userId,
+            trip,
+          ));
 
   @override
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
@@ -79,21 +103,12 @@ class DataService
 
   @override
   Future<void> updateUserProfileAsync(CustomUserData customUserData) async {
-    final userId = _authenticationDataService.currentUserId!;
+    final userId = _authenticationDataService.currentUser!.uid;
     final photoUrl = await _storageDataService.updateProfilePicture(
         userId, customUserData.photoUrl);
     customUserData.photoUrl = photoUrl;
     return _functionsDataService.updateCustomUserData(customUserData);
   }
-
-  Stream<AuthenticationState> get authState =>
-      _manualAuthStateEmitter.stream.asyncMap((currentUser) async {
-        final customData = currentUser != null
-            ? await getCustomUserDataByIdAsync(currentUser.uid)
-            : null;
-
-        return AuthenticationState(currentUser, customData);
-      });
 
   @override
   Future<AuthenticationResult> signUpAsync(
@@ -111,4 +126,13 @@ class DataService
 
   @override
   Future<void> signOutAsync() => _authenticationDataService.signOutAsync();
+
+  Future<TResult> _useStateMutatingFunction<TResult>(
+      Future<TResult> Function() mutatingFunction) async {
+    final result = await mutatingFunction();
+
+    _manualAppStateEmitter.add(_authenticationDataService.currentUser);
+
+    return result;
+  }
 }

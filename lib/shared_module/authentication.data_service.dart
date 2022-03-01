@@ -55,5 +55,5 @@ class AuthenticationDataService {
     await authentication.signOut();
   }
 
-  String? get currentUserId => authentication.currentUser?.uid;
+  User? get currentUser => authentication.currentUser;
 }

@@ -7,7 +7,7 @@ import '../views/complete_profile_step.dart';
 import '../views/login_step.dart';
 
 class LoginPage extends StatefulWidget {
-  final AuthenticationState authenticationState;
+  final ApplicationState authenticationState;
   const LoginPage({Key? key, required this.authenticationState})
       : super(key: key);
 
@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void didUpdateWidget(LoginPage oldWidget) {
-    final authState = context.watch<AuthenticationState>();
+    final authState = context.watch<ApplicationState>();
     if (authState.currentUser != null && !authState.hasCompleteProfile) {
       _slideController.forward();
     } else {
