@@ -5,7 +5,7 @@ class Activity {
   late String foursqareId;
   late DateTime timestamp;
   late String title;
-  late String description;
+  late String? description;
   late String photoUrl;
 
   Activity(this.activityId, this.foursqareId, this.timestamp, this.title,
