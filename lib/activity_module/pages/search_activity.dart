@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/activity_module/activity.data_service.dart';
+import 'package:travel_atvisor/activity_module/pages/place_search_page.dart';
 import 'package:uuid/uuid.dart';
 
+import '../activity.data_service.dart';
 import '../models/locality_suggestion.dart';
 import '../utils/debouncer.dart';
 import '../views/search_mask.dart';
-import 'place_search_page.dart';
 
-class LocalityChooserPage extends StatefulWidget {
+class SearchActivity extends StatefulWidget {
   final searchDebouncer = Debouncer(milliseconds: 200);
-  LocalityChooserPage({Key? key}) : super(key: key);
+  final String tripId;
+
+  SearchActivity({Key? key, required this.tripId}) : super(key: key);
 
   @override
-  _LocalityChooserPageState createState() => _LocalityChooserPageState();
+  _SearchActivityState createState() => _SearchActivityState();
 }
 
-class _LocalityChooserPageState extends State<LocalityChooserPage> {
+class _SearchActivityState extends State<SearchActivity> {
   static const uuid = Uuid();
   String sessionToken = uuid.v4();
 
@@ -40,7 +42,7 @@ class _LocalityChooserPageState extends State<LocalityChooserPage> {
             : null,
         onTap: () async {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PlaceSearchPage(locality: result.name)));
+              builder: (context) => PlaceSearchPage(locality: result.name, tripId: widget.tripId,)));
           sessionToken = uuid.v4();
         },
       ),

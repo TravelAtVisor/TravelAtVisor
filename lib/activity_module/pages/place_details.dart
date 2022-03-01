@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../shared_module/models/activity.dart';
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../models/place_categories.dart';
@@ -10,8 +12,9 @@ import '../views/opening_hour_visualizer.dart';
 
 class PlaceDetails extends StatefulWidget {
   final String foursquareId;
+  final String tripId;
 
-  const PlaceDetails({Key? key, required this.foursquareId}) : super(key: key);
+  const PlaceDetails({Key? key, required this.foursquareId, required this.tripId}) : super(key: key);
 
   @override
   _PlaceDetailsState createState() => _PlaceDetailsState();
@@ -19,6 +22,7 @@ class PlaceDetails extends StatefulWidget {
 
 class _PlaceDetailsState extends State<PlaceDetails> {
   ExtendedPlaceData? _details;
+  static const uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,16 @@ class _PlaceDetailsState extends State<PlaceDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(d.name),
+        actions: [
+          IconButton(icon: Icon(Icons.check),
+            onPressed: () async {
+                await context
+                    .read<ActivityDataService>()
+                    .setActivityAsync(widget.tripId, Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name, d.description, d.photoUrls.first));
+                Navigator.of(context).pop();
+              },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(

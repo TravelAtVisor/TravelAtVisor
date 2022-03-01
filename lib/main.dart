@@ -7,8 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:travel_atvisor/shared_module/data_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/navigation_service.dart';
 import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
 import 'home.dart';
@@ -30,8 +32,12 @@ class TravelAtVisorApp extends StatelessWidget {
       FirebaseFunctions.instanceFor(region: "europe-west6"),
       FirebaseStorage.instance,
     );
+    final navigationService = NavigationService();
     return MultiProvider(
       providers: [
+        Provider<TripNavigationService>(
+          create: (_) => navigationService,
+        ),
         Provider<TripDataservice>(
           create: (_) => cloudFunctionDataService,
         ),

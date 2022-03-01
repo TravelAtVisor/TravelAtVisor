@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_atvisor/activity_module/pages/search_activity.dart';
 import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/userScreen.dart';
 
 class Home extends StatefulWidget {
@@ -26,7 +29,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
         child: const Icon(Icons.add),
-        onPressed: () => _navigateToNewTripScreen(context),
+        onPressed: () => context.read<TripNavigationService>().pushAddActivityScreen(context, '09a37987-fd56-4416-8b39-e6895a75166e'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(

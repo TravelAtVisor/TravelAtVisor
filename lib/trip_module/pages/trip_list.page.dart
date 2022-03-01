@@ -2,7 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:intl/intl.dart';
 
+import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
 
 class TripList extends StatefulWidget {
@@ -18,13 +20,19 @@ class _TripListState extends State<TripList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = [
-      buildTripCard('31. Januar - 14. Februar', 'New York City'),
-      buildTripCard('31. Januar - 14. Februar', 'New York City'),
-      buildTripCard('31. Januar - 14. Februar', 'New York City'),
-      buildTripCard('31. Januar - 14. Februar', 'New York City'),
-      buildTripCard('31. Januar - 14. Februar', 'New York City'),
-    ];
+
+
+    final List<Trip> trips = context
+        .read<AuthenticationState>()
+        .currentUser!
+        .customData!
+        .trips;
+    trips.sort((b, c) => b.begin.compareTo(c.begin));
+    List<Widget> items = [];
+
+    for(var item = 0; item < trips.length; item++){
+      items.add(buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -121,32 +129,35 @@ class _TripListState extends State<TripList> {
             ),
 
             Consumer<AuthenticationState>(builder: (context, state, child) {
+              /*return ListView.builder(
+                  itemCount: state.currentUser!.customData!.trips.length,
+                  itemBuilder: (BuildContext context,int index)
+              )*/
               return ExpansionTile(
                 collapsedTextColor: Colors.black,
                 collapsedIconColor: Colors.black,
                 title: Row(children: [
-                  Image.network(
+                  /*Image.network(
                     state.currentUser!.customData!.trips[0].activities[0]
                         .photoUrl,
                     height: MediaQuery.of(context).size.width * 0.25,
                     width: MediaQuery.of(context).size.width * 0.25,
                     fit: BoxFit.contain,
-                  ),
+                  ),*/
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.035,
                   ),
                   Flexible(
                     child: Text(
-                        state.currentUser!.customData!.trips[0].activities[0]
-                            .title,
+                        state.currentUser!.customData!.trips[0].title,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
                         )),
                   )
                 ]),
                 children: [
-                  Text(state.currentUser!.customData!.trips[0].activities[0]
-                      .description),
+                  /*Text(state.currentUser!.customData!.trips[0].activities[0]
+                      .description),*/
                   Row(
                     children: const [],
                   )
@@ -198,7 +209,8 @@ class _TripListState extends State<TripList> {
     );
   }
 
-  Widget buildTripCard(String date, String title) {
+  Widget buildTripCard(DateTime begin, DateTime end, String title) {
+    final DateFormat formatter = DateFormat('dd.MM.yyyy');
     return Card(
       clipBehavior: Clip.antiAlias,
       color: Colors.blueGrey,
@@ -212,7 +224,7 @@ class _TripListState extends State<TripList> {
           children: [
             ListTile(
               title: Text(
-                date,
+                formatter.format(begin) + " - " + formatter.format(end),
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: MediaQuery.of(context).size.width * 0.035),

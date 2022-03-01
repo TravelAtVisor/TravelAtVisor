@@ -41,7 +41,7 @@ class DataService
 
   @override
   Future<void> deleteActivityAsync(
-      String userId, String tripId, String activityId) {
+      String tripId, String activityId) {
     return _deleteActivity.call({"tripId": tripId, "activityId": activityId});
   }
 
@@ -67,7 +67,7 @@ class DataService
 
   @override
   Future<void> setActivityAsync(
-      String userId, String tripId, Activity activity) {
+      String tripId, Activity activity) {
     return _setActivity.call({
       "tripId": tripId,
       "activityId": activity.activityId,
@@ -76,7 +76,7 @@ class DataService
   }
 
   @override
-  Future<void> setTripAsync(String userId, Trip trip) {
+  Future<void> setTripAsync(Trip trip) {
     return _setTrip.call({"tripId": trip.tripId, "trip": trip.toMap()});
   }
 
