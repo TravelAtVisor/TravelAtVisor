@@ -8,6 +8,7 @@ import '../views/login_step.dart';
 
 class LoginPage extends StatefulWidget {
   final ApplicationState authenticationState;
+  static const animationDuration = Duration(milliseconds: 150);
   const LoginPage({Key? key, required this.authenticationState})
       : super(key: key);
 
@@ -34,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context, isKeyboardVisible) => Column(
               children: [
                 AnimatedPadding(
-                  duration: const Duration(milliseconds: 100),
+                  duration: LoginPage.animationDuration,
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: isKeyboardVisible ? 0 : 100,
@@ -51,13 +52,13 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                       color: Colors.white,
                     ),
-                    duration: const Duration(milliseconds: 150),
+                    duration: LoginPage.animationDuration,
                     child: Consumer<ApplicationState>(
                       builder: (context, value, child) => SafeArea(
                         child: Stack(
                           children: [
                             AnimatedPositioned(
-                              duration: const Duration(milliseconds: 500),
+                              duration: LoginPage.animationDuration,
                               width: deviceWidth,
                               curve: Curves.easeInOut,
                               left: value.isLoggedIn ? 0 : deviceWidth,
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: CompleteProfileStep(),
                             ),
                             AnimatedPositioned(
-                              duration: const Duration(milliseconds: 500),
+                              duration: LoginPage.animationDuration,
                               width: deviceWidth,
                               curve: Curves.easeInOut,
                               left: value.isLoggedIn ? -deviceWidth : 0,
