@@ -41,14 +41,17 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                  child: AnimatedContainer(
+                    decoration: BoxDecoration(
+                      borderRadius: isKeyboardVisible
+                          ? null
+                          : const BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
                       color: Colors.white,
                     ),
+                    duration: const Duration(milliseconds: 150),
                     child: Consumer<ApplicationState>(
                       builder: (context, value, child) => SafeArea(
                         child: Stack(
