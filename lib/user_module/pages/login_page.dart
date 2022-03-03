@@ -58,6 +58,8 @@ class _LoginPageState extends State<LoginPage> {
                               width: deviceWidth,
                               curve: Curves.easeInOut,
                               left: value.isLoggedIn ? 0 : deviceWidth,
+                              top: 0,
+                              bottom: 0,
                               child: CompleteProfileStep(),
                             ),
                             AnimatedPositioned(
@@ -65,6 +67,8 @@ class _LoginPageState extends State<LoginPage> {
                               width: deviceWidth,
                               curve: Curves.easeInOut,
                               left: value.isLoggedIn ? -deviceWidth : 0,
+                              top: 0,
+                              bottom: 0,
                               child: LoginStep(),
                             ),
                           ],
