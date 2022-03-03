@@ -12,9 +12,6 @@ import '../../shared_module/models/custom_user_data.dart';
 import '../../shared_module/views/bottom_sheet_action.dart';
 
 class CompleteProfileStep extends StatefulWidget {
-  final fullNameController = TextEditingController();
-  final nicknameController = TextEditingController();
-  final biographyController = TextEditingController();
   final imagePicker = ImagePicker();
 
   CompleteProfileStep({Key? key}) : super(key: key);
@@ -24,6 +21,10 @@ class CompleteProfileStep extends StatefulWidget {
 }
 
 class _CompleteProfileStepState extends State<CompleteProfileStep> {
+  final fullNameController = TextEditingController();
+  final nicknameController = TextEditingController();
+  final biographyController = TextEditingController();
+
   bool _isUserNameValid = false;
   bool _isUserNameValidationFinished = false;
   bool _isFullNameValid = false;
@@ -50,14 +51,14 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
 
   void _validateFullName(String fullName) {
     setState(() {
-      _isFullNameValid = widget.fullNameController.text.contains(RegExp(r"\w"));
+      _isFullNameValid = fullNameController.text.contains(RegExp(r"\w"));
     });
   }
 
   void triggerPofilePictureWorkflow() {
     showModalBottomSheet(
         context: context,
-        builder: (context) => SafeArea(
+        builder: (context) => SingleChildScrollView(
               child: Wrap(
                 children: [
                   BottomSheetAction(
@@ -151,7 +152,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
               ),
               Flexible(
                 child: CustomTextInput(
-                  controller: widget.fullNameController,
+                  controller: fullNameController,
                   labelText: "Voller Name",
                   autofillHints: const [AutofillHints.name],
                   textInputAction: TextInputAction.next,
@@ -161,7 +162,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
             ],
           ),
           CustomTextInput(
-            controller: widget.nicknameController,
+            controller: nicknameController,
             labelText: "Benutzername",
             autofillHints: const [AutofillHints.newUsername],
             autocorrect: false,
@@ -170,7 +171,7 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
                 _validateUserName(username, context.read<UserDataService>()),
           ),
           CustomTextInput(
-            controller: widget.biographyController,
+            controller: biographyController,
             labelText: "Biographie",
             maxLines: 5,
             textInputAction: TextInputAction.done,
@@ -181,10 +182,10 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
                   ? () async {
                       LoadingOverlay.show(context);
                       final customUserData = CustomUserData(
-                          widget.nicknameController.text,
-                          widget.fullNameController.text,
+                          nicknameController.text,
+                          fullNameController.text,
                           _profilePicturePath,
-                          widget.biographyController.text, []);
+                          biographyController.text, []);
                       await context
                           .read<UserDataService>()
                           .updateUserProfileAsync(customUserData);

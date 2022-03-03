@@ -50,23 +50,25 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white,
                     ),
                     child: Consumer<ApplicationState>(
-                      builder: (context, value, child) => Stack(
-                        children: [
-                          AnimatedPositioned(
-                            duration: const Duration(milliseconds: 500),
-                            width: deviceWidth,
-                            curve: Curves.easeInOut,
-                            left: value.isLoggedIn ? 0 : deviceWidth,
-                            child: CompleteProfileStep(),
-                          ),
-                          AnimatedPositioned(
-                            duration: const Duration(milliseconds: 500),
-                            width: deviceWidth,
-                            curve: Curves.easeInOut,
-                            left: value.isLoggedIn ? -deviceWidth : 0,
-                            child: LoginStep(),
-                          ),
-                        ],
+                      builder: (context, value, child) => SafeArea(
+                        child: Stack(
+                          children: [
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 500),
+                              width: deviceWidth,
+                              curve: Curves.easeInOut,
+                              left: value.isLoggedIn ? 0 : deviceWidth,
+                              child: CompleteProfileStep(),
+                            ),
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 500),
+                              width: deviceWidth,
+                              curve: Curves.easeInOut,
+                              left: value.isLoggedIn ? -deviceWidth : 0,
+                              child: LoginStep(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

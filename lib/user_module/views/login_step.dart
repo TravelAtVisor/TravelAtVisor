@@ -12,8 +12,7 @@ import '../../shared_module/views/password_input.dart';
 class LoginStep extends StatefulWidget {
   final RegExp emailPattern = RegExp(
       r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+
   final List<PasswordRequirement> passwordRequirements = [
     PasswordRequirement(
         predicate: (password) => password.length >= 8,
@@ -41,6 +40,9 @@ class LoginStep extends StatefulWidget {
 }
 
 class _LoginStepState extends State<LoginStep> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   bool _isEmailValid = false;
   bool _isPasswordValid = false;
 
@@ -76,17 +78,21 @@ class _LoginStepState extends State<LoginStep> {
           children: [
             const Text("Bitte melde dich an, um die App zu verwenden"),
             CustomTextInput(
-              controller: widget.emailController,
+              controller: emailController,
               labelText: "E-Mail",
               onChanged: _validateEmail,
               errorText: _isEmailValid
                   ? null
                   : "Bitte geben Sie eine gültige E-Mail an",
               textInputAction: TextInputAction.next,
-              autofillHints: const [AutofillHints.email],
+              autofillHints: const [
+                AutofillHints.email,
+                AutofillHints.username,
+                AutofillHints.newUsername
+              ],
             ),
             PasswordInput(
-              controller: widget.passwordController,
+              controller: passwordController,
               requirements: widget.passwordRequirements,
               onValidStateChanged: (isValid) => setState(() {
                 _isPasswordValid = isValid;
@@ -98,8 +104,8 @@ class _LoginStepState extends State<LoginStep> {
                   ? () => authenticationHandler(
                         context,
                         () => context.read<UserDataService>().signInAsync(
-                              email: widget.emailController.text.trim(),
-                              password: widget.passwordController.text.trim(),
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
                             ),
                       )
                   : null,
@@ -111,8 +117,8 @@ class _LoginStepState extends State<LoginStep> {
                     ? () => authenticationHandler(
                           context,
                           () => context.read<UserDataService>().signUpAsync(
-                                email: widget.emailController.text.trim(),
-                                password: widget.passwordController.text.trim(),
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
                               ),
                         )
                     : null,
