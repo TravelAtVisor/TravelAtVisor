@@ -114,83 +114,86 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                context.read<UserDataService>().signOutAsync();
-              },
-              icon: const Icon(Icons.chevron_left),
-            ),
-            const Text("Bitte erzähl uns noch etwas über dich"),
-          ],
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: triggerPofilePictureWorkflow,
-                child: SizedBox(
-                  height: 59,
-                  width: 59,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: _profilePicturePath != null
-                        ? Image.file(File(_profilePicturePath!))
-                        : Image.network(
-                            "https://lwkstuttgart.de/images/no-user-image.jpg"),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  context.read<UserDataService>().signOutAsync();
+                },
+                icon: const Icon(Icons.chevron_left),
+              ),
+              const Text("Bitte erzähl uns noch etwas über dich"),
+            ],
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: triggerPofilePictureWorkflow,
+                  child: SizedBox(
+                    height: 59,
+                    width: 59,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: _profilePicturePath != null
+                          ? Image.file(File(_profilePicturePath!))
+                          : Image.network(
+                              "https://lwkstuttgart.de/images/no-user-image.jpg"),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Flexible(
-              child: CustomTextInput(
-                controller: widget.fullNameController,
-                labelText: "Voller Name",
-                autofillHints: const [AutofillHints.name],
-                textInputAction: TextInputAction.next,
-                onChanged: (fullName) => _validateFullName(fullName),
-              ),
-            )
-          ],
-        ),
-        CustomTextInput(
-          controller: widget.nicknameController,
-          labelText: "Benutzername",
-          autofillHints: const [AutofillHints.newUsername],
-          autocorrect: false,
-          textInputAction: TextInputAction.next,
-          onChanged: (username) =>
-              _validateUserName(username, context.read<UserDataService>()),
-        ),
-        CustomTextInput(
-          controller: widget.biographyController,
-          labelText: "Biographie",
-          maxLines: 5,
-          textInputAction: TextInputAction.done,
-        ),
-        FullWidthButton(
-            text: "Abschließen",
-            onPressed: _isFormValid()
-                ? () async {
-                    LoadingOverlay.show(context);
-                    final customUserData = CustomUserData(
-                        widget.nicknameController.text,
-                        widget.fullNameController.text,
-                        _profilePicturePath,
-                        widget.biographyController.text, []);
-                    await context
-                        .read<UserDataService>()
-                        .updateUserProfileAsync(customUserData);
-                    Navigator.pop(context);
-                  }
-                : null,
-            isElevated: true)
-      ],
+              Flexible(
+                child: CustomTextInput(
+                  controller: widget.fullNameController,
+                  labelText: "Voller Name",
+                  autofillHints: const [AutofillHints.name],
+                  textInputAction: TextInputAction.next,
+                  onChanged: (fullName) => _validateFullName(fullName),
+                ),
+              )
+            ],
+          ),
+          CustomTextInput(
+            controller: widget.nicknameController,
+            labelText: "Benutzername",
+            autofillHints: const [AutofillHints.newUsername],
+            autocorrect: false,
+            textInputAction: TextInputAction.next,
+            onChanged: (username) =>
+                _validateUserName(username, context.read<UserDataService>()),
+          ),
+          CustomTextInput(
+            controller: widget.biographyController,
+            labelText: "Biographie",
+            maxLines: 5,
+            textInputAction: TextInputAction.done,
+          ),
+          FullWidthButton(
+              text: "Abschließen",
+              onPressed: _isFormValid()
+                  ? () async {
+                      LoadingOverlay.show(context);
+                      final customUserData = CustomUserData(
+                          widget.nicknameController.text,
+                          widget.fullNameController.text,
+                          _profilePicturePath,
+                          widget.biographyController.text, []);
+                      await context
+                          .read<UserDataService>()
+                          .updateUserProfileAsync(customUserData);
+                      Navigator.pop(context);
+                    }
+                  : null,
+              isElevated: true)
+        ],
+      ),
     );
   }
 }

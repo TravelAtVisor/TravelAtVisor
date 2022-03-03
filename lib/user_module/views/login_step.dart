@@ -10,7 +10,6 @@ import '../../shared_module/views/full_width_button.dart';
 import '../../shared_module/views/password_input.dart';
 
 class LoginStep extends StatefulWidget {
-  final AnimationController animationController;
   final RegExp emailPattern = RegExp(
       r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
   final TextEditingController emailController = TextEditingController();
@@ -35,7 +34,6 @@ class LoginStep extends StatefulWidget {
 
   LoginStep({
     Key? key,
-    required this.animationController,
   }) : super(key: key);
 
   @override
@@ -71,59 +69,65 @@ class _LoginStepState extends State<LoginStep> {
 
   @override
   Widget build(BuildContext context) {
-    return AutofillGroup(
-      child: Column(
-        children: [
-          const Text("Bitte melde dich an, um die App zu verwenden"),
-          CustomTextInput(
-            controller: widget.emailController,
-            labelText: "E-Mail",
-            onChanged: _validateEmail,
-            errorText:
-                _isEmailValid ? null : "Bitte geben Sie eine gültige E-Mail an",
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.email],
-          ),
-          PasswordInput(
-            controller: widget.passwordController,
-            requirements: widget.passwordRequirements,
-            onValidStateChanged: (isValid) => setState(() {
-              _isPasswordValid = isValid;
-            }),
-          ),
-          FullWidthButton(
-            text: "Anmelden",
-            onPressed: _isFormValid()
-                ? () => authenticationHandler(
-                      context,
-                      () => context.read<UserDataService>().signInAsync(
-                            email: widget.emailController.text.trim(),
-                            password: widget.passwordController.text.trim(),
-                          ),
-                    )
-                : null,
-            isElevated: true,
-          ),
-          FullWidthButton(
-              text: "Noch kein Konto? Registrieren",
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: AutofillGroup(
+        child: Column(
+          children: [
+            const Text("Bitte melde dich an, um die App zu verwenden"),
+            CustomTextInput(
+              controller: widget.emailController,
+              labelText: "E-Mail",
+              onChanged: _validateEmail,
+              errorText: _isEmailValid
+                  ? null
+                  : "Bitte geben Sie eine gültige E-Mail an",
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.email],
+            ),
+            PasswordInput(
+              controller: widget.passwordController,
+              requirements: widget.passwordRequirements,
+              onValidStateChanged: (isValid) => setState(() {
+                _isPasswordValid = isValid;
+              }),
+            ),
+            FullWidthButton(
+              text: "Anmelden",
               onPressed: _isFormValid()
                   ? () => authenticationHandler(
                         context,
-                        () => context.read<UserDataService>().signUpAsync(
+                        () => context.read<UserDataService>().signInAsync(
                               email: widget.emailController.text.trim(),
                               password: widget.passwordController.text.trim(),
                             ),
                       )
                   : null,
-              isElevated: false),
-          const DividerWithText(text: "ODER"),
-          FullWidthButton(
-            text: "Weiter mit Google",
-            onPressed: () => authenticationHandler(context,
-                () => context.read<UserDataService>().signInWithGoogleAsync()),
-            isElevated: false,
-          )
-        ],
+              isElevated: true,
+            ),
+            FullWidthButton(
+                text: "Noch kein Konto? Registrieren",
+                onPressed: _isFormValid()
+                    ? () => authenticationHandler(
+                          context,
+                          () => context.read<UserDataService>().signUpAsync(
+                                email: widget.emailController.text.trim(),
+                                password: widget.passwordController.text.trim(),
+                              ),
+                        )
+                    : null,
+                isElevated: false),
+            const DividerWithText(text: "ODER"),
+            FullWidthButton(
+              text: "Weiter mit Google",
+              onPressed: () => authenticationHandler(
+                  context,
+                  () =>
+                      context.read<UserDataService>().signInWithGoogleAsync()),
+              isElevated: false,
+            )
+          ],
+        ),
       ),
     );
   }

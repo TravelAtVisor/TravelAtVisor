@@ -30,7 +30,11 @@ class DataService
   final StreamController<ApplicationState> _applicationStateEmitter =
       StreamController<ApplicationState>();
   Stream<ApplicationState> get applicationState =>
-      _applicationStateEmitter.stream;
+      _applicationStateEmitter.stream.map((event) {
+        print("State update");
+        print(event.currentUser);
+        return event;
+      });
 
   DataService(FirebaseFunctions functions, FirebaseStorage storage,
       FirebaseAuth authentication) {
@@ -108,13 +112,14 @@ class DataService
       _functionsDataService.isUsernameAvailable(username);
 
   @override
-  Future<void> updateUserProfileAsync(CustomUserData customUserData) async {
-    final userId = _authenticationDataService.currentUser!.uid;
-    final photoUrl = await _storageDataService.updateProfilePicture(
-        userId, customUserData.photoUrl);
-    customUserData.photoUrl = photoUrl;
-    return _functionsDataService.updateCustomUserData(customUserData);
-  }
+  Future<void> updateUserProfileAsync(CustomUserData customUserData) =>
+      _useStateMutatingFunction(() async {
+        final userId = _authenticationDataService.currentUser!.uid;
+        final photoUrl = await _storageDataService.updateProfilePicture(
+            userId, customUserData.photoUrl);
+        customUserData.photoUrl = photoUrl;
+        return _functionsDataService.updateCustomUserData(customUserData);
+      });
 
   @override
   Future<AuthenticationResult> signUpAsync(
