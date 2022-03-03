@@ -66,6 +66,18 @@ extension ListExtension<TData> on List<TData> {
       return previousValue;
     });
   }
+
+  List<TValue> mapIndexed<TValue>(
+      TValue Function(TData item, int index) project) {
+    final result = <TValue>[];
+
+    for (var i = 0; i < length; i++) {
+      final newValue = project(elementAt(i), i);
+      result.add(newValue);
+    }
+
+    return result;
+  }
 }
 
 class DuplicateKeyException implements Exception {

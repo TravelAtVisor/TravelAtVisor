@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/utils/mappers.dart';
 
 import '../../shared_module/views/companions_friends.dart';
+import '../views/scroll_progress_indicator.dart';
 
 class TripList extends StatefulWidget {
   const TripList({Key? key}) : super(key: key);
@@ -51,41 +55,9 @@ class _TripListState extends State<TripList> {
                     });
                   }),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: items.asMap().entries.map((entry) {
-                return GestureDetector(
-                  onTap: () => _controller.animateToPage(entry.key),
-                  child: Container(
-                    width: _current == entry.key
-                        ? MediaQuery.of(context).size.width * 0.0275
-                        : ((_current == entry.key + 1 ||
-                                _current == entry.key - 1)
-                            ? MediaQuery.of(context).size.width * 0.02
-                            : ((_current == entry.key + 2 ||
-                                    _current == entry.key - 2)
-                                ? MediaQuery.of(context).size.width * 0.0125
-                                : 0.0)),
-                    height: _current == entry.key
-                        ? MediaQuery.of(context).size.width * 0.0275
-                        : ((_current == entry.key + 1 ||
-                                _current == entry.key - 1)
-                            ? MediaQuery.of(context).size.width * 0.02
-                            : ((_current == entry.key + 2 ||
-                                    _current == entry.key - 2)
-                                ? MediaQuery.of(context).size.width * 0.0125
-                                : 0.0)),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 4.0),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black)
-                            .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-                  ),
-                );
-              }).toList(),
+            ScrollProgressIndicator(
+              elementCount: items.length,
+              currentElement: _current,
             ),
             IntrinsicHeight(
               child: Expanded(
