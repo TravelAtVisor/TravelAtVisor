@@ -30,11 +30,7 @@ class DataService
   final StreamController<ApplicationState> _applicationStateEmitter =
       StreamController<ApplicationState>();
   Stream<ApplicationState> get applicationState =>
-      _applicationStateEmitter.stream.map((event) {
-        print("State update");
-        print(event.currentUser);
-        return event;
-      });
+      _applicationStateEmitter.stream;
 
   DataService(FirebaseFunctions functions, FirebaseStorage storage,
       FirebaseAuth authentication) {

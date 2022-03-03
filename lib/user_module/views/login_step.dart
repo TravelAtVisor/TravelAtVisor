@@ -59,12 +59,23 @@ class _LoginStepState extends State<LoginStep> {
     final authenticationResult = await authCall();
     Navigator.pop(context);
 
-    if (authenticationResult == AuthenticationResult.success) {
-      return;
-    }
+    const responses = {
+      AuthenticationResult.canceled: null,
+      AuthenticationResult.success: null,
+      AuthenticationResult.invalidMail:
+          "Du hast noch kein Benutzerkonto bei uns.",
+      AuthenticationResult.unkownUser:
+          "Du hast noch kein Benutzerkonto bei uns.",
+      AuthenticationResult.wrongPassword:
+          "Das eingegebene Passwort ist falsch.",
+      AuthenticationResult.unexpected: "Ein unbekannter Fehler ist aufgetreten."
+    };
+
+    final errorMessage = responses[authenticationResult];
+    if (errorMessage == null) return;
 
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("Error")));
+        .showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   bool _isFormValid() => _isEmailValid && _isPasswordValid;

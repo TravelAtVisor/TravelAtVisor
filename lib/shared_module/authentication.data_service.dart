@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'models/authentication_result.dart';
 import 'utils/mappers.dart';
 
 class AuthenticationDataService {
+  final _googleSignIn = GoogleSignIn();
   final FirebaseAuth authentication;
 
   AuthenticationDataService(
@@ -36,18 +38,24 @@ class AuthenticationDataService {
 
   Future<AuthenticationResult> signInWithGoogleAsync() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return AuthenticationResult.canceled;
+
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+
       await authentication.signInWithCredential(credential);
+
       return AuthenticationResult.success;
     } on FirebaseAuthException catch (e) {
       return StringMappers.getAuthenticationResult(e.code);
+    } on PlatformException catch (e) {
+      if (e.message == "com.google.GIDSignIn") {}
+      return AuthenticationResult.unexpected;
     }
   }
 
