@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
-import 'package:travel_atvisor/shared_module/utils/mappers.dart';
 
 import '../../shared_module/views/companions_friends.dart';
 import '../views/scroll_progress_indicator.dart';
