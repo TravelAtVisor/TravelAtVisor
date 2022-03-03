@@ -82,6 +82,7 @@ class _LoginStepState extends State<LoginStep> {
 
   @override
   Widget build(BuildContext context) {
+    final userDataService = context.read<UserDataService>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -115,10 +116,10 @@ class _LoginStepState extends State<LoginStep> {
                 onPressed: _isFormValid()
                     ? () => authenticationHandler(
                           context,
-                          () => context.read<UserDataService>().signInAsync(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim(),
-                              ),
+                          () => userDataService.signInAsync(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          ),
                         )
                     : null,
                 isElevated: true,
@@ -128,10 +129,10 @@ class _LoginStepState extends State<LoginStep> {
                   onPressed: _isFormValid()
                       ? () => authenticationHandler(
                             context,
-                            () => context.read<UserDataService>().signUpAsync(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                ),
+                            () => userDataService.signUpAsync(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
+                            ),
                           )
                       : null,
                   isElevated: false),
@@ -139,10 +140,9 @@ class _LoginStepState extends State<LoginStep> {
               FullWidthButton(
                 text: "Weiter mit Google",
                 onPressed: () => authenticationHandler(
-                    context,
-                    () => context
-                        .read<UserDataService>()
-                        .signInWithGoogleAsync()),
+                  context,
+                  () => userDataService.signInWithGoogleAsync(),
+                ),
                 isElevated: false,
               )
             ],
