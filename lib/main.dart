@@ -12,7 +12,6 @@ import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
 import 'global_tab_controller.dart';
-import 'shared_module/authentication_provider.dart';
 import 'user_module/pages/login_page.dart';
 
 Future<void> main() async {
