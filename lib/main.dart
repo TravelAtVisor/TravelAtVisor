@@ -11,7 +11,7 @@ import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
-import 'home.dart';
+import 'global_tab_controller.dart';
 import 'user_module/pages/login_page.dart';
 
 Future<void> main() async {
@@ -47,14 +47,18 @@ class TravelAtVisorApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue.shade400,
+          ),
+        ),
         home: AuthenticationGuard(
           loginBuilder: (_) => Consumer<ApplicationState>(
             builder: (context, value, child) => LoginPage(
               authenticationState: value,
             ),
           ),
-          userSafeBuilder: (_) => const Home(),
+          userSafeBuilder: (_) => GlobalTabController(),
         ),
       ),
     );
