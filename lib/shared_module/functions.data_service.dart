@@ -6,6 +6,7 @@ import 'package:travel_atvisor/activity_module/models/place_core_data.dart';
 import 'package:travel_atvisor/activity_module/models/locality_suggestion.dart';
 import 'package:travel_atvisor/activity_module/models/extended_place_data.dart';
 
+import '../activity_module/models/place_categories.dart';
 import 'models/custom_user_data.dart';
 
 class FunctionsDataService {
@@ -51,9 +52,12 @@ class FunctionsDataService {
   }
 
   Future<List<PlaceCoreData>> searchPlacesAsync(
-      String input, String locality) async {
-    final response =
-        await _searchPlaceProxy.call({"input": input, "locality": locality});
+      String input, String locality, PlaceCategory? category) async {
+    final response = await _searchPlaceProxy.call({
+      "input": input,
+      "locality": locality,
+      "category": category?.value,
+    });
 
     final dynamicData = response.data["results"] as List<dynamic>;
 

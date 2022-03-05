@@ -101,7 +101,7 @@ export const searchLocalityProxy = useAuthenticatedFunction<SearchLocalityReques
     return await response.data;
 });
 
-export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(async ({ input, locality }, _) => {
+export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(async ({ input, locality, category }, _) => {
     const foursquareKey = useSecret("foursquare");
 
     const requestUrl = new URL("https://api.foursquare.com/v3/places/search");
@@ -109,7 +109,7 @@ export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(as
     requestUrl.searchParams.append("near", locality);
     requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos");
     requestUrl.searchParams.append("sort", "popularity");
-
+    if (category !== undefined) requestUrl.searchParams.append("categories", `${category}`);
 
     const response = await axios.get(requestUrl.href, {
         headers: {

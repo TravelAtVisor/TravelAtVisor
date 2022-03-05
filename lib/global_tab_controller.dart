@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/activity_module/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
 import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
@@ -50,7 +51,7 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
         child: const Icon(Icons.add),
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const NewTrip(),
+            builder: (context) => LocalityChooserPage(),
           ),
         ),
       ),

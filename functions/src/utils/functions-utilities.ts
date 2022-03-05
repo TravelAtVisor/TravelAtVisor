@@ -5,5 +5,8 @@ export function useCallableFunction<TPayload>(functionHandler: (payload: TPayloa
     return functions
         .region("europe-west6")
         .https
-        .onCall((data, context) => functionHandler(data, context.auth));
+        .onCall((data, context) => {
+            functions.logger.info({ data });
+            return functionHandler(data, context.auth);
+        });
 }

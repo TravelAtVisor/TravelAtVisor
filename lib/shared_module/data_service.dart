@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
+import 'package:travel_atvisor/activity_module/models/place_categories.dart';
 import 'package:travel_atvisor/shared_module/authentication.data_service.dart';
 import 'package:travel_atvisor/shared_module/functions.data_service.dart';
 import 'package:travel_atvisor/shared_module/models/user_model.dart';
@@ -96,8 +97,8 @@ class DataService
 
   @override
   Future<List<PlaceCoreData>> searchPlacesAsync(
-          String input, String locality) =>
-      _functionsDataService.searchPlacesAsync(input, locality);
+          String input, String locality, PlaceCategory? category) =>
+      _functionsDataService.searchPlacesAsync(input, locality, category);
 
   @override
   Future<CustomUserData?> getCustomUserDataByIdAsync() =>

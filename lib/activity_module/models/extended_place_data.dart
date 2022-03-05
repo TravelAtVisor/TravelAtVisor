@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/activity_module/models/place_categories.dart';
 
 import '../../shared_module/utils/mappers.dart';
 import 'place_core_data.dart';
@@ -18,7 +19,7 @@ class ExtendedPlaceData extends PlaceCoreData {
   ExtendedPlaceData(
       {required String foursquareId,
       required String name,
-      required Set<int> categories,
+      required Set<PlaceCategory> categories,
       required Set<String> photoUrls,
       required this.description,
       required this.phoneNumber,

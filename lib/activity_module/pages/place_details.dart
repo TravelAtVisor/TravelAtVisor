@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
-import '../models/place_categories.dart';
 import '../views/opening_hour_visualizer.dart';
 
 class PlaceDetails extends StatefulWidget {
@@ -92,8 +91,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
                     ),
                     if (d.categories.isNotEmpty)
                       Text(
-                        PlaceCategory.describe(d.categories.first)
-                            .toUpperCase(),
+                        d.categories.first.displayValue.toUpperCase(),
                         style: Theme.of(context).textTheme.subtitle1,
                       )
                   ],

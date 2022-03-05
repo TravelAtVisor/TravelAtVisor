@@ -14,6 +14,8 @@ import 'package:travel_atvisor/user_module/user.data_service.dart';
 import 'global_tab_controller.dart';
 import 'user_module/pages/login_page.dart';
 
+const useLocalFunctions = false;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -25,8 +27,11 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var functions = FirebaseFunctions.instanceFor(region: "europe-west6");
+    if (useLocalFunctions) functions.useFunctionsEmulator("localhost", 5001);
+
     final dataService = DataService(
-      FirebaseFunctions.instanceFor(region: "europe-west6"),
+      functions,
       FirebaseStorage.instance,
       FirebaseAuth.instance,
     );

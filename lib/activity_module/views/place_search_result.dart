@@ -34,7 +34,7 @@ class PlaceSearchResult extends StatelessWidget {
             .map(
               (e) => Chip(
                 label: Text(
-                  e.toString(),
+                  e.displayValue,
                 ),
               ),
             )
