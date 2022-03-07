@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/activity_module/models/place_categories.dart';
 
 class PlaceCoreData {
+  static const String defaultImageUrl =
+      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/no-image.jpg?alt=media&token=8b0b0ecb-cc43-4831-b80c-2929f81c5853";
   final String foursquareId;
   final String name;
-  final Set<int> categories;
+  final Set<PlaceCategory> categories;
   final Set<String> photoUrls;
 
   PlaceCoreData(
@@ -20,14 +23,15 @@ class PlaceCoreData {
         photoUrls: _parsePhotos(data["photos"], imageSize));
   }
 
-  static Set<int> _parseCategories(List<dynamic> categories) =>
+  static Set<PlaceCategory> _parseCategories(List<dynamic> categories) =>
       categories.map((c) {
         final categoryId = c["id"] as int;
-        return categoryId - (categoryId % 1000);
+        final generalizedCategoryId = categoryId - (categoryId % 1000);
+        return PlaceCategory.categories[generalizedCategoryId]!;
       }).toSet();
 
   static Set<String> _parsePhotos(List<dynamic>? photos, Size? size) {
-    if (photos == null) return <String>{};
+    if (photos == null || photos.isEmpty) return <String>{defaultImageUrl};
 
     final sizeModifier = size != null
         ? "${size.width.toInt()}x${size.height.toInt()}"

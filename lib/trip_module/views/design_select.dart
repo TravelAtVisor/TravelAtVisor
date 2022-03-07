@@ -8,10 +8,10 @@ class DesignSelect extends StatefulWidget {
 }
 
 class _DesignSelectState extends State<DesignSelect> {
- bool border1 = false;
- bool border2 = false;
- bool border3 = false;
- bool border4 = false;
+  bool border1 = false;
+  bool border2 = false;
+  bool border3 = false;
+  bool border4 = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -19,19 +19,27 @@ class _DesignSelectState extends State<DesignSelect> {
         Row(
           children: [
             InkWell(
-              onTap: () {setState(() {
+              onTap: () {
+                setState(() {
                   border1 == false
-                      ? (){border1 = true; border2 = false; border3 = false; border4 = false;}()
+                      ? () {
+                          border1 = true;
+                          border2 = false;
+                          border3 = false;
+                          border4 = false;
+                        }()
                       : border1 = false;
                 });
               },
               child: Card(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border1
                       ? const BorderSide(width: 5, color: Colors.green)
-                      : const BorderSide(width: 0, color: Colors.blueGrey),
+                      : BorderSide(
+                          width: 0,
+                          color: Theme.of(context).colorScheme.primary),
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
@@ -41,19 +49,27 @@ class _DesignSelectState extends State<DesignSelect> {
               ),
             ),
             InkWell(
-              onTap: () {setState(() {
-                border2 == false
-                    ? (){border2 = true; border1 = false; border3 = false; border4 = false;}()
-                    : border2 = false;
-              });
+              onTap: () {
+                setState(() {
+                  border2 == false
+                      ? () {
+                          border2 = true;
+                          border1 = false;
+                          border3 = false;
+                          border4 = false;
+                        }()
+                      : border2 = false;
+                });
               },
               child: Card(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border2
                       ? const BorderSide(width: 5, color: Colors.green)
-                      : const BorderSide(width: 0, color: Colors.blueGrey),
+                      : BorderSide(
+                          width: 0,
+                          color: Theme.of(context).colorScheme.primary),
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
@@ -67,19 +83,27 @@ class _DesignSelectState extends State<DesignSelect> {
         Row(
           children: [
             InkWell(
-              onTap: () {setState(() {
-                border3 == false
-                    ? (){border3 = true; border1 = false; border2 = false; border4 = false;}()
-                    : border3 = false;
-              });
+              onTap: () {
+                setState(() {
+                  border3 == false
+                      ? () {
+                          border3 = true;
+                          border1 = false;
+                          border2 = false;
+                          border4 = false;
+                        }()
+                      : border3 = false;
+                });
               },
               child: Card(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border3
                       ? const BorderSide(width: 5, color: Colors.green)
-                      : const BorderSide(width: 0, color: Colors.blueGrey),
+                      : BorderSide(
+                          width: 0,
+                          color: Theme.of(context).colorScheme.primary),
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
@@ -89,19 +113,27 @@ class _DesignSelectState extends State<DesignSelect> {
               ),
             ),
             InkWell(
-              onTap: () {setState(() {
-                border4 == false
-                    ? (){border4 = true; border1 = false; border2 = false; border3 = false;}()
-                    : border4 = false;
-              });
+              onTap: () {
+                setState(() {
+                  border4 == false
+                      ? () {
+                          border4 = true;
+                          border1 = false;
+                          border2 = false;
+                          border3 = false;
+                        }()
+                      : border4 = false;
+                });
               },
               child: Card(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: border4
                       ? const BorderSide(width: 5, color: Colors.green)
-                      : const BorderSide(width: 0, color: Colors.blueGrey),
+                      : BorderSide(
+                          width: 0,
+                          color: Theme.of(context).colorScheme.primary),
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,

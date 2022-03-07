@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
+import 'package:travel_atvisor/activity_module/models/place_categories.dart';
 
 import '../models/place_core_data.dart';
 import '../utils/debouncer.dart';
@@ -23,10 +24,50 @@ class _PlaceSearchPageState extends State<PlaceSearchPage> {
   Widget build(BuildContext context) {
     final placeDataService = context.read<ActivityDataService>();
 
-    return SearchMask<PlaceCoreData>(
+    return SearchMask<PlaceCoreData, PlaceCategory>(
       title: Text("Plätze in ${widget.locality}"),
-      searchAction: (text) =>
-          placeDataService.searchPlacesAsync(text, widget.locality),
+      searchAction: (text, suggestionFilter) => placeDataService
+          .searchPlacesAsync(text, widget.locality, suggestionFilter),
+      suggestionFilterBuilder:
+          (context, activeSuggestionFilter, setSuggestionFilter) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: PlaceCategory.categories.values.map(
+              (e) {
+                final color = activeSuggestionFilter == e
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.black38;
+                return GestureDetector(
+                  onTap: () => setSuggestionFilter(
+                      e == activeSuggestionFilter ? null : e),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // color: Colors.black.withOpacity(0.3),
+                        border: Border.all(color: color, width: 3),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Icon(
+                          e.iconData,
+                          size: 48,
+                          color: color,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+        ),
+      ),
       resultBuilder: (context, result) => ListTile(
         leading: result.photoUrls.isNotEmpty
             ? Image(image: NetworkImage(result.photoUrls.first))
@@ -36,7 +77,7 @@ class _PlaceSearchPageState extends State<PlaceSearchPage> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: result.categories
-                .map((e) => Chip(label: Text(e.toString())))
+                .map((e) => Chip(label: Text(e.displayValue)))
                 .toList(),
           ),
         ),

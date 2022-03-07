@@ -13,7 +13,7 @@ class AuthenticationGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthenticationState>(builder: (context, authState, _) {
+    return Consumer<ApplicationState>(builder: (context, authState, _) {
       if (authState.hasCompleteProfile) {
         return userSafeBuilder(context);
       }

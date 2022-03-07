@@ -7,7 +7,8 @@ import '../views/complete_profile_step.dart';
 import '../views/login_step.dart';
 
 class LoginPage extends StatefulWidget {
-  final AuthenticationState authenticationState;
+  final ApplicationState authenticationState;
+  static const animationDuration = Duration(milliseconds: 150);
   const LoginPage({Key? key, required this.authenticationState})
       : super(key: key);
 
@@ -15,36 +16,10 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _slideController;
-
-  @override
-  void initState() {
-    _slideController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 150));
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(LoginPage oldWidget) {
-    final authState = context.watch<AuthenticationState>();
-    if (authState.currentUser != null && !authState.hasCompleteProfile) {
-      _slideController.forward();
-    } else {
-      _slideController.reverse();
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    _slideController.dispose();
-    super.dispose();
-  }
-
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    final deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Stack(alignment: Alignment.topCenter, children: [
         SizedBox(
@@ -60,45 +35,47 @@ class _LoginPageState extends State<LoginPage>
             builder: (context, isKeyboardVisible) => Column(
               children: [
                 AnimatedPadding(
-                  duration: const Duration(milliseconds: 100),
+                  duration: LoginPage.animationDuration,
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: isKeyboardVisible ? 0 : 100,
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                  child: AnimatedContainer(
+                    decoration: BoxDecoration(
+                      borderRadius: isKeyboardVisible
+                          ? null
+                          : const BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
                       color: Colors.white,
                     ),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 40.0),
-                        child: AnimatedBuilder(
-                          animation: _slideController,
-                          builder: (context, child) => Stack(children: [
-                            SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1.5, 0),
-                                end: Offset.zero,
-                              ).animate(_slideController),
+                    duration: LoginPage.animationDuration,
+                    child: Consumer<ApplicationState>(
+                      builder: (context, value, child) => SafeArea(
+                        child: Stack(
+                          children: [
+                            AnimatedPositioned(
+                              duration: LoginPage.animationDuration,
+                              width: deviceWidth,
+                              curve: Curves.easeInOut,
+                              left: value.isLoggedIn ? 0 : deviceWidth,
+                              top: 0,
+                              bottom: 0,
                               child: CompleteProfileStep(),
                             ),
-                            SlideTransition(
-                              position: Tween<Offset>(
-                                begin: Offset.zero,
-                                end: const Offset(-1.5, 0),
-                              ).animate(_slideController),
-                              child: LoginStep(
-                                animationController: _slideController,
-                              ),
+                            AnimatedPositioned(
+                              duration: LoginPage.animationDuration,
+                              width: deviceWidth,
+                              curve: Curves.easeInOut,
+                              left: value.isLoggedIn ? -deviceWidth : 0,
+                              top: 0,
+                              bottom: 0,
+                              child: LoginStep(),
                             ),
-                          ]),
+                          ],
                         ),
                       ),
                     ),

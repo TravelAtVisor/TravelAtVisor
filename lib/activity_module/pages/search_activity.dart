@@ -25,8 +25,8 @@ class _SearchActivityState extends State<SearchActivity> {
   @override
   Widget build(BuildContext context) {
     final placeDataService = context.read<ActivityDataService>();
-    return SearchMask<LocalitySuggestion>(
-      searchAction: (text) =>
+    return SearchMask<LocalitySuggestion, void>(
+      searchAction: (text, _) =>
           placeDataService.searchLocalitiesAsync(text, sessionToken),
       resultBuilder: (context, result) => ListTile(
         leading: const SizedBox(

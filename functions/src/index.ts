@@ -6,7 +6,7 @@ import { CheckUsernameAvailabilityRequest } from "./models/check-username-availa
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
 import { firestore, initializeApp } from "firebase-admin";
-import { SetActivityRequest } from "./models/set-activity-request";
+import { SetActivityRequest as AddActivityRequest } from "./models/add-activity-request";
 import { DeleteActivityRequest } from "./models/delete-activity-request";
 import { SearchLocalityRequest } from "./models/search-locality-request";
 import { SearchPlacesRequest } from "./models/search-places-request";
@@ -58,7 +58,7 @@ export const deleteTrip = useAuthenticatedFunction<DeleteTripRequest>(async ({ t
     }, { merge: true });
 });
 
-export const setActivity = useAuthenticatedFunction<SetActivityRequest>(async ({ activity, activityId, tripId }, { uid }) => {
+export const addActivity = useAuthenticatedFunction<AddActivityRequest>(async ({ activity, activityId, tripId }, { uid }) => {
     const ref = useUserRecord(uid);
 
     await ref.set({
@@ -101,7 +101,7 @@ export const searchLocalityProxy = useAuthenticatedFunction<SearchLocalityReques
     return await response.data;
 });
 
-export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(async ({ input, locality }, _) => {
+export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(async ({ input, locality, category }, _) => {
     const foursquareKey = useSecret("foursquare");
 
     const requestUrl = new URL("https://api.foursquare.com/v3/places/search");
@@ -109,7 +109,7 @@ export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(as
     requestUrl.searchParams.append("near", locality);
     requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos");
     requestUrl.searchParams.append("sort", "popularity");
-
+    if (category !== undefined) requestUrl.searchParams.append("categories", `${category}`);
 
     const response = await axios.get(requestUrl.href, {
         headers: {

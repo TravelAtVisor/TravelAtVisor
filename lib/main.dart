@@ -13,9 +13,10 @@ import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 
-import 'home.dart';
-import 'shared_module/authentication_provider.dart';
+import 'global_tab_controller.dart';
 import 'user_module/pages/login_page.dart';
+
+const useLocalFunctions = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,9 +29,13 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cloudFunctionDataService = DataService(
-      FirebaseFunctions.instanceFor(region: "europe-west6"),
+    var functions = FirebaseFunctions.instanceFor(region: "europe-west6");
+    if (useLocalFunctions) functions.useFunctionsEmulator("localhost", 5001);
+
+    final dataService = DataService(
+      functions,
       FirebaseStorage.instance,
+      FirebaseAuth.instance,
     );
     final navigationService = NavigationService();
     return MultiProvider(
@@ -39,36 +44,32 @@ class TravelAtVisorApp extends StatelessWidget {
           create: (_) => navigationService,
         ),
         Provider<TripDataservice>(
-          create: (_) => cloudFunctionDataService,
+          create: (_) => dataService,
         ),
         Provider<UserDataService>(
-          create: (_) => cloudFunctionDataService,
+          create: (_) => dataService,
         ),
         Provider<ActivityDataService>(
-          create: (_) => cloudFunctionDataService,
-        ),
-        Provider<AuthenticationProvider>(
-          create: (context) {
-            final authenticationDataService = cloudFunctionDataService;
-            return AuthenticationProvider(
-                FirebaseAuth.instance, authenticationDataService);
-          },
+          create: (_) => dataService,
         ),
         StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationProvider>().authState,
-            initialData: AuthenticationState.initialState),
+            create: (_) => dataService.applicationState,
+            initialData: ApplicationState.initialState),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue.shade400,
+          ),
+        ),
         home: AuthenticationGuard(
-          loginBuilder: (_) => Consumer<AuthenticationState>(
+          loginBuilder: (_) => Consumer<ApplicationState>(
             builder: (context, value, child) => LoginPage(
               authenticationState: value,
             ),
           ),
-          userSafeBuilder: (_) => const Home(),
+          userSafeBuilder: (_) => GlobalTabController(),
         ),
       ),
     );

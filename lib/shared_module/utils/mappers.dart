@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../activity_module/models/extended_place_data.dart';
+import '../models/authentication_result.dart';
 
 class DynamicMappers {
   static DateTime getDateTime(dynamic data) {
@@ -65,10 +66,37 @@ extension ListExtension<TData> on List<TData> {
       return previousValue;
     });
   }
+
+  List<TValue> mapIndexed<TValue>(
+      TValue Function(TData item, int index) project) {
+    final result = <TValue>[];
+
+    for (var i = 0; i < length; i++) {
+      final newValue = project(elementAt(i), i);
+      result.add(newValue);
+    }
+
+    return result;
+  }
 }
 
 class DuplicateKeyException implements Exception {
   final dynamic duplicatedKey;
 
   DuplicateKeyException(this.duplicatedKey);
+}
+
+class StringMappers {
+  static AuthenticationResult getAuthenticationResult(String code) {
+    switch (code) {
+      case "user-not-found":
+        return AuthenticationResult.unkownUser;
+      case "invalid-email":
+        return AuthenticationResult.invalidMail;
+      case "wrong-password":
+        return AuthenticationResult.wrongPassword;
+      default:
+        return AuthenticationResult.unexpected;
+    }
+  }
 }

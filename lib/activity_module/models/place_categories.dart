@@ -1,40 +1,73 @@
+import 'package:flutter/material.dart';
+
 class PlaceCategory {
-  static const artsAndEntertainment = 10000;
-  static const businessAndProfessional = 11000;
-  static const communityAndGovernment = 12000;
-  static const diningAndDrinking = 13000;
-  static const event = 14000;
-  static const healthAndMedicine = 15000;
-  static const landmarksAndOutdoors = 16000;
-  static const retail = 17000;
-  static const sportsAndReceration = 18000;
-  static const travelAndTransportation = 19000;
+  final String displayValue;
+  final IconData iconData;
+  final int value;
 
-  static String describe(int category) {
-    switch (category) {
-      case artsAndEntertainment:
-        return "Kunst und Unterhaltung";
-      case businessAndProfessional:
-        return "Unternehmen";
-      case communityAndGovernment:
-        return "Einrichtung der öffentlichen Hand";
-      case diningAndDrinking:
-        return "Restaurant oder Bar";
-      case event:
-        return "Veranstaltung";
-      case healthAndMedicine:
-        return "Gesundheit und Medizin";
-      case landmarksAndOutdoors:
-        return "Sehenswürdigkeiten";
-      case retail:
-        return "Einkaufsladen";
-      case sportsAndReceration:
-        return "Sport und Erholung";
-      case travelAndTransportation:
-        return "Reisen und Transport";
+  const PlaceCategory(this.displayValue, this.iconData, this.value);
 
-      default:
-        throw ArgumentError("category is unknown");
-    }
-  }
+  static const artsAndEntertainment = PlaceCategory(
+    "Kunst und Unterhaltung",
+    Icons.theater_comedy,
+    10000,
+  );
+  static const businessAndProfessional = PlaceCategory(
+    "Unternehmen",
+    Icons.business,
+    11000,
+  );
+  static const communityAndGovernment = PlaceCategory(
+    "Einrichtung der öffentlichen Hand",
+    Icons.local_police,
+    12000,
+  );
+  static const diningAndDrinking = PlaceCategory(
+    "Restaurant oder Bar",
+    Icons.liquor,
+    13000,
+  );
+  static const event = PlaceCategory(
+    "Veranstaltung",
+    Icons.local_activity,
+    14000,
+  );
+  static const healthAndMedicine = PlaceCategory(
+    "Gesundheit und Medizin",
+    Icons.health_and_safety,
+    15000,
+  );
+  static const landmarksAndOutdoors = PlaceCategory(
+    "Sehenswürdigkeiten",
+    Icons.park,
+    16000,
+  );
+  static const retail = PlaceCategory(
+    "Einkaufsladen",
+    Icons.storefront,
+    17000,
+  );
+  static const sportsAndReceration = PlaceCategory(
+    "Sport und Erholung",
+    Icons.sports,
+    18000,
+  );
+  static const travelAndTransportation = PlaceCategory(
+    "Reisen und Transport",
+    Icons.directions_bus,
+    19000,
+  );
+
+  static const categories = {
+    10000: artsAndEntertainment,
+    11000: businessAndProfessional,
+    12000: communityAndGovernment,
+    13000: diningAndDrinking,
+    14000: event,
+    15000: healthAndMedicine,
+    16000: landmarksAndOutdoors,
+    17000: retail,
+    18000: sportsAndReceration,
+    19000: travelAndTransportation,
+  };
 }

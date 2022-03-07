@@ -50,7 +50,10 @@ class _PasswordInputState extends State<PasswordInput> {
           isPassword: true,
           labelText: "Passwort",
           onChanged: onTextChanged,
-          autofillHints: const [AutofillHints.password],
+          autofillHints: const [
+            AutofillHints.password,
+            AutofillHints.newPassword
+          ],
           onEntered: () {
             setState(() {
               hasFocus = true;

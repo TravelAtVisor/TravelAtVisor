@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import '../utils/debouncer.dart';
 
-class SearchMask<TEntity> extends StatefulWidget {
+class SearchMask<TEntity, TSuggestionFilter> extends StatefulWidget {
   final Debouncer debouncer = Debouncer(milliseconds: 200);
-  final TextEditingController controller = TextEditingController();
-
-  final Future<List<TEntity>> Function(String searchTerm) searchAction;
+  final Widget Function(
+      BuildContext context,
+      TSuggestionFilter? activeSuggestionFilter,
+      Function(TSuggestionFilter? suggestionFilter)
+          onSuggestionFilterTapped)? suggestionFilterBuilder;
+  final Future<List<TEntity>> Function(
+          String searchTerm, TSuggestionFilter? activeSuggestionFilter)
+      searchAction;
   final Widget Function(BuildContext context, TEntity searchResult)
       resultBuilder;
   final Widget title;
@@ -14,15 +19,29 @@ class SearchMask<TEntity> extends StatefulWidget {
       {Key? key,
       required this.searchAction,
       required this.resultBuilder,
-      required this.title})
+      required this.title,
+      this.suggestionFilterBuilder})
       : super(key: key);
 
   @override
-  _SearchMaskState createState() => _SearchMaskState<TEntity>();
+  _SearchMaskState createState() =>
+      _SearchMaskState<TEntity, TSuggestionFilter>();
 }
 
-class _SearchMaskState<TEntity> extends State<SearchMask<TEntity>> {
+class _SearchMaskState<TEntity, TSuggestionFilter>
+    extends State<SearchMask<TEntity, TSuggestionFilter>> {
+  final TextEditingController controller = TextEditingController();
   List<TEntity> _searchResults = [];
+  TSuggestionFilter? _suggestionFilter;
+
+  Future<void> sendSearchRequest() async {
+    if (controller.text.isEmpty && _suggestionFilter == null) return;
+    final results =
+        await widget.searchAction(controller.text, _suggestionFilter);
+    setState(() {
+      _searchResults = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +53,24 @@ class _SearchMaskState<TEntity> extends State<SearchMask<TEntity>> {
           child: Column(
             children: [
               TextField(
-                controller: widget.controller,
+                controller: controller,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.search),
                   labelText: "Suchen",
                   suffix: IconButton(
-                      onPressed: () => widget.controller.clear(),
+                      onPressed: () => controller.clear(),
                       icon: const Icon(Icons.clear)),
                 ),
-                onChanged: (text) => widget.debouncer.run(() async {
-                  final results = await widget.searchAction(text);
-                  setState(() {
-                    _searchResults = results;
-                  });
-                }),
+                onChanged: (text) => widget.debouncer.run(sendSearchRequest),
               ),
+              if (widget.suggestionFilterBuilder != null)
+                widget.suggestionFilterBuilder!(
+                    context,
+                    _suggestionFilter,
+                    (suggestionFilter) => setState(() {
+                          _suggestionFilter = suggestionFilter;
+                          sendSearchRequest();
+                        })),
               Expanded(
                 child: ListView.builder(
                   itemCount: _searchResults.length,

@@ -3,5 +3,6 @@ enum AuthenticationResult {
   wrongPassword,
   unkownUser,
   invalidMail,
-  unexpected
+  unexpected,
+  canceled,
 }

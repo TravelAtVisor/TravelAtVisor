@@ -38,7 +38,7 @@ class _NewTripState extends State<NewTrip> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Neue Reise"),
         //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
@@ -177,7 +177,7 @@ class _NewTripState extends State<NewTrip> {
   }
 
   Widget buildDesignCard({required bool showBorder}) {
-    Color _color = Colors.blueGrey;
+    Color _color = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: () {
         setState(() {

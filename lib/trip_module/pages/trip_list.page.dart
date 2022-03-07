@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
+import '../views/scroll_progress_indicator.dart';
 
 class TripList extends StatefulWidget {
   const TripList({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _TripListState extends State<TripList> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: Center(
@@ -59,41 +60,9 @@ class _TripListState extends State<TripList> {
                     });
                   }),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: items.asMap().entries.map((entry) {
-                return GestureDetector(
-                  onTap: () => _controller.animateToPage(entry.key),
-                  child: Container(
-                    width: _current == entry.key
-                        ? MediaQuery.of(context).size.width * 0.0275
-                        : ((_current == entry.key + 1 ||
-                                _current == entry.key - 1)
-                            ? MediaQuery.of(context).size.width * 0.02
-                            : ((_current == entry.key + 2 ||
-                                    _current == entry.key - 2)
-                                ? MediaQuery.of(context).size.width * 0.0125
-                                : 0.0)),
-                    height: _current == entry.key
-                        ? MediaQuery.of(context).size.width * 0.0275
-                        : ((_current == entry.key + 1 ||
-                                _current == entry.key - 1)
-                            ? MediaQuery.of(context).size.width * 0.02
-                            : ((_current == entry.key + 2 ||
-                                    _current == entry.key - 2)
-                                ? MediaQuery.of(context).size.width * 0.0125
-                                : 0.0)),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 4.0),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black)
-                            .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-                  ),
-                );
-              }).toList(),
+            ScrollProgressIndicator(
+              elementCount: items.length,
+              currentElement: _current,
             ),
             IntrinsicHeight(
               child: Expanded(
@@ -128,22 +97,11 @@ class _TripListState extends State<TripList> {
               height: MediaQuery.of(context).size.height * 0.015,
             ),
 
-            Consumer<AuthenticationState>(builder: (context, state, child) {
-              /*return ListView.builder(
-                  itemCount: state.currentUser!.customData!.trips.length,
-                  itemBuilder: (BuildContext context,int index)
-              )*/
+            Consumer<ApplicationState>(builder: (context, state, child) {
               return ExpansionTile(
                 collapsedTextColor: Colors.black,
                 collapsedIconColor: Colors.black,
                 title: Row(children: [
-                  /*Image.network(
-                    state.currentUser!.customData!.trips[0].activities[0]
-                        .photoUrl,
-                    height: MediaQuery.of(context).size.width * 0.25,
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    fit: BoxFit.contain,
-                  ),*/
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.035,
                   ),
@@ -156,8 +114,9 @@ class _TripListState extends State<TripList> {
                   )
                 ]),
                 children: [
-                  /*Text(state.currentUser!.customData!.trips[0].activities[0]
-                      .description),*/
+                  Text(state.currentUser!.customData!.trips[0].activities[0]
+                          .description ??
+                      "KEINE BESCHREIBUNG"),
                   Row(
                     children: const [],
                   )
@@ -213,7 +172,7 @@ class _TripListState extends State<TripList> {
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
     return Card(
       clipBehavior: Clip.antiAlias,
-      color: Colors.blueGrey,
+      color: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -282,10 +241,10 @@ class _TripListState extends State<TripList> {
           ),
           buildTripActivity('assets/empire.jpg', 'Empire State Building'),
           buildTripActivity('assets/empire.jpg', 'Empire State Building'),
-          const Opacity(
+          Opacity(
               opacity: 0.2,
               child: Divider(
-                color: Colors.blueGrey,
+                color: Theme.of(context).colorScheme.primary,
                 thickness: 1.5,
                 indent: 20,
                 endIndent: 20,
