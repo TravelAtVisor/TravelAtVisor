@@ -66,7 +66,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
             onPressed: () async {
                 await context
                     .read<ActivityDataService>()
-                    .setActivityAsync(widget.tripId, Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name, d.description, d.photoUrls.first));
+                    .addActivityAsync(widget.tripId, Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name, d.description, d.photoUrls.first));
                 Navigator.of(context).pop();
               },
           ),

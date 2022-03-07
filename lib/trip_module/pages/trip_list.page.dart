@@ -24,7 +24,7 @@ class _TripListState extends State<TripList> {
 
 
     final List<Trip> trips = context
-        .read<AuthenticationState>()
+        .read<ApplicationState>()
         .currentUser!
         .customData!
         .trips;

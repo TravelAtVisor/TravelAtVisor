@@ -33,6 +33,18 @@ class DataService
   Stream<ApplicationState> get applicationState =>
       _applicationStateEmitter.stream;
 
+  Future<TResult> _useStateMutatingFunction<TResult>(
+      Future<TResult> Function() mutatingFunction) async {
+    final result = await mutatingFunction();
+    await refreshCurrentUser(_authenticationDataService.currentUser);
+
+    return result;
+  }
+
+  @override
+  Future<CustomUserData?> getCustomUserDataByIdAsync() =>
+      _functionsDataService.getCustomUserData();
+
   DataService(FirebaseFunctions functions, FirebaseStorage storage,
       FirebaseAuth authentication) {
     _functionsDataService = FunctionsDataService(functions);
@@ -58,10 +70,6 @@ class DataService
     }
 
     _applicationStateEmitter.add(applicationState);
-  @override
-  Future<void> deleteActivityAsync(
-      String tripId, String activityId) {
-    return _deleteActivity.call({"tripId": tripId, "activityId": activityId});
   }
 
   @override
@@ -94,30 +102,13 @@ class DataService
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
       _functionsDataService.getPlaceDetailsAsync(foursquareId);
 
-  @override
-  Future<void> setActivityAsync(
-      String tripId, Activity activity) {
-    return _setActivity.call({
-      "tripId": tripId,
-      "activityId": activity.activityId,
-      "activity": activity.toMap()
-    });
-  }
   Future<List<LocalitySuggestion>> searchLocalitiesAsync(
           String input, String sessionKey) =>
       _functionsDataService.searchLocalitiesAsync(input, sessionKey);
 
-  @override
-  Future<void> setTripAsync(Trip trip) {
-    return _setTrip.call({"tripId": trip.tripId, "trip": trip.toMap()});
-  }
   Future<List<PlaceCoreData>> searchPlacesAsync(
           String input, String locality, PlaceCategory? category) =>
       _functionsDataService.searchPlacesAsync(input, locality, category);
-
-  @override
-  Future<CustomUserData?> getCustomUserDataByIdAsync() =>
-      _functionsDataService.getCustomUserData();
 
   @override
   Future<bool> isUsernameAvailableAsync(String username) =>
@@ -149,14 +140,6 @@ class DataService
 
   @override
   Future<void> signOutAsync() => _authenticationDataService.signOutAsync();
-
-  Future<TResult> _useStateMutatingFunction<TResult>(
-      Future<TResult> Function() mutatingFunction) async {
-    final result = await mutatingFunction();
-    await refreshCurrentUser(_authenticationDataService.currentUser);
-
-    return result;
-  }
 
   @override
   void setActiveTripId(String tripId) {
