@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
-import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
 import 'package:travel_atvisor/userScreen.dart';
 
+import 'activity_module/pages/locality_chooser_page.dart';
 import 'shared_module/models/route_metadata.dart';
 import 'shared_module/views/custom_tab_bar.dart';
 
