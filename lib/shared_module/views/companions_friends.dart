@@ -18,9 +18,10 @@ class CompanionsFriends extends StatefulWidget {
 class _CompanionsFriendsState extends State<CompanionsFriends> {
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Expanded(
-        flex: 3,
+    return Expanded(
+      flex: 3,
+      child:
+      IntrinsicHeight(
         child: Column(children: [
           Align(
             alignment: Alignment.centerLeft,

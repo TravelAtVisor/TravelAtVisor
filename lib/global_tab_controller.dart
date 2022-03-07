@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/userScreen.dart';
 
 import 'activity_module/pages/locality_chooser_page.dart';
@@ -48,11 +51,7 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => LocalityChooserPage(),
-          ),
-        ),
+        onPressed: () => context.read<TripNavigationService>().pushAddActivityScreen(context, context.read<ApplicationState>().currentTripId!),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomTabBar(

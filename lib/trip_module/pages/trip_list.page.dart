@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:intl/intl.dart';
+import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 
 import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
@@ -21,16 +22,16 @@ class _TripListState extends State<TripList> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final List<Trip> trips = context
         .read<ApplicationState>()
         .currentUser!
         .customData!
         .trips;
     trips.sort((b, c) => b.begin.compareTo(c.begin));
-    List<Widget> items = [];
 
+    context.read<TripDataservice>().setActiveTripId(trips.elementAt(_current).tripId);
+
+    List<Widget> items = [];
     for(var item = 0; item < trips.length; item++){
       items.add(buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
     }
