@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "773474425139",
+    "project_id": "travelatvisor",
+    "storage_bucket": "travelatvisor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773474425139:android:db62073b943a243cf34646",
+        "android_client_info": {
+          "package_name": "com.example.travel_atvisor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773474425139-au2f7faha8f1l75nvo3nctr4def7d0mu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARhKY_B-Cxt3aCCdaOcYLvjMOUnPYQe2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773474425139-au2f7faha8f1l75nvo3nctr4def7d0mu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "773474425139-9ik9q0s1rgpluhr0php8d2gd3qs88mag.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.travelatvisor.application"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
