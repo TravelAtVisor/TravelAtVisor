@@ -26,7 +26,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
   late final TextEditingController biographyController;
 
   bool _isUserNameValid = false;
-  bool _isUserNameValidationFinished = false;
+  bool _isUserNameValidationFinished = true;
   bool _isFullNameValid = false;
   String? _profilePicturePath;
 
@@ -41,6 +41,9 @@ class _EditProfileFormState extends State<EditProfileForm> {
     biographyController = TextEditingController(
       text: widget.currentProfile?.biography,
     );
+
+    _isFullNameValid = widget.currentProfile != null;
+    _isUserNameValid = widget.currentProfile != null;
 
     super.initState();
   }
