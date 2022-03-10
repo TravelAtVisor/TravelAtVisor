@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/models/custom_user_data.dart';
+import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
+import 'package:travel_atvisor/user_module/user.data_service.dart';
 import 'edit_user_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -13,16 +16,18 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   final double titleImageHeight = 200;
   final double profileImageHeight = 120;
+
   @override
   Widget build(BuildContext context) {
+    final userDataService = context.read<UserDataService>();
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           title: const Text('Profil'),
-          actions: <Widget>[
+          actions: [
             IconButton(
               icon: const Icon(
-                Icons.settings,
+                Icons.edit,
                 color: Colors.white,
               ),
               onPressed: () {
@@ -33,68 +38,110 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
         body: Consumer<ApplicationState>(builder: (context, state, _) {
-          return Container(
-              padding: const EdgeInsets.all(10),
+          return SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
               child: Column(
-                children: <Widget>[
-                  picturesTop(),
-                  nameAndUserName(state.currentUser!.customData!.fullName,
-                      state.currentUser!.customData!.nickname),
-                  const SizedBox(height: 30),
-                  statisticInfo(),
-                  const SizedBox(height: 10),
-                  const Divider(
-                    color: Colors.blueGrey,
-                    thickness: 0.8,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: profileImageHeight / 2 + 5,
+                    child: CircleAvatar(
+                      radius: profileImageHeight / 2,
+                      foregroundImage:
+                          state.currentUser!.customData!.photoUrl != null
+                              ? Image.network(
+                                      state.currentUser!.customData!.photoUrl!)
+                                  .image
+                              : null,
+                      backgroundImage:
+                          const AssetImage("assets/ph_profile.png"),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  about(),
-                  const SizedBox(height: 30),
-                  logout()
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          state.currentUser!.customData!.fullName,
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "@${state.currentUser!.customData!.nickname}",
+                          style: const TextStyle(color: Colors.lightBlue),
+                        )
+                      ],
+                    ),
+                  ),
+                  ProfileStatisticsViewer(
+                      customUserData: state.currentUser!.customData!),
+                  Divider(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  BiographyViewer(
+                      biography: state.currentUser!.customData!.biography),
+                  FullWidthButton(
+                    text: "Abmelden",
+                    onPressed: () => userDataService.signOutAsync(),
+                    isElevated: false,
+                  ),
                 ],
-              ));
+              ),
+            ),
+          );
         }));
   }
+}
 
-  Widget picturesTop() {
-    return Positioned(
-        top: titleImageHeight - (profileImageHeight / 2),
-        child: profileImage());
-  }
+class BiographyViewer extends StatelessWidget {
+  final String? biography;
 
-  Widget profileImage() {
-    return CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: profileImageHeight / 2 + 5,
-        child: CircleAvatar(
-          radius: profileImageHeight / 2,
-          backgroundImage: const AssetImage(
-            "assets/ph_profile.png",
-          ),
-        ));
-  }
+  const BiographyViewer({
+    Key? key,
+    required this.biography,
+  }) : super(key: key);
 
-  Widget nameAndUserName(String name, String username) {
+  @override
+  Widget build(BuildContext context) {
+    if (biography == null) return Container();
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          name,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            "Über mich",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        Text(
-          "@$username",
-          style: const TextStyle(color: Colors.lightBlue),
-        )
+        Text(biography!),
       ],
     );
   }
+}
 
-  Widget statisticInfo() {
+class ProfileStatisticsViewer extends StatelessWidget {
+  final CustomUserData customUserData;
+  const ProfileStatisticsViewer({Key? key, required this.customUserData})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-            flex: 3,
-            child: Column(children: const [
+          flex: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
               Text(
                 "7",
                 style: TextStyle(
@@ -103,10 +150,14 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               Text("Reisen")
-            ])),
+            ],
+          ),
+        ),
         Expanded(
-            flex: 3,
-            child: Column(children: const [
+          flex: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
               Text(
                 "36",
                 style: TextStyle(
@@ -115,10 +166,14 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               Text("Tage")
-            ])),
+            ],
+          ),
+        ),
         Expanded(
-            flex: 3,
-            child: Column(children: const [
+          flex: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
               Text(
                 "152",
                 style: TextStyle(
@@ -127,38 +182,10 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               Text("Aktivitäten")
-            ])),
-      ],
-    );
-  }
-
-  Widget about() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          "About",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+            ],
           ),
         ),
-        SizedBox(height: 10),
-        Text("Hier sollte ein Text stehen.\n"
-            "Dies könnte ein Spruch sein oder sonstiges.\n"
-            "Eventuell auch eine dritte Zeile...")
       ],
-    );
-  }
-
-  Widget logout() {
-    return const Text(
-      "Abmelden",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Colors.red,
-        fontSize: 15,
-      ),
     );
   }
 }

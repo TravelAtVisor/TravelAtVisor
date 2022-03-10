@@ -22,7 +22,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
     return Consumer<ApplicationState>(builder: (context, state, _) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           title: const Text('Profil'),
           actions: [
             IconButton(
