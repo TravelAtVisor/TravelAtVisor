@@ -36,7 +36,11 @@ class _CompleteProfileStepState extends State<CompleteProfileStep> {
           ],
         ),
         EditProfileForm(
-          onProfileChanged: (profile) {},
+          onProfileChanged: (profile) => setState(
+            (() {
+              customUserData = profile;
+            }),
+          ),
         ),
         FullWidthButton(
             text: "Abschließen",
