@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/custom_user_data.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 import 'package:travel_atvisor/user_module/views/edit_profile_form.dart';
 
@@ -18,8 +19,6 @@ class _EditUserScreenState extends State<EditUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final dataService = context.read<UserDataService>();
-    //dataService.updateUserProfileAsync(CustomUserData(nickname, fullName, photoUrl, biography, trips));
     return Consumer<ApplicationState>(builder: (context, state, _) {
       return Scaffold(
         appBar: AppBar(
@@ -29,9 +28,14 @@ class _EditUserScreenState extends State<EditUserScreen> {
             IconButton(
                 onPressed: customUserData == null
                     ? null
-                    : () => context
-                        .read<UserDataService>()
-                        .updateUserProfileAsync(customUserData!),
+                    : () async {
+                        LoadingOverlay.show(context);
+                        await context
+                            .read<UserDataService>()
+                            .updateUserProfileAsync(customUserData!);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
                 icon: Icon(
                   Icons.check,
                   color: customUserData == null

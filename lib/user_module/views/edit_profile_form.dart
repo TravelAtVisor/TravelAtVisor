@@ -44,6 +44,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
 
     _isFullNameValid = widget.currentProfile != null;
     _isUserNameValid = widget.currentProfile != null;
+    _profilePicturePath = widget.currentProfile?.photoUrl;
 
     super.initState();
   }

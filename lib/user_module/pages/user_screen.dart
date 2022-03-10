@@ -57,28 +57,9 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Widget picturesTop() {
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(bottom: profileImageHeight / 2 + 10),
-          child: backgroundImage(),
-        ),
-        Positioned(
-            top: titleImageHeight - (profileImageHeight / 2),
-            child: profileImage())
-      ],
-    );
-  }
-
-  Widget backgroundImage() {
-    return Container(
-        color: Colors.grey,
-        child: Image.asset("assets/milan.jpg",
-            width: MediaQuery.of(context).size.width,
-            height: titleImageHeight,
-            fit: BoxFit.cover));
+    return Positioned(
+        top: titleImageHeight - (profileImageHeight / 2),
+        child: profileImage());
   }
 
   Widget profileImage() {
