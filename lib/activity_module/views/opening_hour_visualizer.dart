@@ -45,7 +45,11 @@ class OpeningHourVisualizer extends StatelessWidget {
           child: CustomPaint(
             painter: OpeningHourGridPainter(
                 labelStyle: Theme.of(context).textTheme.caption),
-            foregroundPainter: OpeningHourBarsPainter(bars: dayBarMap),
+            foregroundPainter: OpeningHourBarsPainter(
+              bars: dayBarMap,
+              openedColor: Theme.of(context).colorScheme.secondary,
+              popularColor: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       ),
@@ -103,7 +107,13 @@ abstract class OpeningHourPainterBase extends CustomPainter {
 class OpeningHourBarsPainter extends OpeningHourPainterBase {
   final Map<Day, List<_OpeningHourBarData>> bars;
 
-  OpeningHourBarsPainter({required this.bars});
+  OpeningHourBarsPainter(
+      {required this.bars,
+      required Color openedColor,
+      required Color popularColor}) {
+    _openPaint.color = openedColor;
+    _popularPaint.color = popularColor;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {

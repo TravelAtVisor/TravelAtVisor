@@ -48,7 +48,6 @@ class _PlaceSearchPageState extends State<PlaceSearchPage> {
                       curve: Curves.easeInOut,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        // color: Colors.black.withOpacity(0.3),
                         border: Border.all(color: color, width: 3),
                       ),
                       child: Padding(
