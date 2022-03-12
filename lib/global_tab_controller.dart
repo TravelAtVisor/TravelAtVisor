@@ -44,23 +44,29 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageStorage(
-        child: widget.pageManager.buildPage(currentRoute, context),
-        bucket: bucket,
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => context.read<TripNavigationService>().pushAddActivityScreen(context, context.read<ApplicationState>().currentTripId!),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: CustomTabBar(
-        routes: widget.pageManager.knownRoutes,
-        currentRoute: currentRoute,
-        onNavigated: (newRoute) => setState(
-          () {
-            currentRoute = newRoute;
-          },
+    return Consumer<ApplicationState>(
+      builder: (context, state, _) => Scaffold(
+        body: PageStorage(
+          child: widget.pageManager.buildPage(currentRoute, context),
+          bucket: bucket,
+        ),
+        floatingActionButton: state.currentTripId != null
+            ? FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () => context
+                    .read<TripNavigationService>()
+                    .pushAddActivityScreen(context, state.currentTripId!),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: CustomTabBar(
+          routes: widget.pageManager.knownRoutes,
+          currentRoute: currentRoute,
+          onNavigated: (newRoute) => setState(
+            () {
+              currentRoute = newRoute;
+            },
+          ),
         ),
       ),
     );
