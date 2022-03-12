@@ -70,6 +70,7 @@ class DataService
     }
 
     _applicationStateEmitter.add(applicationState);
+    currentApplicationState = applicationState;
   }
 
   @override
