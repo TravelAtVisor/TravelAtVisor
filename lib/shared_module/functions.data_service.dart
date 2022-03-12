@@ -19,7 +19,7 @@ class FunctionsDataService {
       _functions.httpsCallable("isUsernameAvailable");
   late final _setTrip = _functions.httpsCallable("setTrip");
   late final _deleteTrip = _functions.httpsCallable("deleteTrip");
-  late final _setActivity = _functions.httpsCallable("setActivity");
+  late final _addActivity = _functions.httpsCallable("addActivity");
   late final _deleteActivity = _functions.httpsCallable("deleteActivity");
   late final _searchLocalityProxy =
       _functions.httpsCallable("searchLocalityProxy");
@@ -67,7 +67,11 @@ class FunctionsDataService {
   }
 
   Future<void> addActivityAsync(String tripId, Activity activity) =>
-      _setActivity.call();
+      _addActivity.call({
+        "tripId": tripId,
+        "activityId": activity.activityId,
+        "activity": activity.toMap(),
+      });
 
   Future<void> setTripAsync(Trip trip) => _setTrip.call();
 

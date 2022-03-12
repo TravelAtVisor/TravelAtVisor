@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,7 +14,9 @@ class PlaceDetails extends StatefulWidget {
   final String foursquareId;
   final String tripId;
 
-  const PlaceDetails({Key? key, required this.foursquareId, required this.tripId}) : super(key: key);
+  const PlaceDetails(
+      {Key? key, required this.foursquareId, required this.tripId})
+      : super(key: key);
 
   @override
   _PlaceDetailsState createState() => _PlaceDetailsState();
@@ -62,13 +65,17 @@ class _PlaceDetailsState extends State<PlaceDetails> {
       appBar: AppBar(
         title: Text(d.name),
         actions: [
-          IconButton(icon: Icon(Icons.check),
+          IconButton(
+            icon: Icon(Icons.check),
             onPressed: () async {
-                await context
-                    .read<ActivityDataService>()
-                    .addActivityAsync(widget.tripId, Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name, d.description, d.photoUrls.first));
-                Navigator.of(context).pop();
-              },
+              LoadingOverlay.show(context);
+              await context.read<ActivityDataService>().addActivityAsync(
+                  widget.tripId,
+                  Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name,
+                      d.description, d.photoUrls.first));
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
           ),
         ],
       ),

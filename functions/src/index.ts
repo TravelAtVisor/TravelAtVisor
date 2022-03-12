@@ -109,7 +109,7 @@ export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(as
     requestUrl.searchParams.append("near", locality);
     requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos");
     requestUrl.searchParams.append("sort", "popularity");
-    if (category !== undefined) requestUrl.searchParams.append("categories", `${category}`);
+    if (category !== null) requestUrl.searchParams.append("categories", `${category}`);
 
     const response = await axios.get(requestUrl.href, {
         headers: {
