@@ -29,7 +29,8 @@ class _TripListState extends State<TripList> {
         .trips;
     trips.sort((b, c) => b.begin.compareTo(c.begin));
 
-    context.read<TripDataservice>().setActiveTripId(trips.elementAt(_current).tripId);
+    //context.read<TripDataservice>().;
+    //context.read<TripDataservice>().setActiveTripId(trips.elementAt(_current).tripId);
 
     List<Widget> items = [];
     for(var item = 0; item < trips.length; item++){
@@ -42,129 +43,111 @@ class _TripListState extends State<TripList> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.01,
-            ),
-            // Card Carousel and Indicator dots
-            CarouselSlider(
-              items: items,
-              carouselController: _controller,
-              options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  height: MediaQuery.of(context).size.height * 0.19,
-                  viewportFraction: 0.93,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _current = index;
-                    });
-                  }),
-            ),
-            ScrollProgressIndicator(
-              elementCount: items.length,
-              currentElement: _current,
-            ),
-            IntrinsicHeight(
-              child: Expanded(
-                flex: 1,
-                child: Container(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    padding: EdgeInsets.all(
-                      MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.25),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: const CompanionsFriends(
-                        header: 'Begleiter', addPerson: true)),
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.015,
-            ),
-
-            Consumer<ApplicationState>(builder: (context, state, child) {
-              return ExpansionTile(
-                collapsedTextColor: Colors.black,
-                collapsedIconColor: Colors.black,
-                title: Row(children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.035,
-                  ),
-                  Flexible(
-                    child: Text(
-                        state.currentUser!.customData!.trips[0].title,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                        )),
-                  )
-                ]),
+        child:
+        Consumer<ApplicationState>(builder: (context, state, child) {
+          return state.currentUser!.customData!.trips.isNotEmpty
+            ? Column(
                 children: [
-                  Text(state.currentUser!.customData!.trips[0].activities[0]
-                          .description ??
-                      "KEINE BESCHREIBUNG"),
-                  Row(
-                    children: const [],
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  // Card Carousel and Indicator dots
+                  CarouselSlider(
+                    items: items,
+                    carouselController: _controller,
+                    options: CarouselOptions(
+                        enableInfiniteScroll: false,
+                        height: MediaQuery.of(context).size.height * 0.19,
+                        viewportFraction: 0.93,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _current = index;
+                          });
+                        }),
+                  ),
+                  ScrollProgressIndicator(
+                    elementCount: items.length,
+                    currentElement: _current,
+                  ),
+                  IntrinsicHeight(
+                    child: Expanded(
+                      flex: 1,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.03,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.25),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset:
+                                    const Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: const CompanionsFriends(
+                              header: 'Begleiter', addPerson: true)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.015,
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: ShaderMask(
+                      shaderCallback: (rect) {
+                        return const LinearGradient(
+                          begin: Alignment(0.0, 0.65),
+                          end: Alignment(0.0, 1.0),
+                          colors: [Colors.black, Colors.transparent],
+                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                      },
+                      blendMode: BlendMode.dstIn,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.03,
+                              right: MediaQuery.of(context).size.width * 0.03),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.width * 0.03),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.25),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset:
+                                const Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: buildTripActiviesList()
+                      ),
+                    ),
                   )
                 ],
-              );
-            }),
-
-            Expanded(
-              flex: 3,
-              child: ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    begin: Alignment(0.0, 0.65),
-                    end: Alignment(0.0, 1.0),
-                    colors: [Colors.black, Colors.transparent],
-                  ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-                },
-                blendMode: BlendMode.dstIn,
-                child: Container(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.03,
-                        right: MediaQuery.of(context).size.width * 0.03),
-                    margin: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.width * 0.03),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.25),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: buildTripActiviesList()),
-              ),
-            ),
-          ],
-        ),
+            ) 
+            : Column(
+                children: [
+                  Text("Willkommen beim Travek@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!")
+                ],
+            );
+        }),
       ),
     );
   }
@@ -240,8 +223,8 @@ class _TripListState extends State<TripList> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.015,
           ),
-          buildTripActivity('assets/empire.jpg', 'Empire State Building'),
-          buildTripActivity('assets/empire.jpg', 'Empire State Building'),
+          buildTripActivity('assets/empire.jpg', 'Empire State Building', 'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
+          buildTripActivity('assets/empire.jpg', 'Empire State Building', 'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
           Opacity(
               opacity: 0.2,
               child: Divider(
@@ -255,7 +238,7 @@ class _TripListState extends State<TripList> {
     );
   }
 
-  Widget buildTripActivity(String path, String name) {
+  Widget buildTripActivity(String path, String name, String description) {
     return ExpansionTile(
       collapsedTextColor: Colors.black,
       collapsedIconColor: Colors.black,
@@ -276,10 +259,17 @@ class _TripListState extends State<TripList> {
               )),
         )
       ]),
-      children: const [
-        Text('Big Bang'),
-        Text('Birth of the Sun'),
-        Text('Earth is Born'),
+      children: [
+        Text(description),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(onPressed: () => print("infos"), icon: Icon(Icons.info), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
+            IconButton(onPressed: () => print("bearbeiten"), icon: Icon(Icons.settings), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
+            IconButton(onPressed: () => print("löschen"), icon: Icon(Icons.delete), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
+          ],
+        )
       ],
     );
   }
