@@ -43,7 +43,7 @@ class TravelAtVisorApp extends StatelessWidget {
         Provider<TripNavigationService>(
           create: (_) => navigationService,
         ),
-        Provider<TripDataservice>(
+        Provider<TripDataService>(
           create: (_) => dataService,
         ),
         Provider<UserDataService>(

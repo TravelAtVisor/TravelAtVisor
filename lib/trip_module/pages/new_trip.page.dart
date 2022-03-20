@@ -27,7 +27,7 @@ class _NewTripState extends State<NewTrip> {
   Future<void> createTrip(
       String tripId, String title, DateTime begin, DateTime end) async {
     await context
-        .read<TripDataservice>()
+        .read<TripDataService>()
         .setTripAsync(Trip(tripId, title, begin, end, [], []));
   }
 

@@ -23,7 +23,7 @@ import 'models/custom_user_data.dart';
 import 'models/trip.dart';
 
 class DataService
-    implements UserDataService, TripDataservice, ActivityDataService {
+    implements UserDataService, TripDataService, ActivityDataService {
   late final FunctionsDataService _functionsDataService;
   late final StorageDataService _storageDataService;
   late final AuthenticationDataService _authenticationDataService;
