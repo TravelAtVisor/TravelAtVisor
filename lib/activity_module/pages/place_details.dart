@@ -66,7 +66,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
         title: Text(d.name),
         actions: [
           IconButton(
-            icon: Icon(Icons.check),
+            icon: const Icon(Icons.check),
             onPressed: () async {
               LoadingOverlay.show(context);
               await context.read<ActivityDataService>().addActivityAsync(

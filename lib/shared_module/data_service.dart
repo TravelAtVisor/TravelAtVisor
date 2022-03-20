@@ -104,10 +104,12 @@ class DataService
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
       _functionsDataService.getPlaceDetailsAsync(foursquareId);
 
+  @override
   Future<List<LocalitySuggestion>> searchLocalitiesAsync(
           String input, String sessionKey) =>
       _functionsDataService.searchLocalitiesAsync(input, sessionKey);
 
+  @override
   Future<List<PlaceCoreData>> searchPlacesAsync(
           String input, String locality, PlaceCategory? category) =>
       _functionsDataService.searchPlacesAsync(input, locality, category);
