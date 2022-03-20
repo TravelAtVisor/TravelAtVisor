@@ -28,14 +28,18 @@ export const updateCustomUserData = useAuthenticatedFunction<CustomUserData>((us
     return ref.set(userData);
 });
 
-export const isUsernameAvailable = useCallableFunction<CheckUsernameAvailabilityRequest>(async ({ username }, _) => {
+export const isUsernameAvailable = useCallableFunction<CheckUsernameAvailabilityRequest>(async ({ username }, authentication) => {
     const userCollection = useUserCollection();
-
+    const callingUserId = authentication?.uid;
     const snapshot = await userCollection
-        .where("nickname", "==", username)
-        .get()
+        .where("nickname", "==", username).get();
 
-    return snapshot.size === 0;
+    let isValid = true;
+    snapshot.forEach((document) => {
+        isValid = isValid && document.id === callingUserId;
+    });
+
+    return isValid;
 });
 
 export const setTrip = useAuthenticatedFunction<SetTripRequest>(async ({ trip, tripId }, { uid }) => {

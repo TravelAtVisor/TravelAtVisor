@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -119,9 +120,18 @@ class DataService
   Future<void> updateUserProfileAsync(CustomUserData customUserData) =>
       _useStateMutatingFunction(() async {
         final userId = _authenticationDataService.currentUser!.uid;
-        final photoUrl = await _storageDataService.updateProfilePicture(
-            userId, customUserData.photoUrl);
-        customUserData.photoUrl = photoUrl;
+
+        final isLocalPhotoUrl = customUserData.photoUrl != null
+            ? File(customUserData.photoUrl!).existsSync()
+            : true;
+
+        // As uploading the photo is time expensive, only upload it local files
+        if (isLocalPhotoUrl) {
+          final photoUrl = await _storageDataService.updateProfilePicture(
+              userId, customUserData.photoUrl);
+          customUserData.photoUrl = photoUrl;
+        }
+
         return _functionsDataService.updateCustomUserData(customUserData);
       });
 

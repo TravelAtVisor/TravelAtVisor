@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
+import 'package:travel_atvisor/user_module/pages/user_screen.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/userScreen.dart';
 
