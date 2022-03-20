@@ -187,10 +187,12 @@ class _TripListState extends State<TripList> {
   Widget buildTripActiviesList(Trip trip) {
     final groupedByDay = trip.activities.fold(<DateTime, List<Activity>>{},
         (Map<DateTime, List<Activity>> previousValue, element) {
-      if (previousValue.containsKey(element.timestamp)) {
-        previousValue[element.timestamp]!.add(element);
+      final day = DateTime(element.timestamp.year, element.timestamp.month,
+          element.timestamp.day);
+      if (previousValue.containsKey(day)) {
+        previousValue[day]!.add(element);
       } else {
-        previousValue[element.timestamp] = [element];
+        previousValue[day] = [element];
       }
       return previousValue;
     });
