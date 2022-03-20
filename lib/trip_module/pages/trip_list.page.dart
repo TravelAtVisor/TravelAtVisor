@@ -25,19 +25,18 @@ class _TripListState extends State<TripList> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Trip> trips = context
-        .watch<ApplicationState>()
-        .currentUser!
-        .customData!
-        .trips;
+    final List<Trip> trips =
+        context.watch<ApplicationState>().currentUser!.customData!.trips;
     trips.sort((b, c) => b.begin.compareTo(c.begin));
 
-
-    context.read<TripDataService>().setActiveTripId(trips.elementAt(_current).tripId);
+    context
+        .read<TripDataService>()
+        .setActiveTripId(trips.elementAt(_current).tripId);
 
     List<Widget> items = [];
-    for(var item = 0; item < trips.length; item++){
-      items.add(buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
+    for (var item = 0; item < trips.length; item++) {
+      items.add(
+          buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
     }
 
     return Scaffold(
@@ -46,67 +45,67 @@ class _TripListState extends State<TripList> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: Center(
-        child:
-        Consumer<ApplicationState>(builder: (context, state, child) {
+        child: Consumer<ApplicationState>(builder: (context, state, child) {
           return state.currentUser!.customData!.trips.isNotEmpty
-            ? Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  // Card Carousel and Indicator dots
-                  CarouselSlider(
-                    items: items,
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                        enableInfiniteScroll: false,
-                        height: MediaQuery.of(context).size.height * 0.19,
-                        viewportFraction: 0.93,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _current = index;
-                          });
-                        }),
-                  ),
-                  ScrollProgressIndicator(
-                    elementCount: items.length,
-                    currentElement: _current,
-                  ),
-                  Container(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.03,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.25),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset:
-                                    const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: const CompanionsFriends(
-                              header: 'Begleiter', addPerson: true)),
+              ? Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    // Card Carousel and Indicator dots
+                    CarouselSlider(
+                      items: items,
+                      carouselController: _controller,
+                      options: CarouselOptions(
+                          enableInfiniteScroll: false,
+                          height: MediaQuery.of(context).size.height * 0.19,
+                          viewportFraction: 0.93,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }),
+                    ),
+                    ScrollProgressIndicator(
+                      elementCount: items.length,
+                      currentElement: _current,
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.03,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.25),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: const CompanionsFriends(
+                            header: 'Begleiter', addPerson: true)),
 
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.015,
-                  ),
-                  ShaderMask(
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.015,
+                    ),
+                    ShaderMask(
                       shaderCallback: (rect) {
                         return const LinearGradient(
                           begin: Alignment(0.0, 0.65),
                           end: Alignment(0.0, 1.0),
                           colors: [Colors.black, Colors.transparent],
-                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                        ).createShader(
+                            Rect.fromLTRB(0, 0, rect.width, rect.height));
                       },
                       blendMode: BlendMode.dstIn,
                       child: Container(
@@ -128,21 +127,21 @@ class _TripListState extends State<TripList> {
                                 color: Colors.grey.withOpacity(0.25),
                                 spreadRadius: 1,
                                 blurRadius: 5,
-                                offset:
-                                const Offset(0, 3), // changes position of shadow
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
                               ),
                             ],
                           ),
-                          child: buildTripActiviesList(trips[_current])
-                      ),
+                          child: buildTripActiviesList(trips[_current])),
                     ),
-                ],
-            ) 
-            : Column(
-                children: [
-                  Text("Willkommen beim Travek@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!")
-                ],
-            );
+                  ],
+                )
+              : Column(
+                  children: [
+                    Text(
+                        "Willkommen beim Travek@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!")
+                  ],
+                );
         }),
       ),
     );
@@ -187,22 +186,24 @@ class _TripListState extends State<TripList> {
   }
 
   Widget buildTripActiviesList(Trip trip) {
-    final groupedByDay = trip.activities.fold(
-        <DateTime,List<Activity>>{}, (Map<DateTime, List<Activity>> previousValue, element) {
-          if (previousValue.containsKey(element.timestamp)) {
-            previousValue[element.timestamp]!.add(element);
-          } else {
-            previousValue[element.timestamp] = [element];
-          }
-       return previousValue;
+    final groupedByDay = trip.activities.fold(<DateTime, List<Activity>>{},
+        (Map<DateTime, List<Activity>> previousValue, element) {
+      final day = DateTime(element.timestamp.year, element.timestamp.month,
+          element.timestamp.day);
+      if (previousValue.containsKey(day)) {
+        previousValue[day]!.add(element);
+      } else {
+        previousValue[day] = [element];
+      }
+      return previousValue;
     });
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.46,
       child: ListView.builder(
-          itemBuilder: (context, index) => buildTripDayActivites(groupedByDay.values.elementAt(index), trip.tripId),
-          itemCount: groupedByDay.length,
+        itemBuilder: (context, index) => buildTripDayActivites(
+            groupedByDay.values.elementAt(index), trip.tripId),
+        itemCount: groupedByDay.length,
       ),
-
     );
   }
 
@@ -213,7 +214,8 @@ class _TripListState extends State<TripList> {
         children: [
           Align(
             alignment: Alignment.topLeft,
-            child: Text(DateFormat('dd.MM.yyyy').format(activities.first.timestamp),
+            child: Text(
+                DateFormat('dd.MM.yyyy').format(activities.first.timestamp),
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.045,
                 )),
@@ -257,13 +259,27 @@ class _TripListState extends State<TripList> {
         )
       ]),
       children: [
-        Text(activity.description??"Keine Beschreibung verfügbar."),
+        Text(activity.description ?? "Keine Beschreibung verfügbar."),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IconButton(onPressed: () => context.read<TripNavigationService>().pushActivityDetailScreen(context, activity.foursquareId), icon: Icon(Icons.info), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
-            IconButton(onPressed: () => context.read<TripDataService>().deleteActivityAsync(tripId, activity.activityId), icon: Icon(Icons.delete), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
+            IconButton(
+              onPressed: () => context
+                  .read<TripNavigationService>()
+                  .pushActivityDetailScreen(context, activity.foursquareId),
+              icon: Icon(Icons.info),
+              color: Colors.grey,
+              iconSize: MediaQuery.of(context).size.width * 0.07,
+            ),
+            IconButton(
+              onPressed: () => context
+                  .read<TripDataService>()
+                  .deleteActivityAsync(tripId, activity.activityId),
+              icon: Icon(Icons.delete),
+              color: Colors.grey,
+              iconSize: MediaQuery.of(context).size.width * 0.07,
+            ),
           ],
         )
       ],
