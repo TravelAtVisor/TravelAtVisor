@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 
 import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
@@ -22,132 +23,144 @@ class _TripListState extends State<TripList> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Trip> trips = context
-        .read<ApplicationState>()
-        .currentUser!
-        .customData!
-        .trips;
+    final List<Trip> trips =
+        context.watch<ApplicationState>().currentUser!.customData!.trips;
     trips.sort((b, c) => b.begin.compareTo(c.begin));
 
-    //context.read<TripDataservice>().;
-    //context.read<TripDataservice>().setActiveTripId(trips.elementAt(_current).tripId);
-
-    List<Widget> items = [];
-    for(var item = 0; item < trips.length; item++){
-      items.add(buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
+    if (trips.isNotEmpty) {
+      context
+          .read<TripDataservice>()
+          .setActiveTripId(trips.elementAt(_current).tripId);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        toolbarHeight: MediaQuery.of(context).size.height * 0.001,
-      ),
-      body: Center(
-        child:
-        Consumer<ApplicationState>(builder: (context, state, child) {
-          return state.currentUser!.customData!.trips.isNotEmpty
-            ? Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
+    List<Widget> items = [];
+    for (var item = 0; item < trips.length; item++) {
+      items.add(
+          buildTripCard(trips[item].begin, trips[item].end, trips[item].title));
+    }
+
+    return Consumer<ApplicationState>(
+      builder: (context, state, child) => Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          actions: state.currentUser!.customData!.trips.isNotEmpty
+              ? [
+                  IconButton(
+                    onPressed: () => context
+                        .read<TripNavigationService>()
+                        .pushAddActivityScreen(
+                            context, trips.elementAt(_current).tripId),
+                    icon: const Icon(Icons.plus_one),
                   ),
-                  // Card Carousel and Indicator dots
-                  CarouselSlider(
-                    items: items,
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                        enableInfiniteScroll: false,
-                        height: MediaQuery.of(context).size.height * 0.19,
-                        viewportFraction: 0.93,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _current = index;
-                          });
-                        }),
-                  ),
-                  ScrollProgressIndicator(
-                    elementCount: items.length,
-                    currentElement: _current,
-                  ),
-                  IntrinsicHeight(
-                    child: Expanded(
-                      flex: 1,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.03,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.25),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset:
-                                    const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: const CompanionsFriends(
-                              header: 'Begleiter', addPerson: true)),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.015,
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: ShaderMask(
-                      shaderCallback: (rect) {
-                        return const LinearGradient(
-                          begin: Alignment(0.0, 0.65),
-                          end: Alignment(0.0, 1.0),
-                          colors: [Colors.black, Colors.transparent],
-                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-                      },
-                      blendMode: BlendMode.dstIn,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.03,
-                              right: MediaQuery.of(context).size.width * 0.03),
-                          margin: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).size.width * 0.03),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.25),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset:
-                                const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: buildTripActiviesList()
+                ]
+              : [],
+        ),
+        body: Center(
+            child: state.currentUser!.customData!.trips.isNotEmpty
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
                       ),
-                    ),
+                      CarouselSlider(
+                        items: items,
+                        carouselController: _controller,
+                        options: CarouselOptions(
+                            enableInfiniteScroll: false,
+                            height: MediaQuery.of(context).size.height * 0.19,
+                            viewportFraction: 0.93,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _current = index;
+                              });
+                            }),
+                      ),
+                      ScrollProgressIndicator(
+                        elementCount: items.length,
+                        currentElement: _current,
+                      ),
+                      IntrinsicHeight(
+                        child: Expanded(
+                          flex: 1,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.03,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.25),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: const Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: const CompanionsFriends(
+                                  header: 'Begleiter', addPerson: true)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.015,
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: ShaderMask(
+                          shaderCallback: (rect) {
+                            return const LinearGradient(
+                              begin: Alignment(0.0, 0.65),
+                              end: Alignment(0.0, 1.0),
+                              colors: [Colors.black, Colors.transparent],
+                            ).createShader(
+                                Rect.fromLTRB(0, 0, rect.width, rect.height));
+                          },
+                          blendMode: BlendMode.dstIn,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              padding: EdgeInsets.only(
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.03,
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.03),
+                              margin: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).size.width * 0.03),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.25),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: const Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: buildTripActiviesList()),
+                        ),
+                      )
+                    ],
                   )
-                ],
-            ) 
-            : Column(
-                children: [
-                  Text("Willkommen beim Travek@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!")
-                ],
-            );
-        }),
+                : Column(
+                    children: const [
+                      Text(
+                          "Willkommen beim Travel@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!")
+                    ],
+                  )),
       ),
     );
   }
@@ -223,8 +236,10 @@ class _TripListState extends State<TripList> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.015,
           ),
-          buildTripActivity('assets/empire.jpg', 'Empire State Building', 'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
-          buildTripActivity('assets/empire.jpg', 'Empire State Building', 'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
+          buildTripActivity('assets/empire.jpg', 'Empire State Building',
+              'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
+          buildTripActivity('assets/empire.jpg', 'Empire State Building',
+              'The Empire State Building is an iconic staple of New York City history. From King Kong to Tom Hanks, it has been a focal point of the New York skyline.'),
           Opacity(
               opacity: 0.2,
               child: Divider(
@@ -265,9 +280,24 @@ class _TripListState extends State<TripList> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IconButton(onPressed: () => print("infos"), icon: Icon(Icons.info), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
-            IconButton(onPressed: () => print("bearbeiten"), icon: Icon(Icons.settings), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
-            IconButton(onPressed: () => print("löschen"), icon: Icon(Icons.delete), color: Colors.grey, iconSize: MediaQuery.of(context).size.width * 0.07,),
+            IconButton(
+              onPressed: () => print("infos"),
+              icon: Icon(Icons.info),
+              color: Colors.grey,
+              iconSize: MediaQuery.of(context).size.width * 0.07,
+            ),
+            IconButton(
+              onPressed: () => print("bearbeiten"),
+              icon: Icon(Icons.settings),
+              color: Colors.grey,
+              iconSize: MediaQuery.of(context).size.width * 0.07,
+            ),
+            IconButton(
+              onPressed: () => print("löschen"),
+              icon: Icon(Icons.delete),
+              color: Colors.grey,
+              iconSize: MediaQuery.of(context).size.width * 0.07,
+            ),
           ],
         )
       ],

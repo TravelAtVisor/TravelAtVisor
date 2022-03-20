@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/global.navigation_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
-import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
 import 'package:travel_atvisor/user_module/pages/user_screen.dart';
-import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 
 import 'shared_module/models/route_metadata.dart';
 import 'shared_module/views/custom_tab_bar.dart';
@@ -50,14 +49,11 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
           child: widget.pageManager.buildPage(currentRoute, context),
           bucket: bucket,
         ),
-        floatingActionButton: state.currentTripId != null
-            ? FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () => context
-                    .read<TripNavigationService>()
-                    .pushAddActivityScreen(context, state.currentTripId!),
-              )
-            : null,
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () =>
+              context.read<GlobalNavigationService>().pushAddTripPage(context),
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: CustomTabBar(
           routes: widget.pageManager.knownRoutes,

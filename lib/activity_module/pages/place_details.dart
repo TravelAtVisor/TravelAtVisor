@@ -73,8 +73,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
                   widget.tripId,
                   Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name,
                       d.description, d.photoUrls.first));
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
         ],
