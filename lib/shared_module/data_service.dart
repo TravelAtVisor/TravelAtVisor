@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -103,10 +104,12 @@ class DataService
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
       _functionsDataService.getPlaceDetailsAsync(foursquareId);
 
+  @override
   Future<List<LocalitySuggestion>> searchLocalitiesAsync(
           String input, String sessionKey) =>
       _functionsDataService.searchLocalitiesAsync(input, sessionKey);
 
+  @override
   Future<List<PlaceCoreData>> searchPlacesAsync(
           String input, String locality, PlaceCategory? category) =>
       _functionsDataService.searchPlacesAsync(input, locality, category);
@@ -119,9 +122,18 @@ class DataService
   Future<void> updateUserProfileAsync(CustomUserData customUserData) =>
       _useStateMutatingFunction(() async {
         final userId = _authenticationDataService.currentUser!.uid;
-        final photoUrl = await _storageDataService.updateProfilePicture(
-            userId, customUserData.photoUrl);
-        customUserData.photoUrl = photoUrl;
+
+        final isLocalPhotoUrl = customUserData.photoUrl != null
+            ? File(customUserData.photoUrl!).existsSync()
+            : true;
+
+        // As uploading the photo is time expensive, only upload it local files
+        if (isLocalPhotoUrl) {
+          final photoUrl = await _storageDataService.updateProfilePicture(
+              userId, customUserData.photoUrl);
+          customUserData.photoUrl = photoUrl;
+        }
+
         return _functionsDataService.updateCustomUserData(customUserData);
       });
 

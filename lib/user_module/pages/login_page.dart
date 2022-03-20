@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                               left: value.isLoggedIn ? 0 : deviceWidth,
                               top: 0,
                               bottom: 0,
-                              child: CompleteProfileStep(),
+                              child: const CompleteProfileStep(),
                             ),
                             AnimatedPositioned(
                               duration: LoginPage.animationDuration,

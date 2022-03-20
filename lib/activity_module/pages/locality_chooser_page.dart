@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../shared_module/models/authentication_state.dart';
 import '../models/locality_suggestion.dart';
 import '../utils/debouncer.dart';
 import '../views/search_mask.dart';
@@ -43,7 +42,10 @@ class _LocalityChooserPageState extends State<LocalityChooserPage> {
             : null,
         onTap: () async {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PlaceSearchPage(locality: result.name, tripId: widget.tripId,)));
+              builder: (context) => PlaceSearchPage(
+                    locality: result.name,
+                    tripId: widget.tripId,
+                  )));
           sessionToken = uuid.v4();
         },
       ),

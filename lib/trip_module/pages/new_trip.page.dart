@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/shared_module/data_service.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,13 +24,13 @@ class _NewTripState extends State<NewTrip> {
 
   DateTime _selectedDate = DateTime.now();
 
-  Future<void> createTrip(String tripId, String title, DateTime begin, DateTime end) async {
-
+  Future<void> createTrip(
+      String tripId, String title, DateTime begin, DateTime end) async {
     await context
         .read<TripDataservice>()
         .setTripAsync(Trip(tripId, title, begin, end, [], []));
-
   }
+
   static const uuid = Uuid();
 
   @override
@@ -137,15 +136,20 @@ class _NewTripState extends State<NewTrip> {
                           List beginL = _startDateController.text.split('.');
                           List endL = _endDateController.text.split('.');
                           createTrip(
-                              uuid.v4(),
-                              _tripTitleController.text,
-                              DateTime.parse(beginL[2] + "-" + beginL[1] + "-" + beginL[0]),
-                              DateTime.parse(endL[2] + "-" + endL[1] + "-" + endL[0])
-                          ).whenComplete(() => _navigateToHomeScreen(context));
+                                  uuid.v4(),
+                                  _tripTitleController.text,
+                                  DateTime.parse(beginL[2] +
+                                      "-" +
+                                      beginL[1] +
+                                      "-" +
+                                      beginL[0]),
+                                  DateTime.parse(
+                                      endL[2] + "-" + endL[1] + "-" + endL[0]))
+                              .whenComplete(
+                                  () => _navigateToHomeScreen(context));
                         },
                         isElevated: false),
-                  )
-              ),
+                  )),
             )
           ],
         ),
