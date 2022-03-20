@@ -30,9 +30,9 @@ class FunctionsDataService {
   FunctionsDataService(this._functions);
 
   Future<void> deleteActivityAsync(String tripId, String activityId) =>
-      _deleteActivity.call();
+      _deleteActivity.call({"tripId": tripId, "activityId": activityId});
 
-  Future<void> deleteTripAsync(String tripId) => _deleteTrip.call();
+  Future<void> deleteTripAsync(String tripId) => _deleteTrip.call({"tripId": tripId});
 
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) async {
     final response =

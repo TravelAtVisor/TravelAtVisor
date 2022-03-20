@@ -12,10 +12,10 @@ import '../views/opening_hour_visualizer.dart';
 
 class PlaceDetails extends StatefulWidget {
   final String foursquareId;
-  final String tripId;
+  final String? tripId;
 
   const PlaceDetails(
-      {Key? key, required this.foursquareId, required this.tripId})
+      {Key? key, required this.foursquareId, this.tripId})
       : super(key: key);
 
   @override
@@ -65,12 +65,13 @@ class _PlaceDetailsState extends State<PlaceDetails> {
       appBar: AppBar(
         title: Text(d.name),
         actions: [
+          if(widget.tripId != null)
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
               LoadingOverlay.show(context);
               await context.read<ActivityDataService>().addActivityAsync(
-                  widget.tripId,
+                  widget.tripId!,
                   Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name,
                       d.description, d.photoUrls.first));
               Navigator.of(context).popUntil((route) => route.isFirst);
