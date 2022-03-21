@@ -73,7 +73,10 @@ class FunctionsDataService {
         "activity": activity.toMap(),
       });
 
-  Future<void> setTripAsync(Trip trip) => _setTrip.call();
+  Future<void> setTripAsync(Trip trip) => _setTrip.call({
+        "trip": trip.toMap(),
+        "tripId": trip.tripId,
+      });
 
   Future<CustomUserData?> getCustomUserData() async {
     final data = await _getCustomUserData.call();
