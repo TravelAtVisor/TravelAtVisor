@@ -50,7 +50,7 @@ class TripList extends StatelessWidget {
             ),
           ),
         ),
-        buildTripActiviesList(currentTrip!),
+        if (currentTrip != null) buildTripActiviesList(currentTrip!),
       ],
     );
   }
@@ -147,9 +147,6 @@ class TripActivityRow extends StatelessWidget {
       ),
       title: Text(
         activity.title,
-        style: TextStyle(
-          fontSize: MediaQuery.of(context).size.width * 0.04,
-        ),
       ),
       children: [
         Text(activity.description ?? "Keine Beschreibung verfügbar."),
