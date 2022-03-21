@@ -139,17 +139,28 @@ class TripActivityRow extends StatelessWidget {
     return ExpansionTile(
       collapsedTextColor: Colors.black,
       collapsedIconColor: Colors.black,
-      leading: Image.network(
-        activity.photoUrl,
-        height: MediaQuery.of(context).size.width * 0.25,
-        width: MediaQuery.of(context).size.width * 0.25,
-        fit: BoxFit.contain,
+      leading: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          image: DecorationImage(
+            image: NetworkImage(
+              activity.photoUrl,
+            ),
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+        ),
       ),
       title: Text(
         activity.title,
       ),
       children: [
-        Text(activity.description ?? "Keine Beschreibung verfügbar."),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(activity.description ?? "Keine Beschreibung verfügbar."),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
