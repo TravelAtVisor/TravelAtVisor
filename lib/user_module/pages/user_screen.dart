@@ -4,6 +4,7 @@ import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/models/custom_user_data.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
+import '../../shared_module/models/trip.dart';
 import 'edit_user_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -128,6 +129,31 @@ class BiographyViewer extends StatelessWidget {
   }
 }
 
+class _Statistics {
+  late final int tripCount;
+  late final int totalDays;
+  late final int totalActivities;
+
+  _Statistics takeIntoAccount(Trip trip) {
+    return _Statistics(
+        totalActivities: totalActivities + trip.activities.length,
+        totalDays: totalDays + trip.end.difference(trip.begin).inDays,
+        tripCount: tripCount + 1);
+  }
+
+  _Statistics({
+    required this.tripCount,
+    required this.totalActivities,
+    required this.totalDays,
+  });
+
+  _Statistics.initial() {
+    tripCount = 0;
+    totalDays = 0;
+    totalActivities = 0;
+  }
+}
+
 class ProfileStatisticsViewer extends StatelessWidget {
   final CustomUserData customUserData;
   const ProfileStatisticsViewer({Key? key, required this.customUserData})
@@ -135,21 +161,24 @@ class ProfileStatisticsViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statistics = customUserData.trips.fold(_Statistics.initial(),
+        (_Statistics accumulator, trip) => accumulator.takeIntoAccount(trip));
+
     return Row(
       children: [
         Expanded(
           flex: 1,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text(
-                "7",
-                style: TextStyle(
+                "${statistics.tripCount}",
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25.0,
                 ),
               ),
-              Text("Reisen")
+              const Text("Reisen")
             ],
           ),
         ),
@@ -157,15 +186,15 @@ class ProfileStatisticsViewer extends StatelessWidget {
           flex: 1,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text(
-                "36",
-                style: TextStyle(
+                "${statistics.totalDays}",
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25.0,
                 ),
               ),
-              Text("Tage")
+              const Text("Tage")
             ],
           ),
         ),
@@ -173,15 +202,15 @@ class ProfileStatisticsViewer extends StatelessWidget {
           flex: 1,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text(
-                "152",
-                style: TextStyle(
+                "${statistics.totalActivities}",
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25.0,
                 ),
               ),
-              Text("Aktivitäten")
+              const Text("Aktivitäten")
             ],
           ),
         ),

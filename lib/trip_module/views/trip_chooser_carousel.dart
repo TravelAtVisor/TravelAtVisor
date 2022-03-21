@@ -1,5 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
+import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 
 import '../../shared_module/models/trip.dart';
 import 'scroll_progress_indicator.dart';
@@ -55,7 +58,7 @@ class TripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat('dd.MM.yyyy');
+    final DateFormat formatter = DateFormat('dd. MMMM');
     return Card(
       clipBehavior: Clip.antiAlias,
       color: Theme.of(context).colorScheme.primary,
@@ -69,14 +72,33 @@ class TripCard extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              ListTile(
-                title: Text(
-                  formatter.format(trip.begin) +
-                      " - " +
-                      formatter.format(trip.end),
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Opacity(
+                  opacity: 0.8,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${formatter.format(trip.begin)} bis ${formatter.format(trip.end)}",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize:
+                                MediaQuery.of(context).size.width * 0.035),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          LoadingOverlay.show(context);
+                          await context
+                              .read<TripDataService>()
+                              .deleteTripAsync(trip.tripId);
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.delete),
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(

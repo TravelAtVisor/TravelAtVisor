@@ -99,7 +99,8 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
 
   Image getImage() {
     if (_isRemotePhoto == true || _profilePicturePath == null) {
-      return Image.network(_profilePicturePath ?? _defaultProfilePicture);
+      return Image.network(
+          widget.initialProfilePicture ?? _defaultProfilePicture);
     }
     return Image.file(File(_profilePicturePath!));
   }
