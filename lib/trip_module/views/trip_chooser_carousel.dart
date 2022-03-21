@@ -65,30 +65,38 @@ class TripCard extends StatelessWidget {
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.95,
         height: MediaQuery.of(context).size.height * 0.19,
-        child: Column(
-          children: [
-            ListTile(
-              title: Text(
-                formatter.format(trip.begin) +
-                    " - " +
-                    formatter.format(trip.end),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.035),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 0.1),
-              child: Text(
-                trip.title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: MediaQuery.of(context).size.width * 0.11,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(
+                  formatter.format(trip.begin) +
+                      " - " +
+                      formatter.format(trip.end),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.035),
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      trip.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: MediaQuery.of(context).size.width * 0.11,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
