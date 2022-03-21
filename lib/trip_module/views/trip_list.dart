@@ -25,70 +25,32 @@ class TripList extends StatelessWidget {
     }
     return Column(
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.01,
-        ),
-        TripChooserCarousel(
-          onActiveTripChanged: (currentTrip) {
-            if (this.currentTrip?.tripId != currentTrip.tripId) {
-              context
-                  .read<TripDataService>()
-                  .setActiveTripId(currentTrip.tripId);
-            }
-          },
-          trips: trips,
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.95,
-          padding: EdgeInsets.all(
-            MediaQuery.of(context).size.width * 0.03,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TripChooserCarousel(
+            onActiveTripChanged: (currentTrip) {
+              if (this.currentTrip?.tripId != currentTrip.tripId) {
+                context
+                    .read<TripDataService>()
+                    .setActiveTripId(currentTrip.tripId);
+              }
+            },
+            trips: trips,
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.25),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 3), // changes position of shadow
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CompanionsFriends(
+                header: 'Begleiter',
+                addPerson: true,
               ),
-            ],
+            ),
           ),
-          child: const CompanionsFriends(header: 'Begleiter', addPerson: true),
         ),
-        ShaderMask(
-          shaderCallback: (rect) {
-            return const LinearGradient(
-              begin: Alignment(0.0, 0.65),
-              end: Alignment(0.0, 1.0),
-              colors: [Colors.black, Colors.transparent],
-            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-          },
-          blendMode: BlendMode.dstIn,
-          child: Container(
-              width: MediaQuery.of(context).size.width * 0.95,
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.03,
-                  right: MediaQuery.of(context).size.width * 0.03),
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.width * 0.03),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.25),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: currentTrip != null
-                  ? buildTripActiviesList(currentTrip!)
-                  : null),
-        ),
+        buildTripActiviesList(currentTrip!),
       ],
     );
   }
@@ -106,22 +68,24 @@ class TripList extends StatelessWidget {
       return previousValue;
     });
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) => TripDayRow(
-        activities: groupedByDay.values.elementAt(index),
-        tripId: trip.tripId,
+    return Expanded(
+      child: ListView.builder(
+        itemBuilder: (context, index) => TripDayCard(
+          activities: groupedByDay.values.elementAt(index),
+          tripId: trip.tripId,
+        ),
+        itemCount: groupedByDay.length,
+        shrinkWrap: true,
       ),
-      itemCount: groupedByDay.length,
     );
   }
 }
 
-class TripDayRow extends StatelessWidget {
+class TripDayCard extends StatelessWidget {
   final List<Activity> activities;
   final String tripId;
 
-  const TripDayRow({
+  const TripDayCard({
     Key? key,
     required this.activities,
     required this.tripId,
@@ -130,35 +94,33 @@ class TripDayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.015),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-                DateFormat('dd.MM.yyyy').format(activities.first.timestamp),
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.045,
-                )),
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                      DateFormat('E, dd.MM.yyyy')
+                          .format(activities.first.timestamp),
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                      )),
+                ),
+              ),
+              ...activities.map(
+                (e) => TripActivityRow(
+                  activity: e,
+                  tripId: tripId,
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.015,
-          ),
-          ...activities.map(
-            (e) => TripActivityRow(
-              activity: e,
-              tripId: tripId,
-            ),
-          ),
-          Opacity(
-              opacity: 0.2,
-              child: Divider(
-                color: Theme.of(context).colorScheme.primary,
-                thickness: 1.5,
-                indent: 20,
-                endIndent: 20,
-              ))
-        ],
+        ),
       ),
     );
   }
@@ -177,23 +139,18 @@ class TripActivityRow extends StatelessWidget {
     return ExpansionTile(
       collapsedTextColor: Colors.black,
       collapsedIconColor: Colors.black,
-      title: Row(children: [
-        Image.network(
-          activity.photoUrl,
-          height: MediaQuery.of(context).size.width * 0.25,
-          width: MediaQuery.of(context).size.width * 0.25,
-          fit: BoxFit.contain,
+      leading: Image.network(
+        activity.photoUrl,
+        height: MediaQuery.of(context).size.width * 0.25,
+        width: MediaQuery.of(context).size.width * 0.25,
+        fit: BoxFit.contain,
+      ),
+      title: Text(
+        activity.title,
+        style: TextStyle(
+          fontSize: MediaQuery.of(context).size.width * 0.04,
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.035,
-        ),
-        Flexible(
-          child: Text(activity.title,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.04,
-              )),
-        )
-      ]),
+      ),
       children: [
         Text(activity.description ?? "Keine Beschreibung verfügbar."),
         Row(
