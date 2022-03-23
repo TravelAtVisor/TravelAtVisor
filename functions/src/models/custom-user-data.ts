@@ -6,4 +6,5 @@ export interface CustomUserData {
     photoUrl?: string;
     biography?: string;
     trips: { [tripId: string]: Trip };
+    friends: string[];
 }

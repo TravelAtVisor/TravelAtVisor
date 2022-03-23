@@ -26,13 +26,20 @@ class FunctionsDataService {
   late final _searchPlaceProxy = _functions.httpsCallable("searchPlaceProxy");
   late final _getPlaceDetailsProxy =
       _functions.httpsCallable("getPlaceDetailsProxy");
+  late final _addFriend = _functions.httpsCallable("addFriend");
+  late final _removeFriend = _functions.httpsCallable("removeFriend");
+  late final _addFriendToTrip = _functions.httpsCallable("addFriendToTrip");
+  late final _removeFriendFromTrip =
+      _functions.httpsCallable("removeFriendFromTrip");
+  late final _getForeignProfile = _functions.httpsCallable("getForeignProfile");
 
   FunctionsDataService(this._functions);
 
   Future<void> deleteActivityAsync(String tripId, String activityId) =>
       _deleteActivity.call({"tripId": tripId, "activityId": activityId});
 
-  Future<void> deleteTripAsync(String tripId) => _deleteTrip.call({"tripId": tripId});
+  Future<void> deleteTripAsync(String tripId) =>
+      _deleteTrip.call({"tripId": tripId});
 
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) async {
     final response =
@@ -95,4 +102,31 @@ class FunctionsDataService {
     final data = customUserData.toMap();
     await _updateCustomUserData.call(data);
   }
+
+  Future<void> addFriend(String friendUserId) =>
+      _addFriend.call({"friendUserId": friendUserId});
+
+  Future<void> addFriendToTripAsync(String tripId, String friendUserId) =>
+      _addFriendToTrip.call({
+        "tripId": tripId,
+        "friendUserId": friendUserId,
+      });
+
+  Future<CustomUserData> getForeignProfileAsync(String foreignUserId) async {
+    final data = await _getForeignProfile.call({
+      "foreignUserId": foreignUserId,
+    });
+
+    return CustomUserData.fromDynamic(data.data);
+  }
+
+  Future<void> removeFriend(String friendUserId) => _removeFriend.call({
+        "friendUserId": friendUserId,
+      });
+
+  Future<void> removeFriendFromTripAsync(String tripId, String friendUserId) =>
+      _removeFriendFromTrip.call({
+        "tripId": tripId,
+        "friendUserId": friendUserId,
+      });
 }

@@ -11,4 +11,7 @@ abstract class UserDataService {
   Future<AuthenticationResult> signInWithGoogleAsync();
   Future<void> updateUserProfileAsync(CustomUserData customUserData);
   Future<void> signOutAsync();
+  Future<void> addFriend(String friendUserId);
+  Future<void> removeFriend(String friendUserId);
+  Future<CustomUserData> getForeignProfileAsync(String foreignUserId);
 }

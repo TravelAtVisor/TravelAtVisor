@@ -1,7 +1,7 @@
 import { useAuthenticatedFunction, useSecret } from "./utils/security-utilities";
 import { CustomUserData } from "./models/custom-user-data";
 import { useUserCollection, useUserRecord } from "./utils/firestore-utilities";
-import { config } from "firebase-functions";
+import { config, https } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
@@ -13,6 +13,9 @@ import { SearchPlacesRequest } from "./models/search-places-request";
 import { GetPlaceDetailsRequest } from "./models/get-place-details-request.ts";
 import { useCallableFunction } from "./utils/functions-utilities";
 import axios from 'axios';
+import { ModifyFriendshipRequest } from "./models/modify-friendship-request";
+import { ModifyTripFriendRequest } from "./models/modify-trip-friends-request";
+import { GetForeignProfileRequest } from "./models/get-foreign-profile-request";
 
 initializeApp(config().firebase);
 
@@ -139,4 +142,56 @@ export const getPlaceDetailsProxy = useAuthenticatedFunction<GetPlaceDetailsRequ
     });
 
     return await response.data;
+});
+
+export const addFriend = useAuthenticatedFunction<ModifyFriendshipRequest>(async ({ friendUserId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        friends: firestore.FieldValue.arrayUnion(friendUserId)
+    }, { merge: true });
+});
+
+export const removeFriend = useAuthenticatedFunction<ModifyFriendshipRequest>(async ({ friendUserId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        friends: firestore.FieldValue.arrayRemove(friendUserId)
+    }, { merge: true });
+});
+
+export const addFriendToTrip = useAuthenticatedFunction<ModifyTripFriendRequest>(async ({ friendUserId, tripId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        trips: {
+            [tripId]: {
+                friends: firestore.FieldValue.arrayUnion(friendUserId)
+            }
+        }
+    }, { merge: true });
+});
+
+export const removeFriendFromTrip = useAuthenticatedFunction<ModifyTripFriendRequest>(async ({ friendUserId, tripId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        trips: {
+            [tripId]: {
+                friends: firestore.FieldValue.arrayRemove(friendUserId)
+            }
+        }
+    }, { merge: true });
+});
+
+export const getForeignProfile = useAuthenticatedFunction<GetForeignProfileRequest>(async ({ foreignUserId }, _) => {
+    const ref = useUserRecord(foreignUserId);
+
+    const profile = await ref.get();
+
+    if (!profile.exists) {
+        throw new https.HttpsError("not-found", "The specified user id does not exist.", { foreignUserId });
+    }
+
+    return profile.data();
 });

@@ -4,6 +4,8 @@ abstract class TripDataService {
   Future<void> setTripAsync(Trip trip);
   Future<void> deleteTripAsync(String tripId);
   Future<void> deleteActivityAsync(String tripId, String activityId);
+  Future<void> addFriendToTripAsync(String tripId, String friendUserId);
+  Future<void> removeFriendFromTripAsync(String tripId, String friendUserId);
 
   void setActiveTripId(String tripId);
 }
