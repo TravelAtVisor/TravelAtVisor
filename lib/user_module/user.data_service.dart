@@ -1,3 +1,5 @@
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
+
 import '../shared_module/models/authentication_result.dart';
 import '../shared_module/models/custom_user_data.dart';
 
@@ -14,4 +16,5 @@ abstract class UserDataService {
   Future<void> addFriend(String friendUserId);
   Future<void> removeFriend(String friendUserId);
   Future<CustomUserData> getForeignProfileAsync(String foreignUserId);
+  Future<List<UserSuggestion>> searchUsersAsync(String query);
 }

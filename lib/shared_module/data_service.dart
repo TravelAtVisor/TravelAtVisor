@@ -10,6 +10,7 @@ import 'package:travel_atvisor/shared_module/authentication.data_service.dart';
 import 'package:travel_atvisor/shared_module/functions.data_service.dart';
 import 'package:travel_atvisor/shared_module/models/user_model.dart';
 import 'package:travel_atvisor/shared_module/storage.data_service.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 import '../activity_module/models/extended_place_data.dart';
 import '../activity_module/models/locality_suggestion.dart';
@@ -181,4 +182,8 @@ class DataService
   @override
   Future<void> removeFriendFromTripAsync(String tripId, String friendUserId) =>
       _functionsDataService.removeFriendFromTripAsync(tripId, friendUserId);
+
+  @override
+  Future<List<UserSuggestion>> searchUsersAsync(String query) =>
+      _functionsDataService.searchUsersAsync(query);
 }

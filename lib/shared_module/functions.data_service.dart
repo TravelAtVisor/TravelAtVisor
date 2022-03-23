@@ -5,6 +5,7 @@ import 'package:travel_atvisor/shared_module/models/activity.dart';
 import 'package:travel_atvisor/activity_module/models/place_core_data.dart';
 import 'package:travel_atvisor/activity_module/models/locality_suggestion.dart';
 import 'package:travel_atvisor/activity_module/models/extended_place_data.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 import '../activity_module/models/place_categories.dart';
 import 'models/custom_user_data.dart';
@@ -32,6 +33,7 @@ class FunctionsDataService {
   late final _removeFriendFromTrip =
       _functions.httpsCallable("removeFriendFromTrip");
   late final _getForeignProfile = _functions.httpsCallable("getForeignProfile");
+  late final _searchUsers = _functions.httpsCallable("searchUsers");
 
   FunctionsDataService(this._functions);
 
@@ -129,4 +131,11 @@ class FunctionsDataService {
         "tripId": tripId,
         "friendUserId": friendUserId,
       });
+
+  Future<List<UserSuggestion>> searchUsersAsync(String query) async {
+    final data = await _searchUsers.call({"query": query});
+    return (data.data as List<dynamic>)
+        .map((e) => UserSuggestion.fromDynamic(e))
+        .toList();
+  }
 }

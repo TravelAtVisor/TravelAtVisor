@@ -5,7 +5,7 @@ import { config, https } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
-import { firestore, initializeApp } from "firebase-admin";
+import { auth, firestore, initializeApp } from "firebase-admin";
 import { SetActivityRequest as AddActivityRequest } from "./models/add-activity-request";
 import { DeleteActivityRequest } from "./models/delete-activity-request";
 import { SearchLocalityRequest } from "./models/search-locality-request";
@@ -16,6 +16,9 @@ import axios from 'axios';
 import { ModifyFriendshipRequest } from "./models/modify-friendship-request";
 import { ModifyTripFriendRequest } from "./models/modify-trip-friends-request";
 import { GetForeignProfileRequest } from "./models/get-foreign-profile-request";
+import { SearchUserRequest } from "./models/search-user-request";
+import { UserSuggestion } from "./models/user-suggestion";
+import { useBatchedEffect } from "./utils/array-utilities";
 
 initializeApp(config().firebase);
 
@@ -194,4 +197,53 @@ export const getForeignProfile = useAuthenticatedFunction<GetForeignProfileReque
     }
 
     return profile.data();
+});
+
+export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ query }, { uid }) => {
+    const userCollection = useUserCollection();
+
+    const allUsers = (await userCollection.get())
+        .docs
+        .reduce((accumulator, data) => {
+            const profile = data.data() as CustomUserData;
+
+            const searchableFields = [profile.fullName, profile.nickname];
+
+            if (searchableFields.some(f => f.includes(query))) {
+
+                return {
+                    ...accumulator,
+                    [data.id]: {
+                        biography: profile.biography,
+                        photoUrl: profile.photoUrl,
+                        userId: data.id,
+                        userName: profile.nickname,
+                        fullName: profile.fullName,
+
+                    } as Partial<UserSuggestion>
+                };
+            }
+
+            return accumulator;
+
+        }, {} as { [userId: string]: Partial<UserSuggestion> });
+
+    const { getUsers } = auth();
+    const allUserIds = Object.keys(allUsers);
+    const results = await useBatchedEffect(allUserIds, 100, (async batch => {
+        const users = await getUsers(batch.map(uid => ({ uid })));
+        return users.users.map(({ uid, email }) => ({ uid, email }));
+    }));
+
+    return results.map(({ email, uid }) => {
+        const { fullName, biography, photoUrl, userName } = allUsers[uid];
+        return ({
+            email,
+            userId: uid,
+            fullName,
+            userName,
+            biography,
+            photoUrl,
+        } as UserSuggestion);
+    });
 });
