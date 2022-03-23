@@ -28,7 +28,7 @@ class Trip {
     return {
       "title": title,
       "begin": begin.toString(),
-      "end": begin.toString(),
+      "end": end.toString(),
       "companions": companions,
       "activities":
           activities.toMap((item) => item.activityId, (item) => item.toMap())

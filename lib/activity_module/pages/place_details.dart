@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/activity_module/views/date_time_indicator.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 import '../../shared_module/models/activity.dart';
+import '../../shared_module/views/custom_text_input.dart';
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../views/opening_hour_visualizer.dart';
@@ -14,8 +17,7 @@ class PlaceDetails extends StatefulWidget {
   final String foursquareId;
   final String? tripId;
 
-  const PlaceDetails(
-      {Key? key, required this.foursquareId, this.tripId})
+  const PlaceDetails({Key? key, required this.foursquareId, this.tripId})
       : super(key: key);
 
   @override
@@ -25,6 +27,8 @@ class PlaceDetails extends StatefulWidget {
 class _PlaceDetailsState extends State<PlaceDetails> {
   ExtendedPlaceData? _details;
   static const uuid = Uuid();
+
+  DateTime visitingDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +69,25 @@ class _PlaceDetailsState extends State<PlaceDetails> {
       appBar: AppBar(
         title: Text(d.name),
         actions: [
-          if(widget.tripId != null)
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () async {
-              LoadingOverlay.show(context);
-              await context.read<ActivityDataService>().addActivityAsync(
-                  widget.tripId!,
-                  Activity(uuid.v4(), d.foursquareId, DateTime.now(), d.name,
-                      d.description, d.photoUrls.first));
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          ),
+          if (widget.tripId != null)
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                LoadingOverlay.show(context);
+                await context.read<ActivityDataService>().addActivityAsync(
+                      widget.tripId!,
+                      Activity(
+                        uuid.v4(),
+                        d.foursquareId,
+                        visitingDay,
+                        d.name,
+                        d.description,
+                        d.photoUrls.first,
+                      ),
+                    );
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            ),
         ],
       ),
       body: SafeArea(
@@ -128,6 +139,35 @@ class _PlaceDetailsState extends State<PlaceDetails> {
                 phoneNumber: d.phoneNumber,
                 website: d.website,
               ),
+              if (widget.tripId != null)
+                DateTimeIndicator(
+                    date: visitingDay,
+                    onPressed: () async {
+                      final dateBase = await showDatePicker(
+                        context: context,
+                        initialDate: visitingDay,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(DateTime.now().year + 10),
+                      );
+
+                      if (dateBase == null) return;
+
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: const TimeOfDay(
+                          hour: 12,
+                          minute: 0,
+                        ),
+                      );
+
+                      if (time == null) return;
+                      final date = dateBase.add(
+                          Duration(hours: time.hour, minutes: time.minute));
+
+                      setState(() {
+                        visitingDay = date;
+                      });
+                    }),
               if (d.openingHours != null || d.popularHours != null)
                 OpeningHourVisualizer(
                   openingHours: d.openingHours,
