@@ -5,10 +5,8 @@ import 'package:travel_atvisor/activity_module/views/date_time_indicator.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
 
 import '../../shared_module/models/activity.dart';
-import '../../shared_module/views/custom_text_input.dart';
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../views/opening_hour_visualizer.dart';

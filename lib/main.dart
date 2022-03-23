@@ -13,6 +13,8 @@ import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'global_tab_controller.dart';
 import 'user_module/pages/login_page.dart';
@@ -21,7 +23,11 @@ const useLocalFunctions = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Future.wait([
+    Firebase.initializeApp(),
+    initializeDateFormatting('de_DE', null),
+  ]);
+  Intl.defaultLocale = 'de_DE';
   runApp(const TravelAtVisorApp());
 }
 
