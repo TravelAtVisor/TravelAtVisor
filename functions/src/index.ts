@@ -202,7 +202,9 @@ export const getForeignProfile = useAuthenticatedFunction<GetForeignProfileReque
 export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ query }, { uid }) => {
     const userCollection = useUserCollection();
 
-    const allUsers = (await userCollection.get())
+    const snapshot = await userCollection.get();
+
+    const allUsers = snapshot
         .docs
         .reduce((accumulator, data) => {
             const profile = data.data() as CustomUserData;
@@ -228,12 +230,16 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
 
         }, {} as { [userId: string]: Partial<UserSuggestion> });
 
-    const { getUsers } = auth();
+    const a = auth();
     const allUserIds = Object.keys(allUsers);
     const results = await useBatchedEffect(allUserIds, 100, (async batch => {
-        const users = await getUsers(batch.map(uid => ({ uid })));
+        console.log(`Completing user data with a batch of ${batch.length} users`);
+        const identifiers = batch.map(uid => ({ uid }));
+        const users = await a.getUsers(identifiers);
         return users.users.map(({ uid, email }) => ({ uid, email }));
     }));
+
+    console.log("Authentication module was taken into account", { results });
 
     return results.map(({ email, uid }) => {
         const { fullName, biography, photoUrl, userName } = allUsers[uid];
