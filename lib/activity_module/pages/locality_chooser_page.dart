@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../models/locality_suggestion.dart';
 import '../utils/debouncer.dart';
-import '../views/search_mask.dart';
+import '../../shared_module/views/search_mask.dart';
 import 'place_search_page.dart';
 
 class LocalityChooserPage extends StatefulWidget {

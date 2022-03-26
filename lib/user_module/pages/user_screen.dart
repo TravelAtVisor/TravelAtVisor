@@ -3,12 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/models/custom_user_data.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
+import 'package:travel_atvisor/user_module/pages/search_user.page.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 import '../../shared_module/models/trip.dart';
 import 'edit_user_screen.dart';
 
 class UserScreen extends StatefulWidget {
-  const UserScreen({Key? key}) : super(key: key);
+  final String? userId;
+
+  const UserScreen({Key? key, this.userId}) : super(key: key);
 
   @override
   _UserScreenState createState() => _UserScreenState();
@@ -18,14 +22,40 @@ class _UserScreenState extends State<UserScreen> {
   final double titleImageHeight = 200;
   final double profileImageHeight = 120;
 
+  CustomUserData? customUserData;
+
   @override
   Widget build(BuildContext context) {
-    final userDataService = context.read<UserDataService>();
+    (widget.userId == null
+            ? Future.value(
+                context.watch<ApplicationState>().currentUser!.customData)
+            : context
+                .read<UserDataService>()
+                .getForeignProfileAsync(widget.userId!))
+        .then((value) => setState(() {
+              customUserData = value;
+            }));
+
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: const Text('Profil'),
-          actions: [
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: widget.userId == null
+            ? const Text('Profil')
+            : Text(customUserData?.nickname ?? "Profil"),
+        leading: widget.userId == null
+            ? IconButton(
+                icon: const Icon(
+                  Icons.person_search,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const SearchUserPage()));
+                },
+              )
+            : null,
+        actions: [
+          if (widget.userId == null)
             IconButton(
               icon: const Icon(
                 Icons.edit,
@@ -35,65 +65,73 @@ class _UserScreenState extends State<UserScreen> {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const EditUserScreen()));
               },
-            )
-          ],
-        ),
-        body: Consumer<ApplicationState>(builder: (context, state, _) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+            ),
+          if (widget.userId != null)
+            IconButton(
+              icon: const Icon(
+                Icons.person_add,
+                color: Colors.white,
+              ),
+              onPressed: () =>
+                  context.read<UserDataService>().addFriend(widget.userId!),
+            ),
+        ],
+      ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (customUserData == null) return const LoadingOverlay();
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+        child: Column(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: profileImageHeight / 2 + 5,
+              child: CircleAvatar(
+                radius: profileImageHeight / 2,
+                foregroundImage: customUserData!.photoUrl != null
+                    ? Image.network(customUserData!.photoUrl!).image
+                    : null,
+                backgroundImage: const AssetImage("assets/ph_profile.png"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: profileImageHeight / 2 + 5,
-                    child: CircleAvatar(
-                      radius: profileImageHeight / 2,
-                      foregroundImage:
-                          state.currentUser!.customData!.photoUrl != null
-                              ? Image.network(
-                                      state.currentUser!.customData!.photoUrl!)
-                                  .image
-                              : null,
-                      backgroundImage:
-                          const AssetImage("assets/ph_profile.png"),
-                    ),
+                  Text(
+                    customUserData!.fullName,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          state.currentUser!.customData!.fullName,
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "@${state.currentUser!.customData!.nickname}",
-                          style: const TextStyle(color: Colors.lightBlue),
-                        )
-                      ],
-                    ),
-                  ),
-                  ProfileStatisticsViewer(
-                      customUserData: state.currentUser!.customData!),
-                  Divider(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  BiographyViewer(
-                      biography: state.currentUser!.customData!.biography),
-                  FullWidthButton(
-                    text: "Abmelden",
-                    onPressed: () => userDataService.signOutAsync(),
-                    isElevated: false,
-                  ),
+                  Text(
+                    "@${customUserData!.nickname}",
+                    style: const TextStyle(color: Colors.lightBlue),
+                  )
                 ],
               ),
             ),
-          );
-        }));
+            ProfileStatisticsViewer(customUserData: customUserData!),
+            Divider(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            BiographyViewer(biography: customUserData!.biography),
+            if (widget.userId == null)
+              FullWidthButton(
+                text: "Abmelden",
+                onPressed: () => context.read<UserDataService>().signOutAsync(),
+                isElevated: false,
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/debouncer.dart';
+import '../../activity_module/utils/debouncer.dart';
 
 class SearchMask<TEntity, TSuggestionFilter> extends StatefulWidget {
   final Debouncer debouncer = Debouncer(milliseconds: 200);
