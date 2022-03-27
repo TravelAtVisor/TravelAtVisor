@@ -65,7 +65,8 @@ class _EditProfileFormState extends State<EditProfileForm> {
             fullNameController.text,
             _profilePicturePath,
             biographyController.text,
-            widget.currentProfile?.trips ?? [])
+            widget.currentProfile?.trips ?? [],
+            widget.currentProfile?.friends ?? [])
         : null);
   }
 

@@ -26,15 +26,20 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    (widget.userId == null
-            ? Future.value(
-                context.watch<ApplicationState>().currentUser!.customData)
-            : context
-                .read<UserDataService>()
-                .getForeignProfileAsync(widget.userId!))
-        .then((value) => setState(() {
-              customUserData = value;
-            }));
+    var ownCustomData =
+        context.watch<ApplicationState>().currentUser!.customData;
+    if (customUserData == null) {
+      (widget.userId == null
+              ? Future.value(ownCustomData)
+              : context
+                  .read<UserDataService>()
+                  .getForeignProfileAsync(widget.userId!))
+          .then(
+        (value) => setState(() {
+          customUserData = value;
+        }),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -67,18 +72,40 @@ class _UserScreenState extends State<UserScreen> {
               },
             ),
           if (widget.userId != null)
-            IconButton(
-              icon: const Icon(
-                Icons.person_add,
-                color: Colors.white,
-              ),
-              onPressed: () =>
-                  context.read<UserDataService>().addFriend(widget.userId!),
-            ),
+            _buildFriendshipButtons(context, ownCustomData!),
         ],
       ),
       body: _buildBody(),
     );
+  }
+
+  Widget _buildFriendshipButtons(BuildContext context, CustomUserData ownData) {
+    final isAlreadyAFriend = ownData.friends.contains(widget.userId);
+    if (isAlreadyAFriend) {
+      return IconButton(
+        icon: const Icon(
+          Icons.person_remove,
+          color: Colors.white,
+        ),
+        onPressed: () async {
+          LoadingOverlay.show(context);
+          context.read<UserDataService>().removeFriend(widget.userId!);
+          Navigator.pop(context);
+        },
+      );
+    } else {
+      return IconButton(
+        icon: const Icon(
+          Icons.person_add,
+          color: Colors.white,
+        ),
+        onPressed: () async {
+          LoadingOverlay.show(context);
+          context.read<UserDataService>().addFriend(widget.userId!);
+          Navigator.pop(context);
+        },
+      );
+    }
   }
 
   Widget _buildBody() {

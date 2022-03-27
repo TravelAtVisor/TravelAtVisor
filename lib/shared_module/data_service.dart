@@ -164,24 +164,26 @@ class DataService
   }
 
   @override
-  Future<void> addFriend(String friendUserId) =>
-      _functionsDataService.addFriend(friendUserId);
+  Future<void> addFriend(String friendUserId) => _useStateMutatingFunction(
+      () => _functionsDataService.addFriend(friendUserId));
 
   @override
   Future<void> addFriendToTripAsync(String tripId, String friendUserId) =>
-      _functionsDataService.addFriendToTripAsync(tripId, friendUserId);
+      _useStateMutatingFunction(() =>
+          _functionsDataService.addFriendToTripAsync(tripId, friendUserId));
 
   @override
   Future<CustomUserData> getForeignProfileAsync(String foreignUserId) =>
       _functionsDataService.getForeignProfileAsync(foreignUserId);
 
   @override
-  Future<void> removeFriend(String friendUserId) =>
-      _functionsDataService.removeFriend(friendUserId);
+  Future<void> removeFriend(String friendUserId) => _useStateMutatingFunction(
+      () => _functionsDataService.removeFriend(friendUserId));
 
   @override
   Future<void> removeFriendFromTripAsync(String tripId, String friendUserId) =>
-      _functionsDataService.removeFriendFromTripAsync(tripId, friendUserId);
+      _useStateMutatingFunction(() => _functionsDataService
+          .removeFriendFromTripAsync(tripId, friendUserId));
 
   @override
   Future<List<UserSuggestion>> searchUsersAsync(String query) =>

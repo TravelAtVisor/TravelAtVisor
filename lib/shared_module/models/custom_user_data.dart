@@ -8,9 +8,16 @@ class CustomUserData {
   late String? photoUrl;
   late String? biography;
   late List<Trip> trips;
+  late List<String> friends;
 
   CustomUserData(
-      this.nickname, this.fullName, this.photoUrl, this.biography, this.trips);
+    this.nickname,
+    this.fullName,
+    this.photoUrl,
+    this.biography,
+    this.trips,
+    this.friends,
+  );
 
   CustomUserData.fromDynamic(dynamic data) {
     nickname = data["nickname"];
@@ -21,6 +28,9 @@ class CustomUserData {
     final tripData = data["trips"] as Map<dynamic, dynamic>;
     trips =
         tripData.entries.map((e) => Trip.fromDynamic(e.key, e.value)).toList();
+
+    final friendsData = (data["friends"] ?? []) as List<dynamic>;
+    friends = friendsData.map((e) => e.toString()).toList();
   }
 
   Map<String, dynamic> toMap() {
@@ -30,6 +40,7 @@ class CustomUserData {
       "photoUrl": photoUrl,
       "biography": biography,
       "trips": trips.toMap((item) => item.tripId, (item) => item.toMap()),
+      "friends": friends,
     };
   }
 }
