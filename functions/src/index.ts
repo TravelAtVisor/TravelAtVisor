@@ -19,6 +19,8 @@ import { GetForeignProfileRequest } from "./models/get-foreign-profile-request";
 import { SearchUserRequest } from "./models/search-user-request";
 import { UserSuggestion } from "./models/user-suggestion";
 import { useBatchedEffect } from "./utils/array-utilities";
+import { GetFriendsRequest } from "./models/get-friends-request";
+import { Friend } from "./models/friend";
 
 initializeApp(config().firebase);
 
@@ -169,7 +171,7 @@ export const addFriendToTrip = useAuthenticatedFunction<ModifyTripFriendRequest>
     await ref.set({
         trips: {
             [tripId]: {
-                friends: firestore.FieldValue.arrayUnion(friendUserId)
+                companions: firestore.FieldValue.arrayUnion(friendUserId)
             }
         }
     }, { merge: true });
@@ -181,7 +183,7 @@ export const removeFriendFromTrip = useAuthenticatedFunction<ModifyTripFriendReq
     await ref.set({
         trips: {
             [tripId]: {
-                friends: firestore.FieldValue.arrayRemove(friendUserId)
+                companions: firestore.FieldValue.arrayRemove(friendUserId),
             }
         }
     }, { merge: true });
@@ -252,4 +254,22 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
             photoUrl,
         } as UserSuggestion);
     });
+});
+
+export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ friendIds }, _) => {
+    const userCollection = useUserCollection();
+
+    const friends = await userCollection
+        .where(firestore.FieldPath.documentId(), "in", friendIds)
+        .get();
+
+    return friends.docs.map(doc => {
+        const data = doc.data();
+
+        return {
+            userId: doc.id,
+            photoUrl: data.photoUrl,
+        } as Friend;
+    })
+
 });

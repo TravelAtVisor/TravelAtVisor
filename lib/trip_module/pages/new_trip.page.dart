@@ -122,8 +122,13 @@ class _NewTripState extends State<NewTrip> {
               padding: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.03,
                   right: MediaQuery.of(context).size.width * 0.03),
-              child:
-                  const CompanionsFriends(header: 'Freunde', addPerson: true),
+              child: CompanionsFriends(
+                header: 'Freunde',
+                canAddPerson: true,
+                addFriend: (uid) {},
+                friends: const [],
+                removeFriend: (uid) {},
+              ),
             ),
             Expanded(
               child: Align(

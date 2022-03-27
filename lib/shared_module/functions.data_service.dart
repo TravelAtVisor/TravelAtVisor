@@ -9,6 +9,7 @@ import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 import '../activity_module/models/place_categories.dart';
 import 'models/custom_user_data.dart';
+import 'models/friend.dart';
 
 class FunctionsDataService {
   final FirebaseFunctions _functions;
@@ -34,6 +35,7 @@ class FunctionsDataService {
       _functions.httpsCallable("removeFriendFromTrip");
   late final _getForeignProfile = _functions.httpsCallable("getForeignProfile");
   late final _searchUsers = _functions.httpsCallable("searchUsers");
+  late final _getFriends = _functions.httpsCallable("getFriends");
 
   FunctionsDataService(this._functions);
 
@@ -136,6 +138,15 @@ class FunctionsDataService {
     final data = await _searchUsers.call({"query": query});
     return (data.data as List<dynamic>)
         .map((e) => UserSuggestion.fromDynamic(e))
+        .toList();
+  }
+
+  Future<List<Friend>> getFriends(List<String> friendUserIds) async {
+    final data = await _getFriends.call({
+      "friendIds": friendUserIds,
+    });
+    return (data.data as List<dynamic>)
+        .map((e) => Friend.fromDynamic(e))
         .toList();
   }
 }
