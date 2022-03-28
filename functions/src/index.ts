@@ -5,7 +5,7 @@ import { config, https } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
-import { auth, firestore, initializeApp } from "firebase-admin";
+import { firestore, initializeApp } from "firebase-admin";
 import { SetActivityRequest as AddActivityRequest } from "./models/add-activity-request";
 import { DeleteActivityRequest } from "./models/delete-activity-request";
 import { SearchLocalityRequest } from "./models/search-locality-request";
@@ -18,9 +18,7 @@ import { ModifyTripFriendRequest } from "./models/modify-trip-friends-request";
 import { GetForeignProfileRequest } from "./models/get-foreign-profile-request";
 import { SearchUserRequest } from "./models/search-user-request";
 import { UserSuggestion } from "./models/user-suggestion";
-import { useBatchedEffect } from "./utils/array-utilities";
 import { GetFriendsRequest } from "./models/get-friends-request";
-import { Friend } from "./models/friend";
 
 initializeApp(config().firebase);
 
@@ -228,28 +226,9 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
 
             return accumulator;
 
-        }, {} as { [userId: string]: Partial<UserSuggestion> });
+        }, {} as { [userId: string]: UserSuggestion });
 
-    const a = auth();
-    const allUserIds = Object.keys(allUsers);
-    const results = await useBatchedEffect(allUserIds, 100, (async batch => {
-        console.log(`Completing user data with a batch of ${batch.length} users`);
-        const identifiers = batch.map(uid => ({ uid }));
-        const users = await a.getUsers(identifiers);
-        return users.users.map(({ uid, email }) => ({ uid, email }));
-    }));
-
-    console.log("Authentication module was taken into account", { results });
-
-    return results.map(({ uid }) => {
-        const { fullName, photoUrl, userName } = allUsers[uid];
-        return ({
-            userId: uid,
-            fullName,
-            userName,
-            photoUrl,
-        } as UserSuggestion);
-    });
+    return allUsers;
 });
 
 export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ friendIds }, _) => {
@@ -260,12 +239,12 @@ export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ f
         .get();
 
     return friends.docs.map(doc => {
-        const { fullName, userName, photoUrl } = doc.data();
+        const { fullName, nickname, photoUrl } = doc.data();
 
         return {
             userId: doc.id,
             fullName,
-            userName,
+            userName: nickname,
             photoUrl,
         } as UserSuggestion;
     });

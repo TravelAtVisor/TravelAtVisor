@@ -24,7 +24,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
           return ListTile(
             leading: ClipOval(
               child: Image(
-                image: NetworkImage(result.photoUrl!),
+                image: NetworkImage(result.photoUrl),
               ),
             ),
             title: Text(result.fullName),

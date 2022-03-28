@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/shared_module/models/friend.dart';
-import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/views/trip_chooser_carousel.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 import '../../shared_module/models/activity.dart';
 import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
@@ -25,8 +24,9 @@ class TripList extends StatefulWidget {
 }
 
 class _TripListState extends State<TripList> {
-  List<Friend>? friends;
+  List<UserSuggestion>? friends;
 
+  // Problem: Change Tracking funktioniert nicht richtig.
   bool friendsHaveChanged() {
     final currentFriendIds = friends!.map((e) => e.userId);
     final requestedFriendIds = widget.currentTrip!.companions;

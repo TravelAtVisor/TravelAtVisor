@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:travel_atvisor/shared_module/models/friend.dart';
 import 'package:travel_atvisor/shared_module/views/profile_picture.dart';
-import 'package:travel_atvisor/trip_module/pages/add_friends.page.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 class CompanionsFriends extends StatefulWidget {
   final String header;
 
-  final List<Friend> friends;
+  final List<UserSuggestion> friends;
   final bool canAddPerson;
   final void Function() addFriend;
   final void Function(String userId) removeFriend;

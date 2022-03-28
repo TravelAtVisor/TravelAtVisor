@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../models/friend.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 class ProfilePicture extends StatefulWidget {
-  final Friend friend;
+  final UserSuggestion friend;
   final void Function(String userId) onRemoval;
 
   const ProfilePicture({
