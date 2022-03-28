@@ -218,13 +218,11 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
                 return {
                     ...accumulator,
                     [data.id]: {
-                        biography: profile.biography,
                         photoUrl: profile.photoUrl,
                         userId: data.id,
                         userName: profile.nickname,
                         fullName: profile.fullName,
-
-                    } as Partial<UserSuggestion>
+                    } as UserSuggestion
                 };
             }
 
@@ -243,14 +241,12 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
 
     console.log("Authentication module was taken into account", { results });
 
-    return results.map(({ email, uid }) => {
-        const { fullName, biography, photoUrl, userName } = allUsers[uid];
+    return results.map(({ uid }) => {
+        const { fullName, photoUrl, userName } = allUsers[uid];
         return ({
-            email,
             userId: uid,
             fullName,
             userName,
-            biography,
             photoUrl,
         } as UserSuggestion);
     });
@@ -264,12 +260,13 @@ export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ f
         .get();
 
     return friends.docs.map(doc => {
-        const data = doc.data();
+        const { fullName, userName, photoUrl } = doc.data();
 
         return {
             userId: doc.id,
-            photoUrl: data.photoUrl,
-        } as Friend;
-    })
-
+            fullName,
+            userName,
+            photoUrl,
+        } as UserSuggestion;
+    });
 });

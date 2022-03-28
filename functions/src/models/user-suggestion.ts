@@ -4,5 +4,4 @@ export interface UserSuggestion {
     fullName: string;
     photoUrl?: string;
     email: string;
-    biography?: string;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_atvisor/shared_module/models/friend.dart';
 import 'package:travel_atvisor/shared_module/views/profile_picture.dart';
+import 'package:travel_atvisor/trip_module/pages/add_friends.page.dart';
 
 class CompanionsFriends extends StatefulWidget {
   final String header;
