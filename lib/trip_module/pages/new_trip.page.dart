@@ -125,7 +125,7 @@ class _NewTripState extends State<NewTrip> {
               child: CompanionsFriends(
                 header: 'Freunde',
                 canAddPerson: true,
-                addFriend: (uid) {},
+                addFriend: () {},
                 friends: const [],
                 removeFriend: (uid) {},
               ),

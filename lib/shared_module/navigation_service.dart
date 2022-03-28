@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:travel_atvisor/activity_module/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/activity_module/pages/place_details.dart';
 import 'package:travel_atvisor/global.navigation_service.dart';
+import 'package:travel_atvisor/shared_module/models/trip.dart';
 import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
+import 'package:travel_atvisor/user_module/pages/add_friend.page.dart';
 
 class NavigationService
     implements TripNavigationService, GlobalNavigationService {
@@ -14,7 +16,8 @@ class NavigationService
   }
 
   @override
-  Future<void> pushActivityDetailScreen(BuildContext context, String foursquareId) {
+  Future<void> pushActivityDetailScreen(
+      BuildContext context, String foursquareId) {
     return Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PlaceDetails(foursquareId: foursquareId)));
   }
@@ -23,5 +26,11 @@ class NavigationService
   void pushAddTripPage(BuildContext context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const NewTrip()));
+  }
+
+  @override
+  Future<void> pushAddFriendScreen(BuildContext context, Trip trip) {
+    return Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => AddFriendPage(trip: trip)));
   }
 }

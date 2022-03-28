@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/friend.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/views/trip_chooser_carousel.dart';
 import '../../shared_module/models/activity.dart';
 import '../../shared_module/models/trip.dart';
@@ -92,9 +93,9 @@ class _TripListState extends State<TripList> {
                 child: CompanionsFriends(
                   header: 'Begleiter',
                   canAddPerson: true,
-                  addFriend: (newFriendId) =>
-                      tripDataService.addFriendToTripAsync(
-                          widget.currentTrip!.tripId, newFriendId),
+                  addFriend: () => context
+                      .read<TripNavigationService>()
+                      .pushAddFriendScreen(context, widget.currentTrip!),
                   friends: friends!,
                   removeFriend: (oldFriendId) =>
                       tripDataService.removeFriendFromTripAsync(

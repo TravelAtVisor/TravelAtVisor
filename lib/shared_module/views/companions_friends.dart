@@ -7,7 +7,7 @@ class CompanionsFriends extends StatefulWidget {
 
   final List<Friend> friends;
   final bool canAddPerson;
-  final void Function(String userId) addFriend;
+  final void Function() addFriend;
   final void Function(String userId) removeFriend;
 
   const CompanionsFriends({
@@ -32,7 +32,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
           color: primaryColor,
           iconSize: 32,
           icon: const Icon(Icons.add),
-          onPressed: () {},
+          onPressed: () => widget.addFriend(),
         ),
         Opacity(
           opacity: 0.2,
