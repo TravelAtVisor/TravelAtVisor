@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,8 @@ class NewTrip extends StatefulWidget {
 }
 
 class _NewTripState extends State<NewTrip> {
+  /*List<bool> isCardEnabled = [];
+
   final _tripTitleController = TextEditingController();
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
@@ -109,6 +113,8 @@ class _NewTripState extends State<NewTrip> {
                 //DesignCard(showBorder: false),
               ],
             ),
+
+
             /*Row(
               children: [
                 DesignCard(showBorder: false),
@@ -138,20 +144,22 @@ class _NewTripState extends State<NewTrip> {
                     child: FullWidthButton(
                         text: "Speichern",
                         onPressed: () {
-                          List beginL = _startDateController.text.split('.');
-                          List endL = _endDateController.text.split('.');
-                          createTrip(
-                                  uuid.v4(),
-                                  _tripTitleController.text,
-                                  DateTime.parse(beginL[2] +
-                                      "-" +
-                                      beginL[1] +
-                                      "-" +
-                                      beginL[0]),
-                                  DateTime.parse(
-                                      endL[2] + "-" + endL[1] + "-" + endL[0]))
-                              .whenComplete(
-                                  () => _navigateToHomeScreen(context));
+                          if(_startDateController.text!="" && _endDateController.text!="" && _tripTitleController.text != "") {
+                            List beginL = _startDateController.text.split('.');
+                            List endL = _endDateController.text.split('.');
+                            createTrip(
+                                uuid.v4(),
+                                _tripTitleController.text,
+                                DateTime.parse(beginL[2] +
+                                    "-" +
+                                    beginL[1] +
+                                    "-" +
+                                    beginL[0]),
+                                DateTime.parse(
+                                    endL[2] + "-" + endL[1] + "-" + endL[0])
+                            ).whenComplete(() =>
+                                _navigateToHomeScreen(context));
+                          } else {print("Not ready");}
                         },
                         isElevated: false),
                   )),
@@ -162,6 +170,280 @@ class _NewTripState extends State<NewTrip> {
     );
   }
 
+  void _navigateToHomeScreen(BuildContext context) {
+    Navigator.of(context).pop(context);
+  }
+
+  _selectDate(
+      BuildContext context, TextEditingController textController) async {
+    DateTime? newSelectedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 10),
+    );
+
+    if (newSelectedDate != null) {
+      _selectedDate = newSelectedDate;
+      textController
+        ..text = DateFormat('dd.MM.yyyy').format(_selectedDate)
+        ..selection = TextSelection.fromPosition(TextPosition(
+            offset: textController.text.length,
+            affinity: TextAffinity.upstream));
+    }
+  }
+
+  Widget buildDesignCard({required bool showBorder}) {
+    Color _color = Theme.of(context).colorScheme.primary;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _color = Colors.red;
+        });
+      },
+      child: Card(
+        color: _color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          //side: BorderSide(width: 5, color: Colors.green),
+        ),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.45,
+          height: MediaQuery.of(context).size.height * 0.09,
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  'Reisetitel',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }*/
+  final _tripTitleController = TextEditingController();
+  final _startDateController = TextEditingController();
+  final _endDateController = TextEditingController();
+
+  DateTime _selectedDate = DateTime.now();
+
+  Future<void> createTrip(
+      String tripId, String title, DateTime begin, DateTime end) async {
+    await context
+        .read<TripDataService>()
+        .setTripAsync(Trip(tripId, title, begin, end, [], []));
+  }
+
+  static const uuid = Uuid();
+
+  List<bool> isCardEnabled = [];
+  List<String> imagePath = ['assets/alps.jpg','assets/beach.jpg','assets/roadtrip.jpg','assets/skyline.jpg'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text("Neue Reise"),
+        //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            Column(
+              children: [
+                CustomTextInput(
+                    controller: _tripTitleController,
+                    labelText: 'Name der Reise'),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        'Reisezeitraum',
+                        style: TextStyle(
+                            fontSize:
+                            MediaQuery.of(context).size.width * 0.045),
+                      ),
+                    )),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextInput(
+                        controller: _startDateController,
+                        labelText: 'Beginn',
+                        onEntered: () {
+                          _selectDate(context, _startDateController);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomTextInput(
+                        controller: _endDateController,
+                        labelText: 'Ende',
+                        onEntered: () {
+                          _selectDate(context, _endDateController);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    'Design',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.045),
+                  ),
+                )),
+            Expanded(
+              child: GridView.builder(
+                  padding: const EdgeInsets.all(15),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10
+                  ),
+                  itemCount: 4,
+                  itemBuilder: (BuildContext context, int index){
+                    isCardEnabled.add(false);
+                    return GestureDetector(
+                        onTap: (){
+                          isCardEnabled.replaceRange(0, isCardEnabled.length, [for(int i = 0; i < isCardEnabled.length; i++)false]);
+                          isCardEnabled[index]=true;
+                          setState(() {});
+                        },
+                        child: Center(
+                          child: SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+
+                                side: isCardEnabled[index]?BorderSide(width: 5, color: Colors.blue):BorderSide(width: 0, color: Colors.white),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(imagePath[index]),
+                                    fit: BoxFit.fitWidth,
+                                    alignment: Alignment.topCenter,
+                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+                                    child: Container(
+                                      color: Colors.white.withOpacity(0.5),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.contain,
+
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                    Text(
+                                      "Reisetitel",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),]
+                                ),
+                                //child: Text("Reisetitel"),
+                              ),
+                            ),
+                          ),
+                        )
+                    );
+                  }),
+            ),
+
+
+            /*Row(
+              children: [
+                DesignCard(showBorder: false),
+                DesignCard(showBorder: false),
+              ],
+            ),*/
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.03,
+                  right: MediaQuery.of(context).size.width * 0.03),
+              child: CompanionsFriends(
+                header: 'Freunde',
+                canAddPerson: true,
+                addFriend: () {},
+                friends: const [],
+                removeFriend: (uid) {},
+              ),
+            ),
+            Expanded(
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: FullWidthButton(
+                        text: "Speichern",
+                        onPressed: () {
+                          if(_startDateController.text!="" && _endDateController.text!="" && _tripTitleController.text != "") {
+                            List beginL = _startDateController.text.split('.');
+                            List endL = _endDateController.text.split('.');
+                            createTrip(
+                                uuid.v4(),
+                                _tripTitleController.text,
+                                DateTime.parse(beginL[2] +
+                                    "-" +
+                                    beginL[1] +
+                                    "-" +
+                                    beginL[0]),
+                                DateTime.parse(
+                                    endL[2] + "-" + endL[1] + "-" + endL[0])
+                            ).whenComplete(() =>
+                                _navigateToHomeScreen(context));
+                          } else {print("Not ready");}
+                        },
+                        isElevated: false),
+                  )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   void _navigateToHomeScreen(BuildContext context) {
     Navigator.of(context).pop(context);
   }
