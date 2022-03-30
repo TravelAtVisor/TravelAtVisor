@@ -33,7 +33,10 @@ class DataService
   final StreamController<ApplicationState> _applicationStateEmitter =
       StreamController<ApplicationState>();
   Stream<ApplicationState> get applicationState =>
-      _applicationStateEmitter.stream;
+      _applicationStateEmitter.stream.map((event) {
+        currentApplicationState = event;
+        return event;
+      });
 
   Future<TResult> _useStateMutatingFunction<TResult>(
       Future<TResult> Function() mutatingFunction) async {
@@ -72,7 +75,6 @@ class DataService
     }
 
     _applicationStateEmitter.add(applicationState);
-    currentApplicationState = applicationState;
   }
 
   @override

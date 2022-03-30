@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/utils/mappers.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/views/trip_chooser_carousel.dart';
 import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
@@ -26,86 +27,95 @@ class TripList extends StatefulWidget {
 }
 
 class _TripListState extends State<TripList> {
-  List<UserSuggestion>? friendsAvailable;
+  Map<String, UserSuggestion> friendsAvailable = {};
 
-  Future<void> ensureFriends(
-      TripDataService tripDataService, List<String> friendUserIds) async {
-    if (friendsAvailable == null) {
-      tripDataService.getFriends(friendUserIds).then((value) => setState((() {
-            friendsAvailable = value;
-          })));
-    }
+  bool haveFriendsChanged(List<String> friends) {
+    final friendWasRemoved = friendsAvailable.values
+        .any((element) => !friends.contains(element.userId));
+    final friendWasAdded =
+        friends.any((element) => !friendsAvailable.containsKey(element));
+    return friendWasAdded || friendWasRemoved;
   }
 
   @override
   Widget build(BuildContext context) {
-    final tripDataService = context.read<TripDataService>();
-    if (widget.currentTrip == null) {
-      context
-          .read<TripDataService>()
-          .setActiveTripId(widget.trips.first.tripId);
-    }
+    final dataService = context.read<TripDataService>();
 
-    ensureFriends(tripDataService,
-        context.watch<ApplicationState>().currentUser!.customData!.friends);
+    return Consumer<ApplicationState>(
+      builder: ((context, value, child) {
+        if (value.currentTripId == null) {
+          dataService.setActiveTripId(widget.trips.first.tripId);
+          return const LoadingOverlay();
+        }
 
-    return widget.currentTrip == null
-        ? const LoadingOverlay()
-        : Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TripChooserCarousel(
-                  onActiveTripChanged: (currentTrip) {
-                    if (widget.currentTrip?.tripId != currentTrip.tripId) {
-                      context
-                          .read<TripDataService>()
-                          .setActiveTripId(currentTrip.tripId);
-                    }
-                  },
-                  trips: widget.trips,
-                ),
-              ),
-              if (friendsAvailable != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CompanionsFriends(
-                        header: 'Begleiter',
-                        canAddPerson: true,
-                        addFriend: () async {
-                          final newFriend = await context
-                              .read<TripNavigationService>()
-                              .pushAddFriendScreen(
-                                  context,
-                                  friendsAvailable!
-                                      .where((element) => !widget
-                                          .currentTrip!.companions
-                                          .contains(element.userId))
-                                      .toList());
-                          if (newFriend != null) {
-                            tripDataService.addFriendToTripAsync(
-                                widget.currentTrip!.tripId, newFriend.userId);
-                          }
-                        },
-                        friends: widget.currentTrip!.companions
-                            .map((e) => friendsAvailable!
-                                .where((element) => element.userId == e)
-                                .single)
-                            .toList(),
-                        removeFriend: (oldFriendId) =>
-                            tripDataService.removeFriendFromTripAsync(
-                                widget.currentTrip!.tripId, oldFriendId),
+        final currentUser = value.currentUser!.customData!;
+
+        if (haveFriendsChanged(currentUser.friends)) {
+          dataService.getFriends(currentUser.friends).then(
+                (value) => setState((() {
+                  friendsAvailable = value.toMap((e) => e.userId, (e) => e);
+                })),
+              );
+        }
+
+        return widget.currentTrip == null
+            ? const LoadingOverlay()
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TripChooserCarousel(
+                      onActiveTripChanged: (currentTrip) {
+                        if (widget.currentTrip?.tripId != currentTrip.tripId) {
+                          context
+                              .read<TripDataService>()
+                              .setActiveTripId(currentTrip.tripId);
+                        }
+                      },
+                      trips: widget.trips,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CompanionsFriends(
+                          header: 'Begleiter',
+                          canAddPerson: true,
+                          addFriend: () async {
+                            final newFriend = await context
+                                .read<TripNavigationService>()
+                                .pushAddFriendScreen(
+                                    context,
+                                    friendsAvailable.values
+                                        .where((element) => !widget
+                                            .currentTrip!.companions
+                                            .contains(element.userId))
+                                        .toList());
+                            if (newFriend != null) {
+                              dataService.addFriendToTripAsync(
+                                  widget.currentTrip!.tripId, newFriend.userId);
+                            }
+                          },
+                          friends: widget.currentTrip!.companions
+                              .where((element) =>
+                                  friendsAvailable.containsKey(element))
+                              .map((e) => friendsAvailable[e]!)
+                              .toList(),
+                          removeFriend: (oldFriendId) =>
+                              dataService.removeFriendFromTripAsync(
+                                  widget.currentTrip!.tripId, oldFriendId),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              if (widget.currentTrip != null)
-                buildTripActiviesList(widget.currentTrip!),
-            ],
-          );
+                  if (widget.currentTrip != null)
+                    buildTripActiviesList(widget.currentTrip!),
+                ],
+              );
+      }),
+    );
   }
 
   Widget buildTripActiviesList(Trip trip) {

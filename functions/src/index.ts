@@ -228,7 +228,7 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
 
         }, {} as { [userId: string]: UserSuggestion });
 
-    return allUsers;
+    return Object.values(allUsers);
 });
 
 export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ friendIds }, _) => {
