@@ -111,7 +111,6 @@ class TripCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: MediaQuery.of(context).size.width * 0.11,
                       ),
                     ),
                   ),
