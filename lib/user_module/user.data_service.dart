@@ -18,5 +18,4 @@ abstract class UserDataService {
   Future<CustomUserData> getForeignProfileAsync(String foreignUserId);
   Future<List<UserSuggestion>> searchUsersAsync(String query);
   Future<List<UserSuggestion>> getFriends(List<String> friendUserIds);
-  Future<void> addFriendToTripAsync(String tripId, String friendUserId);
 }

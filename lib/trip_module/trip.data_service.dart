@@ -9,6 +9,6 @@ abstract class TripDataService {
 
   Future<void> removeFriendFromTripAsync(String tripId, String friendUserId);
   Future<List<UserSuggestion>> getFriends(List<String> friendUserIds);
-
+  Future<void> addFriendToTripAsync(String tripId, String friendUserId);
   void setActiveTripId(String tripId);
 }

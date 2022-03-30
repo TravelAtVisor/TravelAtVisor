@@ -3,7 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../shared_module/models/trip.dart';
@@ -234,21 +237,36 @@ class _NewTripState extends State<NewTrip> {
   final _endDateController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
+  List<UserSuggestion>? friendsAvailable;
+  List<UserSuggestion> friendsToAdd = [];
 
   Future<void> createTrip(
       String tripId, String title, DateTime begin, DateTime end) async {
-    await context
-        .read<TripDataService>()
-        .setTripAsync(Trip(tripId, title, begin, end, [], []));
+    await context.read<TripDataService>().setTripAsync(Trip(tripId, title,
+        begin, end, friendsToAdd.map((e) => e.userId).toList(), []));
   }
 
   static const uuid = Uuid();
 
   List<bool> isCardEnabled = [];
-  List<String> imagePath = ['assets/alps.jpg','assets/beach.jpg','assets/roadtrip.jpg','assets/skyline.jpg'];
+  List<String> imagePath = [
+    'assets/alps.jpg',
+    'assets/beach.jpg',
+    'assets/roadtrip.jpg',
+    'assets/skyline.jpg'
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final dataService = context.read<TripDataService>();
+
+    if (friendsAvailable == null) {
+      final friends =
+          context.read<ApplicationState>().currentUser!.customData!.friends;
+      dataService.getFriends(friends).then((value) => setState((() {
+            friendsAvailable = value;
+          })));
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -277,7 +295,7 @@ class _NewTripState extends State<NewTrip> {
                         'Reisezeitraum',
                         style: TextStyle(
                             fontSize:
-                            MediaQuery.of(context).size.width * 0.045),
+                                MediaQuery.of(context).size.width * 0.045),
                       ),
                     )),
                 Row(
@@ -324,15 +342,16 @@ class _NewTripState extends State<NewTrip> {
                       crossAxisCount: 2,
                       childAspectRatio: 2,
                       crossAxisSpacing: 10,
-                      mainAxisSpacing: 10
-                  ),
+                      mainAxisSpacing: 10),
                   itemCount: 4,
-                  itemBuilder: (BuildContext context, int index){
+                  itemBuilder: (BuildContext context, int index) {
                     isCardEnabled.add(false);
                     return GestureDetector(
-                        onTap: (){
-                          isCardEnabled.replaceRange(0, isCardEnabled.length, [for(int i = 0; i < isCardEnabled.length; i++)false]);
-                          isCardEnabled[index]=true;
+                        onTap: () {
+                          isCardEnabled.replaceRange(0, isCardEnabled.length, [
+                            for (int i = 0; i < isCardEnabled.length; i++) false
+                          ]);
+                          isCardEnabled[index] = true;
                           setState(() {});
                         },
                         child: Center(
@@ -341,10 +360,11 @@ class _NewTripState extends State<NewTrip> {
                             height: 200,
                             child: Card(
                               shape: RoundedRectangleBorder(
-
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-
-                                side: isCardEnabled[index]?BorderSide(width: 5, color: Colors.blue):BorderSide(width: 0, color: Colors.white),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12)),
+                                side: isCardEnabled[index]
+                                    ? BorderSide(width: 5, color: Colors.blue)
+                                    : BorderSide(width: 0, color: Colors.white),
                               ),
                               child: Container(
                                 decoration: BoxDecoration(
@@ -353,42 +373,41 @@ class _NewTripState extends State<NewTrip> {
                                     fit: BoxFit.fitWidth,
                                     alignment: Alignment.topCenter,
                                   ),
-                                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+                                child: Stack(children: [
+                                  BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 0.0, sigmaY: 0.0),
                                     child: Container(
                                       color: Colors.white.withOpacity(0.5),
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: FittedBox(
                                           fit: BoxFit.contain,
-
                                         ),
                                       ),
                                     ),
                                   ),
-                                    Text(
-                                      "Reisetitel",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: MediaQuery.of(context).size.width * 0.05,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),]
-                                ),
+                                  Text(
+                                    "Reisetitel",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.05,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ]),
                                 //child: Text("Reisetitel"),
                               ),
                             ),
                           ),
-                        )
-                    );
+                        ));
                   }),
             ),
-
 
             /*Row(
               children: [
@@ -399,18 +418,31 @@ class _NewTripState extends State<NewTrip> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.03,
-                  right: MediaQuery.of(context).size.width * 0.03),
-              child: CompanionsFriends(
-                header: 'Freunde',
-                canAddPerson: true,
-                addFriend: () {},
-                friends: const [],
-                removeFriend: (uid) {},
+            if (friendsAvailable != null)
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.03,
+                    right: MediaQuery.of(context).size.width * 0.03),
+                child: CompanionsFriends(
+                  header: 'Freunde',
+                  canAddPerson: true,
+                  addFriend: () async {
+                    final newFriend = await context
+                        .read<TripNavigationService>()
+                        .pushAddFriendScreen(context, friendsAvailable!);
+                    if (newFriend != null) {
+                      setState(() {
+                        friendsToAdd.add(newFriend);
+                      });
+                    }
+                  },
+                  friends: friendsToAdd,
+                  removeFriend: (uid) => setState(() {
+                    friendsToAdd
+                        .removeWhere((element) => element.userId == uid);
+                  }),
+                ),
               ),
-            ),
             Expanded(
               child: Align(
                   alignment: Alignment.bottomCenter,
@@ -419,22 +451,29 @@ class _NewTripState extends State<NewTrip> {
                     child: FullWidthButton(
                         text: "Speichern",
                         onPressed: () {
-                          if(_startDateController.text!="" && _endDateController.text!="" && _tripTitleController.text != "") {
+                          if (_startDateController.text != "" &&
+                              _endDateController.text != "" &&
+                              _tripTitleController.text != "") {
                             List beginL = _startDateController.text.split('.');
                             List endL = _endDateController.text.split('.');
                             createTrip(
-                                uuid.v4(),
-                                _tripTitleController.text,
-                                DateTime.parse(beginL[2] +
-                                    "-" +
-                                    beginL[1] +
-                                    "-" +
-                                    beginL[0]),
-                                DateTime.parse(
-                                    endL[2] + "-" + endL[1] + "-" + endL[0])
-                            ).whenComplete(() =>
-                                _navigateToHomeScreen(context));
-                          } else {print("Not ready");}
+                                    uuid.v4(),
+                                    _tripTitleController.text,
+                                    DateTime.parse(beginL[2] +
+                                        "-" +
+                                        beginL[1] +
+                                        "-" +
+                                        beginL[0]),
+                                    DateTime.parse(endL[2] +
+                                        "-" +
+                                        endL[1] +
+                                        "-" +
+                                        endL[0]))
+                                .whenComplete(
+                                    () => _navigateToHomeScreen(context));
+                          } else {
+                            print("Not ready");
+                          }
                         },
                         isElevated: false),
                   )),
@@ -444,6 +483,7 @@ class _NewTripState extends State<NewTrip> {
       ),
     );
   }
+
   void _navigateToHomeScreen(BuildContext context) {
     Navigator.of(context).pop(context);
   }

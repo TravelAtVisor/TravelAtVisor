@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/views/trip_chooser_carousel.dart';
 import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 import '../../shared_module/models/activity.dart';
@@ -24,37 +26,14 @@ class TripList extends StatefulWidget {
 }
 
 class _TripListState extends State<TripList> {
-  List<UserSuggestion>? friends;
+  List<UserSuggestion>? friendsAvailable;
 
-  // Problem: Change Tracking funktioniert nicht richtig.
-  bool friendsHaveChanged() {
-    final currentFriendIds = friends!.map((e) => e.userId);
-    final requestedFriendIds = widget.currentTrip!.companions;
-
-    final intersection = currentFriendIds.fold(
-        <String>[],
-        (List<String> accumulator, element) =>
-            requestedFriendIds.contains(element)
-                ? [...accumulator, element]
-                : accumulator);
-
-    return intersection.length != currentFriendIds.length;
-  }
-
-  Future<void> ensureFriends(TripDataService tripDataService) async {
-    if (widget.currentTrip != null &&
-        (friends == null || friendsHaveChanged())) {
-      if (widget.currentTrip!.companions.isEmpty) {
-        setState(() {
-          friends = [];
-        });
-      } else {
-        tripDataService.getFriends(widget.currentTrip!.companions).then(
-              (value) => setState(() {
-                friends = value;
-              }),
-            );
-      }
+  Future<void> ensureFriends(
+      TripDataService tripDataService, List<String> friendUserIds) async {
+    if (friendsAvailable == null) {
+      tripDataService.getFriends(friendUserIds).then((value) => setState((() {
+            friendsAvailable = value;
+          })));
     }
   }
 
@@ -67,47 +46,66 @@ class _TripListState extends State<TripList> {
           .setActiveTripId(widget.trips.first.tripId);
     }
 
-    ensureFriends(tripDataService);
+    ensureFriends(tripDataService,
+        context.watch<ApplicationState>().currentUser!.customData!.friends);
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TripChooserCarousel(
-            onActiveTripChanged: (currentTrip) {
-              if (widget.currentTrip?.tripId != currentTrip.tripId) {
-                context
-                    .read<TripDataService>()
-                    .setActiveTripId(currentTrip.tripId);
-              }
-            },
-            trips: widget.trips,
-          ),
-        ),
-        if (friends != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Card(
-              child: Padding(
+    return widget.currentTrip == null
+        ? const LoadingOverlay()
+        : Column(
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CompanionsFriends(
-                  header: 'Begleiter',
-                  canAddPerson: true,
-                  addFriend: () => context
-                      .read<TripNavigationService>()
-                      .pushAddFriendScreen(context, widget.currentTrip!),
-                  friends: friends!,
-                  removeFriend: (oldFriendId) =>
-                      tripDataService.removeFriendFromTripAsync(
-                          widget.currentTrip!.tripId, oldFriendId),
+                child: TripChooserCarousel(
+                  onActiveTripChanged: (currentTrip) {
+                    if (widget.currentTrip?.tripId != currentTrip.tripId) {
+                      context
+                          .read<TripDataService>()
+                          .setActiveTripId(currentTrip.tripId);
+                    }
+                  },
+                  trips: widget.trips,
                 ),
               ),
-            ),
-          ),
-        if (widget.currentTrip != null)
-          buildTripActiviesList(widget.currentTrip!),
-      ],
-    );
+              if (friendsAvailable != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CompanionsFriends(
+                        header: 'Begleiter',
+                        canAddPerson: true,
+                        addFriend: () async {
+                          final newFriend = await context
+                              .read<TripNavigationService>()
+                              .pushAddFriendScreen(
+                                  context,
+                                  friendsAvailable!
+                                      .where((element) => !widget
+                                          .currentTrip!.companions
+                                          .contains(element.userId))
+                                      .toList());
+                          if (newFriend != null) {
+                            tripDataService.addFriendToTripAsync(
+                                widget.currentTrip!.tripId, newFriend.userId);
+                          }
+                        },
+                        friends: widget.currentTrip!.companions
+                            .map((e) => friendsAvailable!
+                                .where((element) => element.userId == e)
+                                .single)
+                            .toList(),
+                        removeFriend: (oldFriendId) =>
+                            tripDataService.removeFriendFromTripAsync(
+                                widget.currentTrip!.tripId, oldFriendId),
+                      ),
+                    ),
+                  ),
+                ),
+              if (widget.currentTrip != null)
+                buildTripActiviesList(widget.currentTrip!),
+            ],
+          );
   }
 
   Widget buildTripActiviesList(Trip trip) {
