@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:travel_atvisor/shared_module/models/trip.dart';
 import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 
 abstract class TripNavigationService {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:travel_atvisor/activity_module/pages/locality_chooser_page.dart';
 import 'package:travel_atvisor/activity_module/pages/place_details.dart';
 import 'package:travel_atvisor/global.navigation_service.dart';
-import 'package:travel_atvisor/shared_module/models/trip.dart';
 import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/user_module/models/user_suggestion.dart';

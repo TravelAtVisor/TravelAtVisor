@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
-import 'package:travel_atvisor/user_module/user.data_service.dart';
 
 import '../../shared_module/models/authentication_state.dart';
-import '../../shared_module/models/trip.dart';
 
 class AddFriendPage extends StatefulWidget {
   final List<UserSuggestion> friendsToAdd;
