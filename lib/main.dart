@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'global_tab_controller.dart';
+import 'trip_module/views/design_selector.dart';
 import 'user_module/pages/login_page.dart';
 
 const useLocalFunctions = false;
@@ -28,6 +29,7 @@ Future<void> main() async {
     initializeDateFormatting('de_DE', null),
   ]);
   Intl.defaultLocale = 'de_DE';
+
   runApp(const TravelAtVisorApp());
 }
 
@@ -36,6 +38,9 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    for (var defaultDesign in DesignSelector.defaultDesigns) {
+      precacheImage(NetworkImage(defaultDesign), context);
+    }
     var functions = FirebaseFunctions.instanceFor(region: "europe-west6");
     if (useLocalFunctions) functions.useFunctionsEmulator("localhost", 5001);
 
