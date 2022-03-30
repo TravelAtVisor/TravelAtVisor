@@ -9,6 +9,10 @@ import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
 import 'package:travel_atvisor/trip_module/pages/trip_list.page.dart';
 import 'package:travel_atvisor/user_module/pages/user_screen.dart';
 
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
 import 'shared_module/models/route_metadata.dart';
 import 'shared_module/views/custom_tab_bar.dart';
 
@@ -50,7 +54,7 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
   Widget build(BuildContext context) {
     return Consumer<ApplicationState>(
       builder: (context, state, _) => Scaffold(
-        body: SpinCircleBottomBarHolder(
+        /*body: SpinCircleBottomBarHolder(
           bottomNavigationBar: SCBottomBarDetails(
             circleColors: [Colors.white, Colors.white, Colors.white],
             iconTheme: IconThemeData(color: Colors.black45),
@@ -80,6 +84,36 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
             child: widget.pageManager.buildPage(currentRoute, context),
             bucket: bucket,
           ),
+        ),*/
+        //Solution 2:
+        body: PageStorage(
+          child: widget.pageManager.buildPage(currentRoute, context),
+          bucket: bucket,
+        ),
+        floatingActionButton: ExpandableFab(
+          distance: 112.0,
+          children: [
+            ActionButton(
+              onPressed: () => print('ABC'),
+              icon: const Icon(Icons.format_size),
+            ),
+            ActionButton(
+              onPressed: () => print('DEF'),
+              icon: const Icon(Icons.insert_photo),
+            ),
+            ActionButton(
+              onPressed: () => print('GHI'),
+              icon: const Icon(Icons.videocam),
+            ),
+            ActionButton(
+              onPressed: () => print('DEF'),
+              icon: const Icon(Icons.camera_enhance),
+            ),
+            ActionButton(
+              onPressed: () => print('GHI'),
+              icon: const Icon(Icons.camera),
+            ),
+          ],
         ),
       ),
     );
@@ -119,7 +153,7 @@ class ExampleExpandableFab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         itemCount: 25,
         itemBuilder: (context, index) {
-          return FakeItem(isBig: index.isOdd);
+          return Card();
         },
       ),
       floatingActionButton: ExpandableFab(
@@ -244,8 +278,8 @@ class _ExpandableFabState extends State<ExpandableFab>
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
     for (var i = 0, angleInDegrees = 0.0;
-        i < count;
-        i++, angleInDegrees += step) {
+    i < count;
+    i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -286,7 +320,7 @@ class _ExpandableFabState extends State<ExpandableFab>
 
 @immutable
 class _ExpandingActionButton extends StatelessWidget {
-  const _ExpandingActionButton({
+  _ExpandingActionButton({
     Key? key,
     required this.directionInDegrees,
     required this.maxDistance,
@@ -329,12 +363,14 @@ class _ExpandingActionButton extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   const ActionButton({
     Key? key,
-    this.onPressed,
     required this.icon,
+    this.tooltip,
+    this.onPressed,
   }) : super(key: key);
 
   final VoidCallback? onPressed;
   final Widget icon;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -342,34 +378,15 @@ class ActionButton extends StatelessWidget {
     return Material(
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
-      color: theme.colorScheme.secondary,
+      color: theme.accentColor,
       elevation: 4.0,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: icon,
-        color: theme.colorScheme.secondary,
-      ),
-    );
-  }
-}
-
-@immutable
-class FakeItem extends StatelessWidget {
-  const FakeItem({
-    Key? key,
-    required this.isBig,
-  }) : super(key: key);
-
-  final bool isBig;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-      height: isBig ? 128.0 : 36.0,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-        color: Colors.grey.shade300,
+      child: IconTheme.merge(
+        data: theme.accentIconTheme,
+        child: IconButton(
+          tooltip: tooltip,
+          onPressed: onPressed,
+          icon: icon,
+        ),
       ),
     );
   }
