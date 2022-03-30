@@ -81,21 +81,6 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
             bucket: bucket,
           ),
         ),
-        /*floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () =>
-              context.read<GlobalNavigationService>().pushAddTripPage(context),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: CustomTabBar(
-          routes: widget.pageManager.knownRoutes,
-          currentRoute: currentRoute,
-          onNavigated: (newRoute) => setState(
-            () {
-              currentRoute = newRoute;
-            },
-          ),
-        ),*/
       ),
     );
   }
