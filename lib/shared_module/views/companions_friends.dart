@@ -74,8 +74,12 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         ...widget.friends.map(
-                          (e) => ProfilePicture(
-                              friend: e, onRemoval: widget.removeFriend),
+                          (e) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 8),
+                            child: ProfilePicture(
+                                friend: e, onRemoval: widget.removeFriend),
+                          ),
                         ),
                         if (widget.friends.isEmpty)
                           const Text(

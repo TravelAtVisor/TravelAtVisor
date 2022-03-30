@@ -31,8 +31,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
           }),
           child: ClipOval(
             child: SizedBox(
-              height: 64,
-              width: 64,
+              height: 48,
+              width: 48,
               child: Image(
                 image: NetworkImage(widget.friend.photoUrl),
               ),
