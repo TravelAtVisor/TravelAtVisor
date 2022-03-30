@@ -1,5 +1,8 @@
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spincircle_bottom_bar/modals.dart';
+import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 import 'package:travel_atvisor/global.navigation_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/utils/page_manager.dart';
@@ -47,11 +50,38 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
   Widget build(BuildContext context) {
     return Consumer<ApplicationState>(
       builder: (context, state, _) => Scaffold(
-        body: PageStorage(
-          child: widget.pageManager.buildPage(currentRoute, context),
-          bucket: bucket,
+        body: SpinCircleBottomBarHolder(
+          bottomNavigationBar: SCBottomBarDetails(
+            circleColors: [Colors.white, Colors.white, Colors.white],
+            iconTheme: IconThemeData(color: Colors.black45),
+            activeIconTheme: IconThemeData(color: Colors.orange),
+            backgroundColor: Colors.white,
+            titleStyle: TextStyle(color: Colors.black45,fontSize: 12),
+            activeTitleStyle: TextStyle(color: Colors.black,fontSize: 12,fontWeight: FontWeight.bold),
+            actionButtonDetails: SCActionButtonDetails(
+              color: Colors.blueGrey,
+              icon: Icon(
+                Icons.expand_less,
+                color: Colors.white,
+              ),
+              elevation: 2),
+            elevation: 2,
+            items: [
+              SCBottomBarItem(icon: Icons.verified_user, title: "User", onPressed: () {}),
+              SCBottomBarItem(icon: Icons.notifications, title: "Notifications", onPressed: () {}),
+            ],
+            circleItems: [
+              SCItem(icon: Icon(Icons.add), onPressed: () {}),
+              SCItem(icon: Icon(Icons.print), onPressed: () {})
+            ],
+            bnbHeight: 80
+            ),
+          child: PageStorage(
+            child: widget.pageManager.buildPage(currentRoute, context),
+            bucket: bucket,
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () =>
               context.read<GlobalNavigationService>().pushAddTripPage(context),
@@ -65,7 +95,7 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
               currentRoute = newRoute;
             },
           ),
-        ),
+        ),*/
       ),
     );
   }
@@ -359,3 +389,5 @@ class FakeItem extends StatelessWidget {
     );
   }
 }
+
+
