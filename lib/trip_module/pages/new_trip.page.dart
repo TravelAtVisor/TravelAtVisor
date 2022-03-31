@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/trip_module/views/design_selector.dart';
@@ -34,6 +35,7 @@ class _NewTripState extends State<NewTrip> {
 
   Future<void> createTrip(
       String tripId, String title, DateTime begin, DateTime end) async {
+    LoadingOverlay.show(context);
     await context.read<TripDataService>().setTripAsync(Trip(
         tripId,
         title,
@@ -42,6 +44,7 @@ class _NewTripState extends State<NewTrip> {
         friendsToAdd.map((e) => e.userId).toList(),
         [],
         tripDesignPath!));
+    Navigator.pop(context);
   }
 
   static const uuid = Uuid();

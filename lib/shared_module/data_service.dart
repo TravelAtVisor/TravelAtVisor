@@ -46,6 +46,11 @@ class DataService
     return result;
   }
 
+  void _setState(ApplicationState state) {
+    currentApplicationState = state;
+    _applicationStateEmitter.add(state);
+  }
+
   @override
   Future<CustomUserData?> getCustomUserDataByIdAsync() =>
       _functionsDataService.getCustomUserData();
@@ -74,7 +79,7 @@ class DataService
       );
     }
 
-    _applicationStateEmitter.add(applicationState);
+    _setState(applicationState);
   }
 
   @override
@@ -105,7 +110,7 @@ class DataService
         final isLocalDesignUrl = File(trip.tripDesign).existsSync();
 
         final newDesignPath = await _storageDataService.updateCustomTripDesign(
-            trip.tripId, trip.tripDesign);
+            trip.tripId, isLocalDesignUrl ? trip.tripDesign : null);
 
         await _functionsDataService.setTripAsync(
           Trip(
@@ -175,7 +180,7 @@ class DataService
 
   @override
   void setActiveTripId(String tripId) {
-    _applicationStateEmitter.add(ApplicationState(
+    _setState(ApplicationState(
       currentApplicationState.currentUser,
       tripId,
     ));
