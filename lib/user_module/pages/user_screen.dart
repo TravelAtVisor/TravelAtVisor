@@ -66,9 +66,13 @@ class _UserScreenState extends State<UserScreen> {
                 Icons.edit,
                 color: Colors.white,
               ),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const EditUserScreen()));
+              onPressed: () async {
+                final newUserState = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const EditUserScreen()));
+                setState(() {
+                  customUserData = newUserState;
+                });
               },
             ),
           if (widget.userId != null)
