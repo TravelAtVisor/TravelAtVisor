@@ -86,9 +86,12 @@ class DataService
 
   @override
   Future<void> deleteTripAsync(String tripId) =>
-      _useStateMutatingFunction(() => _functionsDataService.deleteTripAsync(
-            tripId,
-          ));
+      _useStateMutatingFunction(() => Future.wait([
+            _functionsDataService.deleteTripAsync(
+              tripId,
+            ),
+            _storageDataService.deleteCustomTripDesign(tripId),
+          ]));
 
   @override
   Future<void> addActivityAsync(String tripId, Activity activity) =>

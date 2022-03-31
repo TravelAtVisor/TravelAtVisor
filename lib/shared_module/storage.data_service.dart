@@ -31,22 +31,31 @@ class StorageDataService {
       await ref.putFile(File(imagePath));
       url = await ref.getDownloadURL();
     } else {
-      try {
-        await ref.delete();
-      } on FirebaseException catch (e) {
-        // Unfortunately FlutterFire does not support a way to determine
-        // whether a file exists so we will ignore a possible exception
-        // in this place but log it to the console if in debug mode.
-        if (e.code != "object-not-found") {
-          rethrow;
-        }
-
-        if (kDebugMode) {
-          print(e);
-        }
-      }
+      await _deleteRef(ref);
     }
 
     return url ?? defaultValue;
+  }
+
+  Future<void> deleteCustomTripDesign(String tripId) {
+    final ref = _storage.ref("trip_designs/$tripId");
+    return _deleteRef(ref);
+  }
+
+  Future<void> _deleteRef(Reference ref) async {
+    try {
+      await ref.delete();
+    } on FirebaseException catch (e) {
+      // Unfortunately FlutterFire does not support a way to determine
+      // whether a file exists so we will ignore a possible exception
+      // in this place but log it to the console if in debug mode.
+      if (e.code != "object-not-found") {
+        rethrow;
+      }
+
+      if (kDebugMode) {
+        print(e);
+      }
+    }
   }
 }
