@@ -33,10 +33,7 @@ class DataService
   final StreamController<ApplicationState> _applicationStateEmitter =
       StreamController<ApplicationState>();
   Stream<ApplicationState> get applicationState =>
-      _applicationStateEmitter.stream.map((event) {
-        currentApplicationState = event;
-        return event;
-      });
+      _applicationStateEmitter.stream;
 
   void _setState(ApplicationState state) {
     currentApplicationState = state;

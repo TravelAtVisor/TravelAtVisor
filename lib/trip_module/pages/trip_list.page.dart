@@ -41,7 +41,6 @@ class _TripListPageState extends State<TripListPage> {
           body: Center(
             child: trips.isNotEmpty
                 ? TripList(
-                    currentTrip: currentTrip,
                     trips: trips,
                   )
                 : Column(
