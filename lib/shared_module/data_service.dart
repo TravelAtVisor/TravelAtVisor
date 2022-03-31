@@ -38,14 +38,6 @@ class DataService
         return event;
       });
 
-  Future<TResult> _useStateMutatingFunction<TResult>(
-      Future<TResult> Function() mutatingFunction) async {
-    final result = await mutatingFunction();
-    await refreshCurrentUser(_authenticationDataService.currentUser);
-
-    return result;
-  }
-
   void _setState(ApplicationState state) {
     currentApplicationState = state;
     _applicationStateEmitter.add(state);
@@ -83,47 +75,169 @@ class DataService
   }
 
   @override
-  Future<void> deleteActivityAsync(String tripId, String activityId) =>
-      _useStateMutatingFunction(() => _functionsDataService.deleteActivityAsync(
-            tripId,
-            activityId,
-          ));
+  Future<void> deleteActivityAsync(String tripId, String activityId) async {
+    await _functionsDataService.deleteActivityAsync(
+      tripId,
+      activityId,
+    );
+
+    final newTrips =
+        currentApplicationState.currentUser!.customData!.trips.map((e) {
+      if (e.tripId != tripId) return e;
+
+      final newActivities =
+          e.activities.where((a) => a.activityId != activityId).toList();
+
+      return Trip(tripId, e.title, e.begin, e.end, e.companions, newActivities,
+          e.tripDesign);
+    }).toList();
+
+    final userModel = currentApplicationState.currentUser!;
+    final newCustomData = CustomUserData(
+        userModel.customData!.nickname,
+        userModel.customData!.fullName,
+        userModel.customData!.photoUrl,
+        userModel.customData!.biography,
+        newTrips,
+        userModel.customData!.friends);
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          newCustomData,
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
-  Future<void> deleteTripAsync(String tripId) =>
-      _useStateMutatingFunction(() => Future.wait([
-            _functionsDataService.deleteTripAsync(
-              tripId,
-            ),
-            _storageDataService.deleteCustomTripDesign(tripId),
-          ]));
+  Future<void> deleteTripAsync(String tripId) async {
+    await Future.wait([
+      _functionsDataService.deleteTripAsync(
+        tripId,
+      ),
+      _storageDataService.deleteCustomTripDesign(tripId),
+    ]);
+
+    final userModel = currentApplicationState.currentUser!;
+    final newCustomData = CustomUserData(
+        userModel.customData!.nickname,
+        userModel.customData!.fullName,
+        userModel.customData!.photoUrl,
+        userModel.customData!.biography,
+        userModel.customData!.trips
+            .where((element) => element.tripId != tripId)
+            .toList(),
+        userModel.customData!.friends);
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          newCustomData,
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
-  Future<void> addActivityAsync(String tripId, Activity activity) =>
-      _useStateMutatingFunction(() => _functionsDataService.addActivityAsync(
-            tripId,
-            activity,
-          ));
+  Future<void> addActivityAsync(String tripId, Activity activity) async {
+    await _functionsDataService.addActivityAsync(
+      tripId,
+      activity,
+    );
+
+    final newTrips =
+        currentApplicationState.currentUser!.customData!.trips.map((e) {
+      if (e.tripId != tripId) return e;
+
+      final newActivities = [
+        ...e.activities,
+        activity,
+      ];
+
+      return Trip(
+        tripId,
+        e.title,
+        e.begin,
+        e.end,
+        e.companions,
+        newActivities,
+        e.tripDesign,
+      );
+    }).toList();
+
+    final userModel = currentApplicationState.currentUser!;
+    final newCustomData = CustomUserData(
+        userModel.customData!.nickname,
+        userModel.customData!.fullName,
+        userModel.customData!.photoUrl,
+        userModel.customData!.biography,
+        newTrips,
+        userModel.customData!.friends);
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          newCustomData,
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
-  Future<void> setTripAsync(Trip trip) => _useStateMutatingFunction(() async {
-        final isLocalDesignUrl = File(trip.tripDesign).existsSync();
+  Future<void> setTripAsync(Trip trip) async {
+    final isLocalDesignUrl = File(trip.tripDesign).existsSync();
 
-        final newDesignPath = await _storageDataService.updateCustomTripDesign(
-            trip.tripId, isLocalDesignUrl ? trip.tripDesign : null);
+    final newDesignPath = await _storageDataService.updateCustomTripDesign(
+        trip.tripId, isLocalDesignUrl ? trip.tripDesign : null);
 
-        await _functionsDataService.setTripAsync(
-          Trip(
-            trip.tripId,
-            trip.title,
-            trip.begin,
-            trip.end,
-            trip.companions,
-            trip.activities,
-            isLocalDesignUrl ? newDesignPath! : trip.tripDesign,
-          ),
-        );
-      });
+    await _functionsDataService.setTripAsync(
+      Trip(
+        trip.tripId,
+        trip.title,
+        trip.begin,
+        trip.end,
+        trip.companions,
+        trip.activities,
+        isLocalDesignUrl ? newDesignPath! : trip.tripDesign,
+      ),
+    );
+
+    final newTrips = [
+      ...currentApplicationState.currentUser!.customData!.trips
+          .where((element) => element.tripId != trip.tripId),
+      trip,
+    ];
+
+    final userModel = currentApplicationState.currentUser!;
+    final newCustomData = CustomUserData(
+        userModel.customData!.nickname,
+        userModel.customData!.fullName,
+        userModel.customData!.photoUrl,
+        userModel.customData!.biography,
+        newTrips,
+        userModel.customData!.friends);
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          newCustomData,
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
@@ -144,22 +258,34 @@ class DataService
       _functionsDataService.isUsernameAvailable(username);
 
   @override
-  Future<void> updateUserProfileAsync(CustomUserData customUserData) =>
-      _useStateMutatingFunction(() async {
-        final userId = _authenticationDataService.currentUser!.uid;
+  Future<void> updateUserProfileAsync(CustomUserData customUserData) async {
+    final userId = _authenticationDataService.currentUser!.uid;
 
-        final isLocalPhotoUrl = customUserData.photoUrl != null
-            ? File(customUserData.photoUrl!).existsSync()
-            : true;
+    final isLocalPhotoUrl = customUserData.photoUrl != null
+        ? File(customUserData.photoUrl!).existsSync()
+        : true;
 
-        if (isLocalPhotoUrl) {
-          final photoUrl = await _storageDataService.updateProfilePicture(
-              userId, customUserData.photoUrl);
-          customUserData.photoUrl = photoUrl;
-        }
+    if (isLocalPhotoUrl) {
+      final photoUrl = await _storageDataService.updateProfilePicture(
+          userId, customUserData.photoUrl);
+      customUserData.photoUrl = photoUrl;
+    }
 
-        return _functionsDataService.updateCustomUserData(customUserData);
-      });
+    await _functionsDataService.updateCustomUserData(customUserData);
+
+    final userModel = currentApplicationState.currentUser!;
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          customUserData,
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
   Future<AuthenticationResult> signUpAsync(
@@ -187,26 +313,137 @@ class DataService
   }
 
   @override
-  Future<void> addFriend(String friendUserId) => _useStateMutatingFunction(
-      () => _functionsDataService.addFriend(friendUserId));
+  Future<void> addFriend(String friendUserId) async {
+    await _functionsDataService.addFriend(friendUserId);
+
+    final userModel = currentApplicationState.currentUser!;
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          CustomUserData(
+              userModel.customData!.nickname,
+              userModel.customData!.fullName,
+              userModel.customData!.photoUrl,
+              userModel.customData!.biography,
+              userModel.customData!.trips, [
+            ...userModel.customData!.friends,
+            friendUserId,
+          ]),
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
-  Future<void> addFriendToTripAsync(String tripId, String friendUserId) =>
-      _useStateMutatingFunction(() =>
-          _functionsDataService.addFriendToTripAsync(tripId, friendUserId));
+  Future<void> addFriendToTripAsync(String tripId, String friendUserId) async {
+    await _functionsDataService.addFriendToTripAsync(tripId, friendUserId);
+
+    final userModel = currentApplicationState.currentUser!;
+
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          CustomUserData(
+            userModel.customData!.nickname,
+            userModel.customData!.fullName,
+            userModel.customData!.photoUrl,
+            userModel.customData!.biography,
+            userModel.customData!.trips.map((t) {
+              if (t.tripId != tripId) return t;
+              return Trip(
+                tripId,
+                t.title,
+                t.begin,
+                t.end,
+                [
+                  ...t.companions,
+                  friendUserId,
+                ],
+                t.activities,
+                t.tripDesign,
+              );
+            }).toList(),
+            userModel.customData!.friends,
+          ),
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
   Future<CustomUserData> getForeignProfileAsync(String foreignUserId) =>
       _functionsDataService.getForeignProfileAsync(foreignUserId);
 
   @override
-  Future<void> removeFriend(String friendUserId) => _useStateMutatingFunction(
-      () => _functionsDataService.removeFriend(friendUserId));
+  Future<void> removeFriend(String friendUserId) async {
+    await _functionsDataService.removeFriend(friendUserId);
+
+    final userModel = currentApplicationState.currentUser!;
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          CustomUserData(
+            userModel.customData!.nickname,
+            userModel.customData!.fullName,
+            userModel.customData!.photoUrl,
+            userModel.customData!.biography,
+            userModel.customData!.trips,
+            userModel.customData!.friends
+                .where((element) => element != friendUserId)
+                .toList(),
+          ),
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
-  Future<void> removeFriendFromTripAsync(String tripId, String friendUserId) =>
-      _useStateMutatingFunction(() => _functionsDataService
-          .removeFriendFromTripAsync(tripId, friendUserId));
+  Future<void> removeFriendFromTripAsync(
+      String tripId, String friendUserId) async {
+    await _functionsDataService.removeFriendFromTripAsync(tripId, friendUserId);
+
+    final userModel = currentApplicationState.currentUser!;
+    _setState(
+      ApplicationState(
+        UserModel(
+          userModel.userId,
+          userModel.email,
+          CustomUserData(
+            userModel.customData!.nickname,
+            userModel.customData!.fullName,
+            userModel.customData!.photoUrl,
+            userModel.customData!.biography,
+            userModel.customData!.trips.map((e) {
+              if (e.tripId != tripId) return e;
+              return Trip(
+                tripId,
+                e.title,
+                e.begin,
+                e.end,
+                e.companions
+                    .where((element) => element != friendUserId)
+                    .toList(),
+                e.activities,
+                e.tripDesign,
+              );
+            }).toList(),
+            userModel.customData!.friends,
+          ),
+        ),
+        currentApplicationState.currentTripId,
+      ),
+    );
+  }
 
   @override
   Future<List<UserSuggestion>> searchUsersAsync(String query) =>
