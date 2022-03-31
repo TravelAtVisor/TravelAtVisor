@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DesignSelector extends StatefulWidget {
+  final void Function(String designPath) onPathChanged;
+
   static const defaultDesigns = [
     "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/trip_designs%2Falpen.png?alt=media&token=cce69cb7-14fe-4407-9308-b2c64385ce4c",
     "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/trip_designs%2Froadtrip.png?alt=media&token=880d0ea6-c928-43d6-8223-4c301a4df019",
@@ -12,7 +14,10 @@ class DesignSelector extends StatefulWidget {
     "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/trip_designs%2Fstrand.png?alt=media&token=1e7a1e2b-03cd-49f0-aced-76eb99043588",
   ];
 
-  const DesignSelector({Key? key}) : super(key: key);
+  const DesignSelector({
+    Key? key,
+    required this.onPathChanged,
+  }) : super(key: key);
 
   @override
   State<DesignSelector> createState() => _DesignSelectorState();
@@ -20,7 +25,7 @@ class DesignSelector extends StatefulWidget {
 
 class _DesignSelectorState extends State<DesignSelector> {
   final imagePicker = ImagePicker();
-  int currentDesign = 0;
+  int currentDesign = -1;
   String? customImagePath;
 
   DecorationImage? getDecorationImage(int index) {
@@ -74,6 +79,8 @@ class _DesignSelectorState extends State<DesignSelector> {
                       setState(() {
                         currentDesign = index;
                       });
+                      widget.onPathChanged(DesignSelector.defaultDesigns
+                          .elementAt(currentDesign));
                     },
                     child: Center(
                       child: SizedBox(
@@ -90,34 +97,30 @@ class _DesignSelectorState extends State<DesignSelector> {
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(12)),
                             ),
-                            child: Stack(children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                  child: Container(),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                child: Center(
+                                  child: index ==
+                                          DesignSelector.defaultDesigns.length
+                                      ? IconButton(
+                                          onPressed: () => pickCustomImage(),
+                                          icon: const Icon(Icons.edit),
+                                        )
+                                      : const Expanded(
+                                          child: Text(
+                                            "Reisetitel",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 30.0),
+                                          ),
+                                        ),
                                 ),
                               ),
-                              Center(
-                                child: index ==
-                                        DesignSelector.defaultDesigns.length
-                                    ? IconButton(
-                                        onPressed: () => pickCustomImage(),
-                                        icon: const Icon(Icons.edit),
-                                      )
-                                    : const Expanded(
-                                        child: Text(
-                                          "Reisetitel",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 30.0),
-                                        ),
-                                      ),
-                              ),
-                            ]),
+                            ),
                           ),
                         ),
                       ),
@@ -136,5 +139,6 @@ class _DesignSelectorState extends State<DesignSelector> {
       customImagePath = image.path;
       currentDesign = DesignSelector.defaultDesigns.length;
     });
+    widget.onPathChanged(image.path);
   }
 }

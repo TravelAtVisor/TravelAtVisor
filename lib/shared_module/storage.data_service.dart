@@ -12,15 +12,27 @@ class StorageDataService {
 
   Future<String> updateProfilePicture(
       String userId, String? profilePicturePath) async {
+    final ref = _storage.ref("users/$userId");
+    return (await _setOrDeleteImage(
+        ref, profilePicturePath, _defaultProfilePicture))!;
+  }
+
+  Future<String?> updateCustomTripDesign(
+      String tripId, String? customTripDesignPath) {
+    final ref = _storage.ref("trip_designs/$tripId");
+    return _setOrDeleteImage(ref, customTripDesignPath, null);
+  }
+
+  Future<String?> _setOrDeleteImage(
+      Reference ref, String? imagePath, String? defaultValue) async {
     String? url;
 
-    if (profilePicturePath != null) {
-      final ref = _storage.ref("users/$userId");
-      await ref.putFile(File(profilePicturePath));
+    if (imagePath != null) {
+      await ref.putFile(File(imagePath));
       url = await ref.getDownloadURL();
     } else {
       try {
-        await _storage.ref("users/$userId").delete();
+        await ref.delete();
       } on FirebaseException catch (e) {
         // Unfortunately FlutterFire does not support a way to determine
         // whether a file exists so we will ignore a possible exception
@@ -35,6 +47,6 @@ class StorageDataService {
       }
     }
 
-    return url ?? _defaultProfilePicture;
+    return url ?? defaultValue;
   }
 }

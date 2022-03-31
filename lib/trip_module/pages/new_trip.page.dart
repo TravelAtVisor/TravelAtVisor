@@ -28,24 +28,23 @@ class _NewTripState extends State<NewTrip> {
   final _endDateController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
+  String? tripDesignPath;
   List<UserSuggestion>? friendsAvailable;
   List<UserSuggestion> friendsToAdd = [];
 
   Future<void> createTrip(
       String tripId, String title, DateTime begin, DateTime end) async {
-    await context.read<TripDataService>().setTripAsync(Trip(tripId, title,
-        begin, end, friendsToAdd.map((e) => e.userId).toList(), []));
+    await context.read<TripDataService>().setTripAsync(Trip(
+        tripId,
+        title,
+        begin,
+        end,
+        friendsToAdd.map((e) => e.userId).toList(),
+        [],
+        tripDesignPath!));
   }
 
   static const uuid = Uuid();
-
-  List<bool> isCardEnabled = [];
-  List<String> imagePath = [
-    'assets/alps.jpg',
-    'assets/beach.jpg',
-    'assets/roadtrip.jpg',
-    'assets/skyline.jpg'
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +115,11 @@ class _NewTripState extends State<NewTrip> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
             ),
-            DesignSelector(),
+            DesignSelector(
+              onPathChanged: (designPath) => setState(() {
+                tripDesignPath = designPath;
+              }),
+            ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
             ),

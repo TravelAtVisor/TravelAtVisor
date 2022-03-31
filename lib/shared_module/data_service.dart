@@ -98,10 +98,24 @@ class DataService
           ));
 
   @override
-  Future<void> setTripAsync(Trip trip) =>
-      _useStateMutatingFunction(() => _functionsDataService.setTripAsync(
-            trip,
-          ));
+  Future<void> setTripAsync(Trip trip) => _useStateMutatingFunction(() async {
+        final isLocalDesignUrl = File(trip.tripDesign).existsSync();
+
+        final newDesignPath = await _storageDataService.updateCustomTripDesign(
+            trip.tripId, trip.tripDesign);
+
+        await _functionsDataService.setTripAsync(
+          Trip(
+            trip.tripId,
+            trip.title,
+            trip.begin,
+            trip.end,
+            trip.companions,
+            trip.activities,
+            isLocalDesignUrl ? newDesignPath! : trip.tripDesign,
+          ),
+        );
+      });
 
   @override
   Future<ExtendedPlaceData> getPlaceDetailsAsync(String foursquareId) =>
@@ -130,7 +144,6 @@ class DataService
             ? File(customUserData.photoUrl!).existsSync()
             : true;
 
-        // As uploading the photo is time expensive, only upload it local files
         if (isLocalPhotoUrl) {
           final photoUrl = await _storageDataService.updateProfilePicture(
               userId, customUserData.photoUrl);
