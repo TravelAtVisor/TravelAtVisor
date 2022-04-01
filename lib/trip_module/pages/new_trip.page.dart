@@ -24,8 +24,6 @@ class NewTrip extends StatefulWidget {
 
 class _NewTripState extends State<NewTrip> {
   final _tripTitleController = TextEditingController();
-  final _startDateController = TextEditingController();
-  final _endDateController = TextEditingController();
 
   String? tripDesignPath;
   List<UserSuggestion>? friendsAvailable;
@@ -47,12 +45,19 @@ class _NewTripState extends State<NewTrip> {
 
   static const uuid = Uuid();
 
-  String _selectedDate = '';
-  String _range = '';
+  DateTime? startDate;
+  DateTime? endDate;
+
+  bool get _isFormValid =>
+      startDate != null &&
+      endDate != null &&
+      _tripTitleController.text.isNotEmpty &&
+      tripDesignPath != null;
 
   @override
   Widget build(BuildContext context) {
     final dataService = context.read<TripDataService>();
+    final dateFormatter = DateFormat("d. MMMM y");
 
     if (friendsAvailable == null) {
       final friends =
@@ -61,43 +66,47 @@ class _NewTripState extends State<NewTrip> {
             friendsAvailable = value;
           })));
     }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Neue Reise"),
         //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            Column(
-              children: [
-                CustomTextInput(
-                    controller: _tripTitleController,
-                    labelText: 'Name der Reise'),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        'Reisezeitraum',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.045),
-                      ),
-                    )),
-                Row(
+      body: ListView(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          Column(
+            children: [
+              CustomTextInput(
+                  controller: _tripTitleController,
+                  labelText: 'Name der Reise'),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Reisezeitraum',
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.045),
+                    ),
+                  )),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
                   children: [
                     Expanded(
                       child: CustomTextInput(
                         readOnly: true,
-                        controller: _startDateController,
+                        controller: TextEditingController(
+                            text: startDate != null
+                                ? dateFormatter.format(startDate!)
+                                : null),
                         labelText: 'Beginn',
                         onEntered: () {
                           _calendarDialog();
@@ -107,7 +116,10 @@ class _NewTripState extends State<NewTrip> {
                     Expanded(
                       child: CustomTextInput(
                         readOnly: true,
-                        controller: _endDateController,
+                        controller: TextEditingController(
+                            text: endDate != null
+                                ? dateFormatter.format(endDate!)
+                                : null),
                         labelText: 'Ende',
                         onEntered: () {
                           _calendarDialog();
@@ -116,92 +128,74 @@ class _NewTripState extends State<NewTrip> {
                     ),
                   ],
                 ),
-              ],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            DesignSelector(
-              onPathChanged: (designPath) => setState(() {
-                tripDesignPath = designPath;
-              }),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            if (friendsAvailable != null)
-              Padding(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.03,
-                    right: MediaQuery.of(context).size.width * 0.03),
-                child: CompanionsFriends(
-                  header: 'Freunde',
-                  canAddPerson: true,
-                  addFriend: () async {
-                    final newFriend = await context
-                        .read<TripNavigationService>()
-                        .pushAddFriendScreen(context, friendsAvailable!);
-                    if (newFriend != null) {
-                      setState(() {
-                        friendsToAdd.add(newFriend);
-                      });
-                    }
-                  },
-                  friends: friendsToAdd,
-                  removeFriend: (uid) => setState(() {
-                    friendsToAdd
-                        .removeWhere((element) => element.userId == uid);
-                  }),
-                ),
               ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: FullWidthButton(
-                        text: "Speichern",
-                        onPressed: () {
-                          if (_startDateController.text != "" &&
-                              _endDateController.text != "" &&
-                              _tripTitleController.text != "" &&
-                              tripDesignPath != "") {
-                            List beginL = _startDateController.text.split('.');
-                            List endL = _endDateController.text.split('.');
-                            createTrip(
-                                    uuid.v4(),
-                                    _tripTitleController.text,
-                                    DateTime.parse(beginL[2] +
-                                        "-" +
-                                        beginL[1] +
-                                        "-" +
-                                        beginL[0]),
-                                    DateTime.parse(endL[2] +
-                                        "-" +
-                                        endL[1] +
-                                        "-" +
-                                        endL[0]))
-                                .whenComplete(
-                                    () => _navigateToHomeScreen(context));
-                          } else {
-                            print("Not ready");
-                          }
-                        },
-                        isElevated: false),
-                  )),
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          DesignSelector(
+            onPathChanged: (designPath) => setState(() {
+              tripDesignPath = designPath;
+            }),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          if (friendsAvailable != null)
+            Padding(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.03,
+                  right: MediaQuery.of(context).size.width * 0.03),
+              child: CompanionsFriends(
+                header: 'Freunde',
+                canAddPerson: true,
+                addFriend: () async {
+                  final newFriend = await context
+                      .read<TripNavigationService>()
+                      .pushAddFriendScreen(context, friendsAvailable!);
+                  if (newFriend != null) {
+                    setState(() {
+                      friendsToAdd.add(newFriend);
+                    });
+                  }
+                },
+                friends: friendsToAdd,
+                removeFriend: (uid) => setState(() {
+                  friendsToAdd.removeWhere((element) => element.userId == uid);
+                }),
+              ),
             ),
-          ],
-        ),
+          Expanded(
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: FullWidthButton(
+                    text: "Speichern",
+                    onPressed: _isFormValid
+                        ? () => createTrip(
+                              uuid.v4(),
+                              _tripTitleController.text,
+                              startDate!,
+                              endDate!,
+                            ).whenComplete(() => _navigateToHomeScreen(context))
+                        : null,
+                    isElevated: false,
+                  ),
+                )),
+          ),
+        ],
       ),
     );
   }
 
-  void _calendarDialog(){
+  void _calendarDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Reisezeitraum wählen'),
+            title: const Text('Reisezeitraum wählen'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -211,8 +205,7 @@ class _NewTripState extends State<NewTrip> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    isElevated: false
-                ),
+                    isElevated: false),
               ],
             ),
           );
@@ -223,37 +216,25 @@ class _NewTripState extends State<NewTrip> {
     Navigator.of(context).pop(context);
   }
 
-  void _setStartEndDate(DateRangePickerSelectionChangedArgs args){
-    if (args.value is PickerDateRange) {
-      _startDateController
-        ..text = DateFormat('dd.MM.yyyy').format(args.value.startDate)
-        ..selection = TextSelection.fromPosition(TextPosition(
-            offset: _startDateController.text.length,
-            affinity: TextAffinity.upstream));
-      _endDateController
-        ..text = DateFormat('dd.MM.yyyy').format(args.value.endDate ?? args.value.startDate)
-        ..selection = TextSelection.fromPosition(TextPosition(
-            offset: _endDateController.text.length,
-            affinity: TextAffinity.upstream));
-    } else if (args.value is DateTime) {
-      _selectedDate = args.value.toString();
-    }
+  void _setStartEndDate(DateRangePickerSelectionChangedArgs args) {
+    final range = args.value as PickerDateRange;
+    setState(() {
+      startDate = range.startDate;
+      endDate = range.endDate;
+    });
   }
 
   Widget getDateRangePicker() {
-    return Container(
-        height: MediaQuery.of(context).size.height*0.35,
+    return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.35,
         width: MediaQuery.of(context).size.width,
         child: Card(
-          child: SfDateRangePicker(
+            child: SfDateRangePicker(
           view: DateRangePickerView.month,
           onSelectionChanged: _setStartEndDate,
           selectionMode: DateRangePickerSelectionMode.range,
           minDate: DateTime.now(),
           cancelText: "Abbrechen",
-        )
-      )
-    );
+        )));
   }
-
 }
