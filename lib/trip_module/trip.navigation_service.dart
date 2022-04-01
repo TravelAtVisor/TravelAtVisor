@@ -7,4 +7,5 @@ abstract class TripNavigationService {
       BuildContext context, String foursquareId);
   Future<UserSuggestion?> pushAddFriendScreen(
       BuildContext context, List<UserSuggestion> friendsToAdd);
+  void pushAddTripPage(BuildContext context);
 }
