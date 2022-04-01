@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
@@ -27,7 +27,6 @@ class _NewTripState extends State<NewTrip> {
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
 
-  DateTime _selectedDate = DateTime.now();
   String? tripDesignPath;
   List<UserSuggestion>? friendsAvailable;
   List<UserSuggestion> friendsToAdd = [];
@@ -47,6 +46,9 @@ class _NewTripState extends State<NewTrip> {
   }
 
   static const uuid = Uuid();
+
+  String _selectedDate = '';
+  String _range = '';
 
   @override
   Widget build(BuildContext context) {
@@ -94,19 +96,21 @@ class _NewTripState extends State<NewTrip> {
                   children: [
                     Expanded(
                       child: CustomTextInput(
+                        readOnly: true,
                         controller: _startDateController,
                         labelText: 'Beginn',
                         onEntered: () {
-                          _selectDate(context, _startDateController);
+                          _calendarDialog();
                         },
                       ),
                     ),
                     Expanded(
                       child: CustomTextInput(
+                        readOnly: true,
                         controller: _endDateController,
                         labelText: 'Ende',
                         onEntered: () {
-                          _selectDate(context, _endDateController);
+                          _calendarDialog();
                         },
                       ),
                     ),
@@ -160,7 +164,8 @@ class _NewTripState extends State<NewTrip> {
                         onPressed: () {
                           if (_startDateController.text != "" &&
                               _endDateController.text != "" &&
-                              _tripTitleController.text != "") {
+                              _tripTitleController.text != "" &&
+                              tripDesignPath != "") {
                             List beginL = _startDateController.text.split('.');
                             List endL = _endDateController.text.split('.');
                             createTrip(
@@ -191,80 +196,64 @@ class _NewTripState extends State<NewTrip> {
     );
   }
 
+  void _calendarDialog(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Reisezeitraum wählen'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                getDateRangePicker(),
+                FullWidthButton(
+                    text: "Okay",
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    isElevated: false
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   void _navigateToHomeScreen(BuildContext context) {
     Navigator.of(context).pop(context);
   }
 
-  void _setStartEndDate(){
-    _startDateController
-      ..text = DateFormat('dd.MM.yyyy').format(startDate)
-      ..selection = TextSelection.fromPosition(TextPosition(
-          offset: _startDateController.text.length,
-          affinity: TextAffinity.upstream));
-    _endDateController
-      ..text = DateFormat('dd.MM.yyyy').format(endDate)
-      ..selection = TextSelection.fromPosition(TextPosition(
-          offset: _endDateController.text.length,
-          affinity: TextAffinity.upstream));
-  }
-
-  /*_selectDate(
-      BuildContext context, TextEditingController textController) async {
-    DateTime? newSelectedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 10),
-    );
-
-    if (newSelectedDate != null) {
-      _selectedDate = newSelectedDate;
-      textController
-        ..text = DateFormat('dd.MM.yyyy').format(_selectedDate)
+  void _setStartEndDate(DateRangePickerSelectionChangedArgs args){
+    if (args.value is PickerDateRange) {
+      _startDateController
+        ..text = DateFormat('dd.MM.yyyy').format(args.value.startDate)
         ..selection = TextSelection.fromPosition(TextPosition(
-            offset: textController.text.length,
+            offset: _startDateController.text.length,
             affinity: TextAffinity.upstream));
+      _endDateController
+        ..text = DateFormat('dd.MM.yyyy').format(args.value.endDate ?? args.value.startDate)
+        ..selection = TextSelection.fromPosition(TextPosition(
+            offset: _endDateController.text.length,
+            affinity: TextAffinity.upstream));
+    } else if (args.value is DateTime) {
+      _selectedDate = args.value.toString();
     }
-  }*/
+  }
 
-  Widget buildDesignCard({required bool isSelected}) {
-    Color _color = Theme.of(context).colorScheme.primary;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _color = Colors.red;
-        });
-      },
-      child: Card(
-        color: _color,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.45,
-          height: MediaQuery.of(context).size.height * 0.09,
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  'Reisetitel',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+  Widget getDateRangePicker() {
+    return Container(
+        height: MediaQuery.of(context).size.height*0.35,
+        width: MediaQuery.of(context).size.width,
+        child: Card(
+          child: SfDateRangePicker(
+          view: DateRangePickerView.month,
+          onSelectionChanged: _setStartEndDate,
+          selectionMode: DateRangePickerSelectionMode.range,
+          minDate: DateTime.now(),
+          cancelText: "Abbrechen",
+        )
+      )
     );
   }
+
 }
-
-
-
-  /// The method for [DateRangePickerSelectionChanged] callback, which will be
-  /// called whenever a selection changed on the date picker widget.
