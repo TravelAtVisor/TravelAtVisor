@@ -108,15 +108,13 @@ class _DesignSelectorState extends State<DesignSelector> {
                                           onPressed: () => pickCustomImage(),
                                           icon: const Icon(Icons.edit),
                                         )
-                                      : const Expanded(
-                                          child: Text(
-                                            "Reisetitel",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 30.0),
-                                          ),
+                                      : const Text(
+                                          "Reisetitel",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 30.0),
                                         ),
                                 ),
                               ),
