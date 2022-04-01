@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
@@ -194,7 +195,20 @@ class _NewTripState extends State<NewTrip> {
     Navigator.of(context).pop(context);
   }
 
-  _selectDate(
+  void _setStartEndDate(){
+    _startDateController
+      ..text = DateFormat('dd.MM.yyyy').format(startDate)
+      ..selection = TextSelection.fromPosition(TextPosition(
+          offset: _startDateController.text.length,
+          affinity: TextAffinity.upstream));
+    _endDateController
+      ..text = DateFormat('dd.MM.yyyy').format(endDate)
+      ..selection = TextSelection.fromPosition(TextPosition(
+          offset: _endDateController.text.length,
+          affinity: TextAffinity.upstream));
+  }
+
+  /*_selectDate(
       BuildContext context, TextEditingController textController) async {
     DateTime? newSelectedDate = await showDatePicker(
       context: context,
@@ -211,7 +225,7 @@ class _NewTripState extends State<NewTrip> {
             offset: textController.text.length,
             affinity: TextAffinity.upstream));
     }
-  }
+  }*/
 
   Widget buildDesignCard({required bool isSelected}) {
     Color _color = Theme.of(context).colorScheme.primary;
@@ -249,3 +263,8 @@ class _NewTripState extends State<NewTrip> {
     );
   }
 }
+
+
+
+  /// The method for [DateRangePickerSelectionChanged] callback, which will be
+  /// called whenever a selection changed on the date picker widget.
