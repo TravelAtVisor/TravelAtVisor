@@ -121,7 +121,7 @@ class TripCard extends StatelessWidget {
                         child: Text(
                           trip.title,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                         ),

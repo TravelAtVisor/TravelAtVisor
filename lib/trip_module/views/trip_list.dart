@@ -42,16 +42,15 @@ class _TripListState extends State<TripList> {
     return Consumer<ApplicationState>(
       builder: (context, value, child) {
         final currentUser = value.currentUser!.customData!;
+        final tripsWithMatchingId = currentUser.trips
+            .where((element) => element.tripId == value.currentTripId);
+        final currentTrip =
+            tripsWithMatchingId.isEmpty ? null : tripsWithMatchingId.single;
 
-        if (value.currentTripId == null ||
-            !currentUser.trips
-                .any((element) => element.tripId == value.currentTripId)) {
-          dataService.setActiveTripId(widget.trips.first.tripId);
+        if (currentTrip == null) {
+          dataService.setActiveTripId(currentUser.trips.first.tripId);
           return const LoadingOverlay();
         }
-
-        final currentTrip = currentUser.trips
-            .singleWhere((element) => element.tripId == value.currentTripId);
 
         if (haveFriendsChanged(currentUser.friends)) {
           dataService.getFriends(currentUser.friends).then(
