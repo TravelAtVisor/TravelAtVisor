@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
+import 'package:travel_atvisor/trip_module/pages/new_trip.page.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 
 import '../../shared_module/models/trip.dart';
@@ -98,16 +99,33 @@ class TripCard extends StatelessWidget {
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.035),
                           ),
-                          IconButton(
-                            onPressed: () async {
-                              LoadingOverlay.show(context);
-                              await context
-                                  .read<TripDataService>()
-                                  .deleteTripAsync(trip.tripId);
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.delete),
-                            color: Colors.white,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NewTrip(
+                                      currentTrip: trip,
+                                    ),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.edit),
+                                color: Colors.white,
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  LoadingOverlay.show(context);
+                                  await context
+                                      .read<TripDataService>()
+                                      .deleteTripAsync(trip.tripId);
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.delete),
+                                color: Colors.red,
+                              ),
+                            ],
                           ),
                         ],
                       ),

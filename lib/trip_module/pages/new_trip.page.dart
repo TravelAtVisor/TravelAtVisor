@@ -16,14 +16,29 @@ import '../../shared_module/views/custom_text_input.dart';
 import '../../shared_module/views/full_width_button.dart';
 
 class NewTrip extends StatefulWidget {
-  const NewTrip({Key? key}) : super(key: key);
+  final Trip? currentTrip;
+  const NewTrip({
+    Key? key,
+    this.currentTrip,
+  }) : super(key: key);
 
   @override
   _NewTripState createState() => _NewTripState();
 }
 
 class _NewTripState extends State<NewTrip> {
-  final _tripTitleController = TextEditingController();
+  late final TextEditingController _tripTitleController;
+
+  @override
+  initState() {
+    _tripTitleController =
+        TextEditingController(text: widget.currentTrip?.title);
+    startDate = widget.currentTrip?.begin;
+    endDate = widget.currentTrip?.end;
+    tripDesignPath = widget.currentTrip?.tripDesign;
+
+    super.initState();
+  }
 
   String? tripDesignPath;
   List<UserSuggestion>? friendsAvailable;
@@ -64,13 +79,20 @@ class _NewTripState extends State<NewTrip> {
           context.read<ApplicationState>().currentUser!.customData!.friends;
       dataService.getFriends(friends).then((value) => setState((() {
             friendsAvailable = value;
+            friendsToAdd = widget.currentTrip?.companions
+                    .map((e) =>
+                        value.singleWhere((element) => element.userId == e))
+                    .toList() ??
+                [];
           })));
     }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text("Neue Reise"),
+        title: Text(widget.currentTrip == null
+            ? "Neue Reise"
+            : "${widget.currentTrip!.title} bearbeiten"),
         //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: ListView(
@@ -135,6 +157,7 @@ class _NewTripState extends State<NewTrip> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           DesignSelector(
+            initialPath: tripDesignPath,
             onPathChanged: (designPath) => setState(() {
               tripDesignPath = designPath;
             }),
@@ -175,7 +198,7 @@ class _NewTripState extends State<NewTrip> {
                     text: "Speichern",
                     onPressed: _isFormValid
                         ? () => createTrip(
-                              uuid.v4(),
+                              widget.currentTrip?.tripId ?? uuid.v4(),
                               _tripTitleController.text,
                               startDate!,
                               endDate!,

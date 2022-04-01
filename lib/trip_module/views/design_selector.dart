@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DesignSelector extends StatefulWidget {
+  final String? initialPath;
   final void Function(String designPath) onPathChanged;
 
   static const defaultDesigns = [
@@ -17,6 +18,7 @@ class DesignSelector extends StatefulWidget {
   const DesignSelector({
     Key? key,
     required this.onPathChanged,
+    this.initialPath,
   }) : super(key: key);
 
   @override
@@ -28,14 +30,29 @@ class _DesignSelectorState extends State<DesignSelector> {
   int currentDesign = -1;
   String? customImagePath;
 
+  @override
+  void initState() {
+    if (widget.initialPath != null) {
+      final indexFound = DesignSelector.defaultDesigns
+          .indexWhere((element) => widget.initialPath == element);
+      currentDesign =
+          indexFound >= 0 ? indexFound : DesignSelector.defaultDesigns.length;
+      customImagePath = widget.initialPath;
+    }
+    super.initState();
+  }
+
   DecorationImage? getDecorationImage(int index) {
     if (index == DesignSelector.defaultDesigns.length) {
       if (customImagePath == null) return null;
 
+      final imageFile = File(customImagePath!);
       return DecorationImage(
-        image: FileImage(
-          File(customImagePath!),
-        ),
+        image: imageFile.existsSync()
+            ? FileImage(
+                File(customImagePath!),
+              ) as ImageProvider
+            : NetworkImage(customImagePath!),
         fit: BoxFit.fitWidth,
         alignment: Alignment.center,
       );
@@ -71,9 +88,13 @@ class _DesignSelectorState extends State<DesignSelector> {
                 scale: currentDesign == index ? 1 : 0.88,
                 child: GestureDetector(
                     onTap: () async {
-                      if (index == DesignSelector.defaultDesigns.length &&
-                          customImagePath == null) {
-                        await pickCustomImage();
+                      if (index == DesignSelector.defaultDesigns.length) {
+                        if (customImagePath == null) {
+                          await pickCustomImage();
+                        }
+                        setState(() {
+                          currentDesign = index;
+                        });
                         return;
                       }
                       setState(() {
