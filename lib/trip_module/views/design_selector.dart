@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 class DesignSelector extends StatefulWidget {
   final String? initialPath;
+  final String? errorText;
   final void Function(String designPath) onPathChanged;
 
   static const defaultDesigns = [
@@ -19,6 +20,7 @@ class DesignSelector extends StatefulWidget {
     Key? key,
     required this.onPathChanged,
     this.initialPath,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -69,8 +71,26 @@ class _DesignSelectorState extends State<DesignSelector> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Design wählen"),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+          child: Text(
+            "Design wählen",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        if (widget.errorText != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              widget.errorText!,
+              style: Theme.of(context)
+                  .textTheme
+                  .caption!
+                  .copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
         GridView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.all(15),
@@ -104,40 +124,36 @@ class _DesignSelectorState extends State<DesignSelector> {
                           .elementAt(currentDesign));
                     },
                     child: Center(
-                      child: SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Card(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                      child: Card(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        elevation: elevation,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: getDecorationImage(index),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12)),
                           ),
-                          elevation: elevation,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: getDecorationImage(index),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12)),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                child: Center(
-                                  child: index ==
-                                          DesignSelector.defaultDesigns.length
-                                      ? IconButton(
-                                          onPressed: () => pickCustomImage(),
-                                          icon: const Icon(Icons.edit),
-                                        )
-                                      : const Text(
-                                          "Reisetitel",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 30.0),
-                                        ),
-                                ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                              child: Center(
+                                child: index ==
+                                        DesignSelector.defaultDesigns.length
+                                    ? IconButton(
+                                        onPressed: () => pickCustomImage(),
+                                        icon: const Icon(Icons.edit),
+                                      )
+                                    : const Text(
+                                        "Reisetitel",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 30.0),
+                                      ),
                               ),
                             ),
                           ),

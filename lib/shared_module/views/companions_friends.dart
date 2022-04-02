@@ -49,50 +49,51 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
           widget.header,
-          style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).size.width * 0.02,
-        ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                if (widget.canAddPerson) _buildAddButton(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ...widget.friends.map(
-                          (e) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 8),
-                            child: ProfilePicture(
-                                friend: e, onRemoval: widget.removeFriend),
+        Padding(
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.width * 0.02,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  if (widget.canAddPerson) _buildAddButton(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ...widget.friends.map(
+                            (e) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 8),
+                              child: ProfilePicture(
+                                  friend: e, onRemoval: widget.removeFriend),
+                            ),
                           ),
-                        ),
-                        if (widget.friends.isEmpty)
-                          const Text(
-                              "Du bist im Moment allein auf deiner Reise"),
-                      ],
+                          if (widget.friends.isEmpty)
+                            const Text(
+                                "Du bist im Moment allein auf deiner Reise"),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      )
-    ]);
+        )
+      ],
+    );
   }
 }
