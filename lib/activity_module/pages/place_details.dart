@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/activity_module/views/date_time_indicator.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../shared_module/models/activity.dart';
 import '../activity.data_service.dart';
@@ -49,7 +51,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
   Widget buildLoader(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mockup.Foursquare"),
+        title: const Text("Lade Daten..."),
       ),
       body: const Center(
         child: SizedBox(
@@ -132,6 +134,18 @@ class _PlaceDetailsState extends State<PlaceDetails> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(d.description!),
                 ),
+              ListTile(
+                leading: const Icon(Icons.map),
+                title: Text(
+                  "Adresse",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                subtitle: Text(d.address?.formatted ?? "In Karten öffnen"),
+                onTap: () => d.address != null
+                    ? MapsLauncher.launchQuery(d.address!.formatted)
+                    : MapsLauncher.launchCoordinates(
+                        d.geocodes.latitude, d.geocodes.longitude),
+              ),
               ContactRows(
                 socialMediaLinks: d.socialMediaLinks,
                 phoneNumber: d.phoneNumber,
@@ -200,7 +214,7 @@ class ContactRows extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.phone),
             title: Text(phoneNumber!),
-            onTap: () => launch("tel:+49 162 7949609"),
+            onTap: () => launch("tel:$phoneNumber"),
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -219,14 +233,14 @@ class ContactRows extends StatelessWidget {
               ),
             if (socialMediaLinks.instagram?.isNotEmpty ?? false)
               IconButton(
-                icon: const Icon(Icons.insert_chart),
+                icon: const Icon(FontAwesomeIcons.instagram),
                 onPressed: () => launch(
                     "https://www.instagram.com/${socialMediaLinks.instagram}",
                     forceWebView: true),
               ),
             if (socialMediaLinks.twitter?.isNotEmpty ?? false)
               IconButton(
-                icon: const Icon(Icons.biotech_rounded),
+                icon: const Icon(FontAwesomeIcons.twitter),
                 onPressed: () => launch(
                     "https://twitter.com/${socialMediaLinks.twitter}",
                     forceWebView: true),
