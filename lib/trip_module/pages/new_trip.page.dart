@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/utils/date_extensions.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
@@ -67,7 +68,14 @@ class _NewTripState extends State<NewTrip> {
       startDate != null &&
       endDate != null &&
       _tripTitleController.text.isNotEmpty &&
-      tripDesignPath != null;
+      tripDesignPath != null &&
+      !_hasTripAcitivitiesOutsideOfTimeRange;
+
+  bool get _hasTripAcitivitiesOutsideOfTimeRange =>
+      widget.currentTrip != null &&
+      widget.currentTrip!.activities.any((element) =>
+          !element.timestamp.isAfterByDate(startDate!) ||
+          !element.timestamp.isBeforeByDate(endDate!));
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +101,6 @@ class _NewTripState extends State<NewTrip> {
         title: Text(widget.currentTrip == null
             ? "Neue Reise"
             : "${widget.currentTrip!.title} bearbeiten"),
-        //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
       ),
       body: ListView(
         children: [
@@ -189,6 +196,14 @@ class _NewTripState extends State<NewTrip> {
                 }),
               ),
             ),
+          if (_hasTripAcitivitiesOutsideOfTimeRange)
+            Text(
+              "Deine Reise enthält Aktivitäten außerhalb des gewählten Zeitraums.",
+              style: Theme.of(context)
+                  .textTheme
+                  .caption!
+                  .copyWith(color: Colors.red),
+            ),
           Expanded(
             child: Align(
                 alignment: Alignment.bottomCenter,
@@ -242,8 +257,8 @@ class _NewTripState extends State<NewTrip> {
   void _setStartEndDate(DateRangePickerSelectionChangedArgs args) {
     final range = args.value as PickerDateRange;
     setState(() {
-      startDate = range.startDate;
-      endDate = range.endDate;
+      startDate = range.startDate ?? startDate;
+      endDate = range.endDate ?? endDate;
     });
   }
 
