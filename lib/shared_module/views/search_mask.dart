@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import '../../activity_module/utils/debouncer.dart';
 
 class SearchMask<TEntity, TSuggestionFilter> extends StatefulWidget {
@@ -33,13 +34,18 @@ class _SearchMaskState<TEntity, TSuggestionFilter>
   final TextEditingController controller = TextEditingController();
   List<TEntity> _searchResults = [];
   TSuggestionFilter? _suggestionFilter;
+  bool isLoading = false;
 
   Future<void> sendSearchRequest() async {
     if (controller.text.isEmpty && _suggestionFilter == null) return;
+    setState(() {
+      isLoading = true;
+    });
     final results =
         await widget.searchAction(controller.text, _suggestionFilter);
     setState(() {
       _searchResults = results;
+      isLoading = false;
     });
   }
 
@@ -71,15 +77,20 @@ class _SearchMaskState<TEntity, TSuggestionFilter>
                           _suggestionFilter = suggestionFilter;
                           sendSearchRequest();
                         })),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _searchResults.length,
-                  itemBuilder: (context, index) {
-                    final item = _searchResults.elementAt(index);
-                    return widget.resultBuilder(context, item);
-                  },
+              if (!isLoading)
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _searchResults.length,
+                    itemBuilder: (context, index) {
+                      final item = _searchResults.elementAt(index);
+                      return widget.resultBuilder(context, item);
+                    },
+                  ),
                 ),
-              ),
+              if (isLoading)
+                const Center(
+                  child: LoadingOverlay(),
+                ),
             ],
           ),
         ),
