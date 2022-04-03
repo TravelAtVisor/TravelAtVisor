@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/global.navigation_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
@@ -37,6 +39,8 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
   final PageStorageBucket bucket = PageStorageBucket();
   late String currentRoute;
 
+  ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+
   @override
   void initState() {
     currentRoute = widget.pageManager.initialRoute;
@@ -52,12 +56,34 @@ class _GlobalTabControllerState extends State<GlobalTabController> {
           bucket: bucket,
         ),
         floatingActionButton: state.currentTripId != null
-            ? FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () => context
-                    .read<GlobalNavigationService>()
-                    .pushAddTripPage(context),
-              )
+            ? SpeedDial(
+          icon: Icons.add,
+          activeIcon: Icons.close,
+          spacing: 3,
+          openCloseDial: isDialOpen,
+          childPadding: const EdgeInsets.all(5),
+          spaceBetweenChildren: 4,
+          elevation: 8.0,
+          isOpenOnStart: false,
+          animationSpeed: 200,
+          direction: SpeedDialDirection.up,
+          children: [
+            SpeedDialChild(
+              child: const Icon(FontAwesomeIcons.planeUp),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+              label: 'Neue Reise',
+              onTap: () => context.read<GlobalNavigationService>().pushAddTripPage(context),
+            ),
+            if (currentRoute == "trip_list") SpeedDialChild(
+              child: const Icon(FontAwesomeIcons.archway),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+              label: 'Neue Aktivität',
+              onTap: () => context.read<GlobalNavigationService>().pushAddActivityScreen(context, state.currentTripId!),
+              ),
+          ],
+        )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: CustomTabBar(

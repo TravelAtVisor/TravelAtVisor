@@ -4,7 +4,7 @@ import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 import '../shared_module/models/activity.dart';
 
 abstract class TripNavigationService {
-  Future<void> pushAddActivityScreen(BuildContext context, String tripID);
+
   Future<void> pushActivityDetailScreen(
       BuildContext context, String foursquareId,
       {Activity? activity});
