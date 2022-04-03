@@ -72,6 +72,7 @@ class TripCard extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.19,
         child: Container(
           decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
             image: DecorationImage(
               image: NetworkImage(trip.tripDesign),
               fit: BoxFit.cover,
