@@ -32,7 +32,7 @@ class CustomTabBarButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.explore,
+                metadata.tabIcon,
                 color: color,
               ),
               if (showLabels)
