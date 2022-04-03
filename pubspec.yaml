@@ -26,6 +26,7 @@ dependencies:
   url_launcher: 6.0.20
   maps_launcher: 2.0.1
   font_awesome_flutter: 10.1.0
+  flutter_speed_dial: ^5.1.0
 
 dev_dependencies:
   flutter_test:

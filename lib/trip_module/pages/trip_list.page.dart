@@ -30,15 +30,6 @@ class _TripListPageState extends State<TripListPage> {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.primary,
-            actions: currentTrip != null
-                ? [
-                    IconButton(
-                      icon: const Icon(Icons.add_box),
-                      onPressed: () => navigationService.pushAddActivityScreen(
-                          context, currentTrip.tripId),
-                    ),
-                  ]
-                : [],
           ),
           body: Center(
             child: trips.isNotEmpty
