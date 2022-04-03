@@ -49,7 +49,7 @@ class _TripListPageState extends State<TripListPage> {
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "Willkommen beim Travel@Visor. Es ist Zeit zu verreisen. Los, lege mit dem \"+\" Button deine erste Reise an!",
+                              "Willkommen beim Travel@Visor. Es ist Zeit zu verreisen. Los, lege hier deine erste Reise an!",
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
