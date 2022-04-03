@@ -26,6 +26,7 @@ dependencies:
   url_launcher: 6.0.20
   spincircle_bottom_bar: ^2.0.0
   fab_circular_menu: ^1.0.0
+  flutter_speed_dial: ^5.0.0+1
 
 dev_dependencies:
   flutter_test:
