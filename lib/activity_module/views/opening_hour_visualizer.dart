@@ -47,8 +47,8 @@ class OpeningHourVisualizer extends StatelessWidget {
                 labelStyle: Theme.of(context).textTheme.caption),
             foregroundPainter: OpeningHourBarsPainter(
               bars: dayBarMap,
-              openedColor: Theme.of(context).colorScheme.secondary,
-              popularColor: Theme.of(context).colorScheme.primary,
+              openedColor: Theme.of(context).colorScheme.primary,
+              popularColor: Colors.red.withOpacity(0.8),
             ),
           ),
         ),
@@ -69,7 +69,7 @@ class _OpeningHourBarData {
 abstract class OpeningHourPainterBase extends CustomPainter {
   static const drawDebugPaint = false;
   static const verticalLegendPadding = 40.0;
-  static const dayLabelWidth = 70.0;
+  static const dayLabelWidth = 50.0;
   static const hoursPerDay = 24;
 
   final Paint _gridLegendPaint = Paint()
@@ -194,8 +194,7 @@ class OpeningHourGridPainter extends OpeningHourPainterBase {
     final textBoxHeight = calculateHourSlotHeight(size);
 
     for (var element in Day.values) {
-      final span =
-          TextSpan(text: element.name.substring(0, 3), style: labelStyle);
+      final span = TextSpan(text: _describeDay(element), style: labelStyle);
       final textPainter =
           TextPainter(text: span, textDirection: TextDirection.ltr);
       textPainter.layout(minWidth: 0, maxWidth: maxTextWidth);
@@ -216,4 +215,23 @@ class OpeningHourGridPainter extends OpeningHourPainterBase {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+
+  String _describeDay(Day day) {
+    switch (day) {
+      case Day.monday:
+        return "MO";
+      case Day.tuesday:
+        return "DI";
+      case Day.wednesday:
+        return "MI";
+      case Day.thursday:
+        return "DO";
+      case Day.friday:
+        return "FR";
+      case Day.saturday:
+        return "SA";
+      case Day.sunday:
+        return "SO";
+    }
+  }
 }

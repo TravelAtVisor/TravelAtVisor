@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class StorageDataService {
   static const String _defaultProfilePicture =
-      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283";
+      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/ph_profile.png?alt=media&token=9273044a-565d-4699-9290-8910d30d9c43";
   final FirebaseStorage _storage;
 
   StorageDataService(this._storage);

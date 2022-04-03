@@ -5,12 +5,12 @@ class DateTimeIndicator extends StatelessWidget {
   final DateTime? date;
   final String? label;
   final String formatLiteral;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   const DateTimeIndicator({
     Key? key,
     this.label,
-    this.formatLiteral = "dd. MMMM y HH:m",
+    this.formatLiteral = "dd. MMMM y HH:mm",
     required this.date,
     required this.onPressed,
   }) : super(key: key);

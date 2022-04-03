@@ -229,7 +229,11 @@ class TripActivityRow extends StatelessWidget {
             IconButton(
               onPressed: () => context
                   .read<TripNavigationService>()
-                  .pushActivityDetailScreen(context, activity.foursquareId),
+                  .pushActivityDetailScreen(
+                    context,
+                    activity.foursquareId,
+                    activity: activity,
+                  ),
               icon: const Icon(Icons.info),
               color: Colors.grey,
               iconSize: MediaQuery.of(context).size.width * 0.07,

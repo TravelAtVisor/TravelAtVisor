@@ -10,7 +10,7 @@ const document = {
   fullName: "Max Mustermann",
   nickname: "mustermann",
   photoUrl:
-    "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283",
+    "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/ph_profile.png?alt=media&token=9273044a-565d-4699-9290-8910d30d9c43",
   trips: {
     "09a37987-fd56-4416-8b39-e6895a75166e": {
       title: "Meine geile Reise",

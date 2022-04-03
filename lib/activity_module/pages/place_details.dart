@@ -17,9 +17,14 @@ import '../views/opening_hour_visualizer.dart';
 class PlaceDetails extends StatefulWidget {
   final String foursquareId;
   final String? tripId;
+  final Activity? activity;
 
-  const PlaceDetails({Key? key, required this.foursquareId, this.tripId})
-      : super(key: key);
+  const PlaceDetails({
+    Key? key,
+    required this.foursquareId,
+    this.tripId,
+    this.activity,
+  }) : super(key: key);
 
   @override
   _PlaceDetailsState createState() => _PlaceDetailsState();
@@ -160,35 +165,36 @@ class _PlaceDetailsState extends State<PlaceDetails> {
                   phoneNumber: d.phoneNumber,
                   website: d.website,
                 ),
-                if (widget.tripId != null)
-                  DateTimeIndicator(
-                      date: visitingDay,
-                      onPressed: () async {
-                        final dateBase = await showDatePicker(
-                          context: context,
-                          initialDate: trip.begin,
-                          firstDate: trip.begin,
-                          lastDate: trip.end,
-                        );
+                DateTimeIndicator(
+                    date: visitingDay ?? widget.activity?.timestamp,
+                    onPressed: widget.tripId != null
+                        ? () async {
+                            final dateBase = await showDatePicker(
+                              context: context,
+                              initialDate: trip.begin,
+                              firstDate: trip.begin,
+                              lastDate: trip.end,
+                            );
 
-                        if (dateBase == null) return;
+                            if (dateBase == null) return;
 
-                        final time = await showTimePicker(
-                          context: context,
-                          initialTime: const TimeOfDay(
-                            hour: 12,
-                            minute: 0,
-                          ),
-                        );
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: const TimeOfDay(
+                                hour: 12,
+                                minute: 0,
+                              ),
+                            );
 
-                        if (time == null) return;
-                        final date = dateBase.add(
-                            Duration(hours: time.hour, minutes: time.minute));
+                            if (time == null) return;
+                            final date = dateBase.add(Duration(
+                                hours: time.hour, minutes: time.minute));
 
-                        setState(() {
-                          visitingDay = date;
-                        });
-                      }),
+                            setState(() {
+                              visitingDay = date;
+                            });
+                          }
+                        : null),
                 if (d.openingHours != null || d.popularHours != null)
                   OpeningHourVisualizer(
                     openingHours: d.openingHours,

@@ -259,6 +259,7 @@ class _NewTripState extends State<NewTrip> {
                     },
                     selectionMode: DateRangePickerSelectionMode.range,
                     minDate: DateTime.now(),
+                    initialSelectedRange: PickerDateRange(startDate, endDate),
                     cancelText: "Abbrechen",
                   ),
                 ),

@@ -82,8 +82,7 @@ class _CompanionsFriendsState extends State<CompanionsFriends> {
                             ),
                           ),
                           if (widget.friends.isEmpty)
-                            const Text(
-                                "Du bist im Moment allein auf deiner Reise"),
+                            const Text("Im Moment noch keine"),
                         ],
                       ),
                     ),
