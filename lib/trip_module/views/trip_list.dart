@@ -129,13 +129,16 @@ class _TripListState extends State<TripList> {
       return previousValue;
     });
 
+    final sortedDays = groupedByDay.keys.toList();
+    sortedDays.sort();
+
     return Expanded(
       child: ListView.builder(
         itemBuilder: (context, index) => TripDayCard(
-          activities: groupedByDay.values.elementAt(index),
+          activities: groupedByDay[sortedDays.elementAt(index)]!,
           tripId: trip.tripId,
         ),
-        itemCount: groupedByDay.length,
+        itemCount: sortedDays.length,
         shrinkWrap: true,
       ),
     );
