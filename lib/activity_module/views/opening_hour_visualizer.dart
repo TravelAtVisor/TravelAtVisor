@@ -47,8 +47,8 @@ class OpeningHourVisualizer extends StatelessWidget {
                 labelStyle: Theme.of(context).textTheme.caption),
             foregroundPainter: OpeningHourBarsPainter(
               bars: dayBarMap,
-              openedColor: Theme.of(context).colorScheme.primary,
-              popularColor: Colors.red.withOpacity(0.8),
+              openedColor: Colors.grey.shade400,
+              popularColor: Colors.red.withOpacity(0.75),
             ),
           ),
         ),
@@ -74,9 +74,9 @@ abstract class OpeningHourPainterBase extends CustomPainter {
 
   final Paint _gridLegendPaint = Paint()
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
+    ..strokeWidth = 1.0
     ..strokeCap = StrokeCap.round
-    ..color = Colors.grey;
+    ..color = Colors.grey.shade600;
   final Paint _debugGridPaint = Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 4.0
