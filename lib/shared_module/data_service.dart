@@ -56,16 +56,17 @@ class DataService
     var applicationState = currentApplicationState;
 
     if (currentUser == null) {
-      applicationState = ApplicationState(null, applicationState.currentTripId);
+      applicationState =
+          ApplicationState(null, applicationState.currentTripId, true);
     } else {
       applicationState = ApplicationState(
-        UserModel(
-          currentUser.uid,
-          currentUser.email!,
-          await getCustomUserDataByIdAsync(),
-        ),
-        currentApplicationState.currentTripId,
-      );
+          UserModel(
+            currentUser.uid,
+            currentUser.email!,
+            await getCustomUserDataByIdAsync(),
+          ),
+          currentApplicationState.currentTripId,
+          true);
     }
 
     _setState(applicationState);
@@ -106,6 +107,7 @@ class DataService
           newCustomData,
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -138,6 +140,7 @@ class DataService
           newCustomData,
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -186,6 +189,7 @@ class DataService
           newCustomData,
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -232,6 +236,7 @@ class DataService
           newCustomData,
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -280,6 +285,7 @@ class DataService
           customUserData,
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -306,6 +312,7 @@ class DataService
     _setState(ApplicationState(
       currentApplicationState.currentUser,
       tripId,
+      currentApplicationState.isInitialized,
     ));
   }
 
@@ -331,6 +338,7 @@ class DataService
           ]),
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -370,6 +378,7 @@ class DataService
           ),
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -400,6 +409,7 @@ class DataService
           ),
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
@@ -438,6 +448,7 @@ class DataService
           ),
         ),
         currentApplicationState.currentTripId,
+        currentApplicationState.isInitialized,
       ),
     );
   }
