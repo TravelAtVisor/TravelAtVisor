@@ -232,6 +232,8 @@ export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ 
 });
 
 export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ friendIds }, _) => {
+    if (friendIds.length == 0) return [];
+
     const userCollection = useUserCollection();
 
     const friends = await userCollection

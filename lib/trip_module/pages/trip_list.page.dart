@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
-import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+
 import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/trip_module/views/trip_list.dart';
-
-import '../../shared_module/views/loading_overlay.dart';
 
 class TripListPage extends StatefulWidget {
   const TripListPage({Key? key}) : super(key: key);

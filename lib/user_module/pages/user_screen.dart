@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
 import 'package:travel_atvisor/shared_module/models/custom_user_data.dart';
+import 'package:travel_atvisor/shared_module/utils/mappers.dart';
+import 'package:travel_atvisor/shared_module/views/companions_friends.dart';
 import 'package:travel_atvisor/shared_module/views/full_width_button.dart';
 import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
 import 'package:travel_atvisor/user_module/pages/search_user.page.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
 import '../../shared_module/models/trip.dart';
@@ -24,21 +27,44 @@ class _UserScreenState extends State<UserScreen> {
 
   CustomUserData? customUserData;
 
+  Map<String, UserSuggestion> friends = {};
+
+  bool haveFriendsChanged(List<String> newFriends) {
+    final friendWasRemoved =
+        friends.values.any((element) => !newFriends.contains(element.userId));
+    final friendWasAdded =
+        newFriends.any((element) => !friends.containsKey(element));
+    return friendWasAdded || friendWasRemoved;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var ownCustomData =
-        context.watch<ApplicationState>().currentUser!.customData;
+    final ownCustomData =
+        context.watch<ApplicationState>().currentUser!.customData!;
+    final dataService = context.read<UserDataService>();
     if (customUserData == null) {
       (widget.userId == null
               ? Future.value(ownCustomData)
-              : context
-                  .read<UserDataService>()
-                  .getForeignProfileAsync(widget.userId!))
+              : dataService.getForeignProfileAsync(widget.userId!))
           .then(
         (value) => setState(() {
           customUserData = value;
         }),
       );
+    }
+
+    if (haveFriendsChanged(ownCustomData.friends)) {
+      if (ownCustomData.friends.isEmpty) {
+        setState(() {
+          friends = {};
+        });
+      } else {
+        dataService
+            .getFriends(ownCustomData.friends)
+            .then((value) => setState((() {
+                  friends = value.toMap((e) => e.userId, (e) => e);
+                })));
+      }
     }
 
     return Scaffold(
@@ -76,7 +102,7 @@ class _UserScreenState extends State<UserScreen> {
               },
             ),
           if (widget.userId != null)
-            _buildFriendshipButtons(context, ownCustomData!),
+            _buildFriendshipButtons(context, ownCustomData),
         ],
       ),
       body: _buildBody(),
@@ -152,6 +178,20 @@ class _UserScreenState extends State<UserScreen> {
             Divider(
               color: Theme.of(context).colorScheme.secondary,
             ),
+            if (widget.userId == null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CompanionsFriends(
+                    header: "Meine Freunde",
+                    canAddPerson: false,
+                    friends: friends.values.toList(),
+                    addFriend: () {},
+                    removeFriend: (userId) =>
+                        context.read<UserDataService>().removeFriend(userId),
+                  ),
+                ),
+              ),
             BiographyViewer(biography: customUserData!.biography),
             if (widget.userId == null)
               FullWidthButton(

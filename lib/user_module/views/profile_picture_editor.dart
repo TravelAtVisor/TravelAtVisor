@@ -28,14 +28,7 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
       "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/ph_profile.png?alt=media&token=9273044a-565d-4699-9290-8910d30d9c43";
 
   String? _profilePicturePath;
-  late bool _isRemotePhoto;
   bool isDirty = false;
-
-  @override
-  void initState() {
-    _isRemotePhoto = widget.initialProfilePicture == null;
-    super.initState();
-  }
 
   void triggerPofilePictureWorkflow() {
     showModalBottomSheet(
@@ -67,7 +60,6 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
                         label: "Profilbild entfernen",
                         onPressed: () => setState(() {
                           _profilePicturePath = null;
-                          _isRemotePhoto = true;
                           isDirty = true;
                         }),
                       )
@@ -98,7 +90,6 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
 
     setState(() {
       _profilePicturePath = croppedFile?.path;
-      _isRemotePhoto = false;
       isDirty = true;
     });
   }

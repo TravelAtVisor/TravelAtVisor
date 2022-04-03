@@ -17,10 +17,12 @@ class ProfilePicture extends StatefulWidget {
 
 class _ProfilePictureState extends State<ProfilePicture> {
   bool isRemovalMode = false;
+  bool isDeletionPending = false;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
         InkWell(
           onLongPress: () => setState(() {
@@ -43,7 +45,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
           right: 0,
           top: 0,
           child: AnimatedOpacity(
-            opacity: isRemovalMode ? 1 : 0,
+            opacity: isRemovalMode && !isDeletionPending ? 1 : 0,
             duration: const Duration(milliseconds: 150),
             child: Container(
               width: 24,
@@ -57,7 +59,12 @@ class _ProfilePictureState extends State<ProfilePicture> {
               ),
               child: IconButton(
                 onPressed: isRemovalMode
-                    ? () => widget.onRemoval(widget.friend.userId)
+                    ? () {
+                        setState(() {
+                          isDeletionPending = true;
+                        });
+                        widget.onRemoval(widget.friend.userId);
+                      }
                     : null,
                 icon: const Icon(Icons.remove),
                 iconSize: 10,
@@ -66,6 +73,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
             ),
           ),
         ),
+        if (isDeletionPending) const CircularProgressIndicator(),
       ],
     );
   }
