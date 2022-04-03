@@ -30,6 +30,7 @@ class _TripListPageState extends State<TripListPage> {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.primary,
+            title: const Text("Travel Atvisor", style: TextStyle(fontWeight: FontWeight.bold),),
           ),
           body: Center(
             child: trips.isNotEmpty
