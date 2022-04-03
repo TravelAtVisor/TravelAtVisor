@@ -41,16 +41,16 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
                         icon: Icons.camera_alt,
                         label: "Profilbild aufnehmen",
                         onPressed: () async {
-                          final pickedFile = await widget.imagePicker
-                              .getImage(source: ImageSource.camera);
+                          final pickedFile = await widget.imagePicker.getImage(
+                              source: ImageSource.camera, imageQuality: 25);
                           cropImage(pickedFile?.path);
                         }),
                     BottomSheetAction(
                         icon: FontAwesomeIcons.image,
                         label: "Profilbild auswählen",
                         onPressed: () async {
-                          final pickedFile = await widget.imagePicker
-                              .getImage(source: ImageSource.gallery);
+                          final pickedFile = await widget.imagePicker.getImage(
+                              source: ImageSource.gallery, imageQuality: 25);
                           cropImage(pickedFile?.path);
                         }),
                     if (_profilePicturePath != null ||

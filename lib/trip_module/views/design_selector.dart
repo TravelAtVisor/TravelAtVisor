@@ -167,7 +167,8 @@ class _DesignSelectorState extends State<DesignSelector> {
   }
 
   Future<void> pickCustomImage() async {
-    final image = await imagePicker.getImage(source: ImageSource.gallery);
+    final image = await imagePicker.getImage(
+        source: ImageSource.gallery, imageQuality: 25);
     if (image == null) return;
 
     setState(() {
