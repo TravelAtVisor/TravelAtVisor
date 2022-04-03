@@ -152,7 +152,8 @@ class _NewTripState extends State<NewTrip> {
         addFriend: () async {
           final newFriend = await context
               .read<TripNavigationService>()
-              .pushAddFriendScreen(context, friendsAvailable!);
+              .pushAddFriendScreen(context,
+              friendsAvailable!.where((e) => !friendsToAdd.contains(e)).toList());
           if (newFriend != null) {
             setState(() {
               friendsToAdd.add(newFriend);
