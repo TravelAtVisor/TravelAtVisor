@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/activity_module/utils/debouncer.dart';
 import 'package:travel_atvisor/user_module/views/profile_picture_editor.dart';
 
 import '../../shared_module/models/custom_user_data.dart';
@@ -9,8 +10,9 @@ import '../user.data_service.dart';
 class EditProfileForm extends StatefulWidget {
   final CustomUserData? currentProfile;
   final Function(CustomUserData? currentProfile) onProfileChanged;
+  final Debouncer debouncer = Debouncer(milliseconds: 150);
 
-  const EditProfileForm({
+  EditProfileForm({
     Key? key,
     required this.onProfileChanged,
     this.currentProfile,
@@ -105,7 +107,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
               autofillHints: const [AutofillHints.newUsername],
               autocorrect: false,
               textInputAction: TextInputAction.next,
-              onChanged: (username) async {
+              onChanged: (username) => widget.debouncer.run(() async {
                 setState(() {
                   _isUserNameValidationFinished = false;
                 });
@@ -116,7 +118,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   _isUserNameValidationFinished = true;
                   _isUserNameValid = isValid;
                 });
-              },
+              }),
             ),
             CustomTextInput(
               controller: biographyController,

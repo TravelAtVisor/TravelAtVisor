@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../shared_module/models/activity.dart';
+import '../../shared_module/models/authentication_state.dart';
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../views/opening_hour_visualizer.dart';
@@ -28,7 +29,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
   ExtendedPlaceData? _details;
   static const uuid = Uuid();
 
-  DateTime visitingDay = DateTime.now();
+  DateTime? visitingDay;
 
   @override
   Widget build(BuildContext context) {
@@ -65,131 +66,140 @@ class _PlaceDetailsState extends State<PlaceDetails> {
 
   Widget buildDetails(BuildContext context) {
     final d = _details!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(d.name),
-        actions: [
-          if (widget.tripId != null)
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                LoadingOverlay.show(context);
-                await context.read<ActivityDataService>().addActivityAsync(
-                      widget.tripId!,
-                      Activity(
-                        uuid.v4(),
-                        d.foursquareId,
-                        visitingDay,
-                        d.name,
-                        d.description,
-                        d.photoUrls.first,
-                      ),
-                    );
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-            ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              CarouselSlider(
-                items: d.photoUrls
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image(
-                              image: NetworkImage(e),
+    return Consumer<ApplicationState>(builder: (context, state, _) {
+      final trip = state.currentUser!.customData!.trips
+          .singleWhere((element) => element.tripId == state.currentTripId);
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(d.name),
+          actions: [
+            if (widget.tripId != null)
+              IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: visitingDay != null
+                    ? () async {
+                        LoadingOverlay.show(context);
+                        await context
+                            .read<ActivityDataService>()
+                            .addActivityAsync(
+                              widget.tripId!,
+                              Activity(
+                                uuid.v4(),
+                                d.foursquareId,
+                                visitingDay!,
+                                d.name,
+                                d.description,
+                                d.photoUrls.first,
+                              ),
+                            );
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      }
+                    : null,
+              ),
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                CarouselSlider(
+                  items: d.photoUrls
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image(
+                                image: NetworkImage(e),
+                              ),
                             ),
-                          ),
-                        ))
-                    .toList(),
-                options: CarouselOptions(
-                  enlargeCenterPage: true,
-                  autoPlay: true,
+                          ))
+                      .toList(),
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    autoPlay: true,
+                  ),
                 ),
-              ),
-              RatingsRow(generalRating: d.rating, priceRating: d.priceRating),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      d.name,
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    if (d.categories.isNotEmpty)
-                      Text(
-                        d.categories.first.displayValue.toUpperCase(),
-                        style: Theme.of(context).textTheme.subtitle1,
-                      )
-                  ],
-                ),
-              ),
-              if (d.description != null)
+                RatingsRow(generalRating: d.rating, priceRating: d.priceRating),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(d.description!),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        d.name,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      if (d.categories.isNotEmpty)
+                        Text(
+                          d.categories.first.displayValue.toUpperCase(),
+                          style: Theme.of(context).textTheme.subtitle1,
+                        )
+                    ],
+                  ),
                 ),
-              ListTile(
-                leading: const Icon(Icons.map),
-                title: Text(
-                  "Adresse",
-                  style: Theme.of(context).textTheme.titleMedium,
+                if (d.description != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(d.description!),
+                  ),
+                ListTile(
+                  leading: const Icon(Icons.map),
+                  title: Text(
+                    "Adresse",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  subtitle: Text(d.address?.formatted ?? "In Karten öffnen"),
+                  onTap: () => d.address != null
+                      ? MapsLauncher.launchQuery(d.address!.formatted)
+                      : MapsLauncher.launchCoordinates(
+                          d.geocodes.latitude, d.geocodes.longitude),
                 ),
-                subtitle: Text(d.address?.formatted ?? "In Karten öffnen"),
-                onTap: () => d.address != null
-                    ? MapsLauncher.launchQuery(d.address!.formatted)
-                    : MapsLauncher.launchCoordinates(
-                        d.geocodes.latitude, d.geocodes.longitude),
-              ),
-              ContactRows(
-                socialMediaLinks: d.socialMediaLinks,
-                phoneNumber: d.phoneNumber,
-                website: d.website,
-              ),
-              if (widget.tripId != null)
-                DateTimeIndicator(
-                    date: visitingDay,
-                    onPressed: () async {
-                      final dateBase = await showDatePicker(
-                        context: context,
-                        initialDate: visitingDay,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(DateTime.now().year + 10),
-                      );
-
-                      if (dateBase == null) return;
-
-                      final time = await showTimePicker(
-                        context: context,
-                        initialTime: const TimeOfDay(
-                          hour: 12,
-                          minute: 0,
-                        ),
-                      );
-
-                      if (time == null) return;
-                      final date = dateBase.add(
-                          Duration(hours: time.hour, minutes: time.minute));
-
-                      setState(() {
-                        visitingDay = date;
-                      });
-                    }),
-              if (d.openingHours != null || d.popularHours != null)
-                OpeningHourVisualizer(
-                  openingHours: d.openingHours,
-                  popularHours: d.popularHours,
+                ContactRows(
+                  socialMediaLinks: d.socialMediaLinks,
+                  phoneNumber: d.phoneNumber,
+                  website: d.website,
                 ),
-            ],
+                if (widget.tripId != null)
+                  DateTimeIndicator(
+                      date: visitingDay,
+                      onPressed: () async {
+                        final dateBase = await showDatePicker(
+                          context: context,
+                          initialDate: trip.begin,
+                          firstDate: trip.begin,
+                          lastDate: trip.end,
+                        );
+
+                        if (dateBase == null) return;
+
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: const TimeOfDay(
+                            hour: 12,
+                            minute: 0,
+                          ),
+                        );
+
+                        if (time == null) return;
+                        final date = dateBase.add(
+                            Duration(hours: time.hour, minutes: time.minute));
+
+                        setState(() {
+                          visitingDay = date;
+                        });
+                      }),
+                if (d.openingHours != null || d.popularHours != null)
+                  OpeningHourVisualizer(
+                    openingHours: d.openingHours,
+                    popularHours: d.popularHours,
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

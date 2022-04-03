@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateTimeIndicator extends StatelessWidget {
-  final DateTime date;
+  final DateTime? date;
   final String? label;
   final String formatLiteral;
   final void Function() onPressed;
@@ -37,13 +37,22 @@ class DateTimeIndicator extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      dateFormat.format(date),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: foregroundColor),
-                    ),
+                    child: date != null
+                        ? Text(
+                            dateFormat.format(date!),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: foregroundColor),
+                          )
+                        : Text(
+                            "Bitte Zeit angeben",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                    color: Theme.of(context).colorScheme.error),
+                          ),
                   ),
                   IconButton(
                     onPressed: onPressed,
