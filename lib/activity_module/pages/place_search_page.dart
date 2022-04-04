@@ -5,14 +5,16 @@ import 'package:travel_atvisor/activity_module/models/place_categories.dart';
 
 import '../models/place_core_data.dart';
 import '../utils/debouncer.dart';
-import '../views/search_mask.dart';
+import '../../shared_module/views/search_mask.dart';
 import 'place_details.dart';
 
 class PlaceSearchPage extends StatefulWidget {
   final searchDebouncer = Debouncer(milliseconds: 200);
   final String locality;
+  final String tripId;
 
-  PlaceSearchPage({Key? key, required this.locality}) : super(key: key);
+  PlaceSearchPage({Key? key, required this.locality, required this.tripId})
+      : super(key: key);
 
   @override
   _PlaceSearchPageState createState() => _PlaceSearchPageState();
@@ -80,8 +82,10 @@ class _PlaceSearchPageState extends State<PlaceSearchPage> {
           ),
         ),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                PlaceDetails(foursquareId: result.foursquareId))),
+            builder: (context) => PlaceDetails(
+                  foursquareId: result.foursquareId,
+                  tripId: widget.tripId,
+                ))),
       ),
     );
   }

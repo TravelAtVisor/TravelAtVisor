@@ -1,7 +1,7 @@
 import { useAuthenticatedFunction, useSecret } from "./utils/security-utilities";
 import { CustomUserData } from "./models/custom-user-data";
 import { useUserCollection, useUserRecord } from "./utils/firestore-utilities";
-import { config } from "firebase-functions";
+import { config, https } from "firebase-functions";
 import { CheckUsernameAvailabilityRequest } from "./models/check-username-availability-request";
 import { SetTripRequest } from "./models/set-trip-request";
 import { DeleteTripRequest } from "./models/delete-trip-request";
@@ -13,6 +13,12 @@ import { SearchPlacesRequest } from "./models/search-places-request";
 import { GetPlaceDetailsRequest } from "./models/get-place-details-request.ts";
 import { useCallableFunction } from "./utils/functions-utilities";
 import axios from 'axios';
+import { ModifyFriendshipRequest } from "./models/modify-friendship-request";
+import { ModifyTripFriendRequest } from "./models/modify-trip-friends-request";
+import { GetForeignProfileRequest } from "./models/get-foreign-profile-request";
+import { SearchUserRequest } from "./models/search-user-request";
+import { UserSuggestion } from "./models/user-suggestion";
+import { GetFriendsRequest } from "./models/get-friends-request";
 
 initializeApp(config().firebase);
 
@@ -113,7 +119,7 @@ export const searchPlaceProxy = useAuthenticatedFunction<SearchPlacesRequest>(as
     requestUrl.searchParams.append("near", locality);
     requestUrl.searchParams.append("fields", "fsq_id,name,categories,photos");
     requestUrl.searchParams.append("sort", "popularity");
-    if (category !== undefined) requestUrl.searchParams.append("categories", `${category}`);
+    if (category !== null) requestUrl.searchParams.append("categories", `${category}`);
 
     const response = await axios.get(requestUrl.href, {
         headers: {
@@ -139,4 +145,109 @@ export const getPlaceDetailsProxy = useAuthenticatedFunction<GetPlaceDetailsRequ
     });
 
     return await response.data;
+});
+
+export const addFriend = useAuthenticatedFunction<ModifyFriendshipRequest>(async ({ friendUserId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        friends: firestore.FieldValue.arrayUnion(friendUserId)
+    }, { merge: true });
+});
+
+export const removeFriend = useAuthenticatedFunction<ModifyFriendshipRequest>(async ({ friendUserId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        friends: firestore.FieldValue.arrayRemove(friendUserId)
+    }, { merge: true });
+});
+
+export const addFriendToTrip = useAuthenticatedFunction<ModifyTripFriendRequest>(async ({ friendUserId, tripId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        trips: {
+            [tripId]: {
+                companions: firestore.FieldValue.arrayUnion(friendUserId)
+            }
+        }
+    }, { merge: true });
+});
+
+export const removeFriendFromTrip = useAuthenticatedFunction<ModifyTripFriendRequest>(async ({ friendUserId, tripId }, { uid }) => {
+    const ref = useUserRecord(uid);
+
+    await ref.set({
+        trips: {
+            [tripId]: {
+                companions: firestore.FieldValue.arrayRemove(friendUserId),
+            }
+        }
+    }, { merge: true });
+});
+
+export const getForeignProfile = useAuthenticatedFunction<GetForeignProfileRequest>(async ({ foreignUserId }, _) => {
+    const ref = useUserRecord(foreignUserId);
+
+    const profile = await ref.get();
+
+    if (!profile.exists) {
+        throw new https.HttpsError("not-found", "The specified user id does not exist.", { foreignUserId });
+    }
+
+    return profile.data();
+});
+
+export const searchUsers = useAuthenticatedFunction<SearchUserRequest>(async ({ query }, { uid }) => {
+    const userCollection = useUserCollection();
+
+    const snapshot = await userCollection.get();
+
+    const allUsers = snapshot
+        .docs
+        .reduce((accumulator, data) => {
+            const profile = data.data() as CustomUserData;
+
+            const searchableFields = [profile.fullName, profile.nickname];
+
+            if (searchableFields.some(f => f.includes(query))) {
+
+                return {
+                    ...accumulator,
+                    [data.id]: {
+                        photoUrl: profile.photoUrl,
+                        userId: data.id,
+                        userName: profile.nickname,
+                        fullName: profile.fullName,
+                    } as UserSuggestion
+                };
+            }
+
+            return accumulator;
+
+        }, {} as { [userId: string]: UserSuggestion });
+
+    return Object.values(allUsers);
+});
+
+export const getFriends = useAuthenticatedFunction<GetFriendsRequest>(async ({ friendIds }, _) => {
+    if (friendIds.length == 0) return [];
+
+    const userCollection = useUserCollection();
+
+    const friends = await userCollection
+        .where(firestore.FieldPath.documentId(), "in", friendIds)
+        .get();
+
+    return friends.docs.map(doc => {
+        const { fullName, nickname, photoUrl } = doc.data();
+
+        return {
+            userId: doc.id,
+            fullName,
+            userName: nickname,
+            photoUrl,
+        } as UserSuggestion;
+    });
 });

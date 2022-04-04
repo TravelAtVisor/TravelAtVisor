@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/activity_module/views/date_time_indicator.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../shared_module/models/activity.dart';
+import '../../shared_module/models/authentication_state.dart';
 import '../activity.data_service.dart';
 import '../models/extended_place_data.dart';
 import '../views/opening_hour_visualizer.dart';
 
 class PlaceDetails extends StatefulWidget {
   final String foursquareId;
+  final String? tripId;
+  final Activity? activity;
 
-  const PlaceDetails({Key? key, required this.foursquareId}) : super(key: key);
+  const PlaceDetails({
+    Key? key,
+    required this.foursquareId,
+    this.tripId,
+    this.activity,
+  }) : super(key: key);
 
   @override
   _PlaceDetailsState createState() => _PlaceDetailsState();
@@ -18,6 +32,9 @@ class PlaceDetails extends StatefulWidget {
 
 class _PlaceDetailsState extends State<PlaceDetails> {
   ExtendedPlaceData? _details;
+  static const uuid = Uuid();
+
+  DateTime? visitingDay;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +57,7 @@ class _PlaceDetailsState extends State<PlaceDetails> {
   Widget buildLoader(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mockup.Foursquare"),
+        title: const Text("Lade Daten..."),
       ),
       body: const Center(
         child: SizedBox(
@@ -54,69 +71,141 @@ class _PlaceDetailsState extends State<PlaceDetails> {
 
   Widget buildDetails(BuildContext context) {
     final d = _details!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(d.name),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              CarouselSlider(
-                items: d.photoUrls
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image(
-                              image: NetworkImage(e),
+    return Consumer<ApplicationState>(builder: (context, state, _) {
+      final trip = state.currentUser!.customData!.trips
+          .singleWhere((element) => element.tripId == state.currentTripId);
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(d.name),
+          actions: [
+            if (widget.tripId != null)
+              IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: visitingDay != null
+                    ? () async {
+                        LoadingOverlay.show(context);
+                        await context
+                            .read<ActivityDataService>()
+                            .addActivityAsync(
+                              widget.tripId!,
+                              Activity(
+                                uuid.v4(),
+                                d.foursquareId,
+                                visitingDay!,
+                                d.name,
+                                d.description,
+                                d.photoUrls.first,
+                              ),
+                            );
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      }
+                    : null,
+              ),
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                CarouselSlider(
+                  items: d.photoUrls
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image(
+                                image: NetworkImage(e),
+                              ),
                             ),
-                          ),
-                        ))
-                    .toList(),
-                options: CarouselOptions(
-                  enlargeCenterPage: true,
-                  autoPlay: true,
+                          ))
+                      .toList(),
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    autoPlay: true,
+                  ),
                 ),
-              ),
-              RatingsRow(generalRating: d.rating, priceRating: d.priceRating),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      d.name,
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    if (d.categories.isNotEmpty)
-                      Text(
-                        d.categories.first.displayValue.toUpperCase(),
-                        style: Theme.of(context).textTheme.subtitle1,
-                      )
-                  ],
-                ),
-              ),
-              if (d.description != null)
+                RatingsRow(generalRating: d.rating, priceRating: d.priceRating),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(d.description!),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        d.name,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      if (d.categories.isNotEmpty)
+                        Text(
+                          d.categories.first.displayValue.toUpperCase(),
+                          style: Theme.of(context).textTheme.subtitle1,
+                        )
+                    ],
+                  ),
                 ),
-              ContactRows(
-                socialMediaLinks: d.socialMediaLinks,
-                phoneNumber: d.phoneNumber,
-                website: d.website,
-              ),
-              if (d.openingHours != null || d.popularHours != null)
-                OpeningHourVisualizer(
-                  openingHours: d.openingHours,
-                  popularHours: d.popularHours,
+                if (d.description != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(d.description!),
+                  ),
+                ListTile(
+                  leading: const Icon(Icons.map),
+                  title: Text(
+                    "Adresse",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  subtitle: Text(d.address?.formatted ?? "In Karten öffnen"),
+                  onTap: () => d.address != null
+                      ? MapsLauncher.launchQuery(d.address!.formatted)
+                      : MapsLauncher.launchCoordinates(
+                          d.geocodes.latitude, d.geocodes.longitude),
                 ),
-            ],
+                ContactRows(
+                  socialMediaLinks: d.socialMediaLinks,
+                  phoneNumber: d.phoneNumber,
+                  website: d.website,
+                ),
+                DateTimeIndicator(
+                    date: visitingDay ?? widget.activity?.timestamp,
+                    onPressed: widget.tripId != null
+                        ? () async {
+                            final dateBase = await showDatePicker(
+                              context: context,
+                              initialDate: trip.begin,
+                              firstDate: trip.begin,
+                              lastDate: trip.end,
+                            );
+
+                            if (dateBase == null) return;
+
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: const TimeOfDay(
+                                hour: 12,
+                                minute: 0,
+                              ),
+                            );
+
+                            if (time == null) return;
+                            final date = dateBase.add(Duration(
+                                hours: time.hour, minutes: time.minute));
+
+                            setState(() {
+                              visitingDay = date;
+                            });
+                          }
+                        : null),
+                if (d.openingHours != null || d.popularHours != null)
+                  OpeningHourVisualizer(
+                    openingHours: d.openingHours,
+                    popularHours: d.popularHours,
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -141,7 +230,7 @@ class ContactRows extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.phone),
             title: Text(phoneNumber!),
-            onTap: () => launch("tel:+49 162 7949609"),
+            onTap: () => launch("tel:$phoneNumber"),
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -160,14 +249,14 @@ class ContactRows extends StatelessWidget {
               ),
             if (socialMediaLinks.instagram?.isNotEmpty ?? false)
               IconButton(
-                icon: const Icon(Icons.insert_chart),
+                icon: const Icon(FontAwesomeIcons.instagram),
                 onPressed: () => launch(
                     "https://www.instagram.com/${socialMediaLinks.instagram}",
                     forceWebView: true),
               ),
             if (socialMediaLinks.twitter?.isNotEmpty ?? false)
               IconButton(
-                icon: const Icon(Icons.biotech_rounded),
+                icon: const Icon(FontAwesomeIcons.twitter),
                 onPressed: () => launch(
                     "https://twitter.com/${socialMediaLinks.twitter}",
                     forceWebView: true),

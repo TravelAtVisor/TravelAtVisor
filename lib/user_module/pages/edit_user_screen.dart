@@ -34,7 +34,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                             .read<UserDataService>()
                             .updateUserProfileAsync(customUserData!);
                         Navigator.of(context).pop();
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(customUserData!);
                       },
                 icon: Icon(
                   Icons.check,

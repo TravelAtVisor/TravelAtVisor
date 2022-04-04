@@ -1,191 +1,280 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/utils/date_extensions.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
+import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
+import 'package:travel_atvisor/trip_module/views/design_selector.dart';
+import 'package:travel_atvisor/user_module/models/user_suggestion.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../shared_module/models/trip.dart';
 import '../../shared_module/views/companions_friends.dart';
 import '../../shared_module/views/custom_text_input.dart';
 import '../../shared_module/views/full_width_button.dart';
-import '../views/design_select.dart';
 
 class NewTrip extends StatefulWidget {
-  const NewTrip({Key? key}) : super(key: key);
+  final Trip? currentTrip;
+  const NewTrip({
+    Key? key,
+    this.currentTrip,
+  }) : super(key: key);
 
   @override
   _NewTripState createState() => _NewTripState();
 }
 
 class _NewTripState extends State<NewTrip> {
-  final _tripTitleController = TextEditingController();
-  final _startDateController = TextEditingController();
-  final _endDateController = TextEditingController();
+  static const uuid = Uuid();
+  late final TextEditingController _tripTitleController;
 
-  DateTime _selectedDate = DateTime.now();
+  String? tripDesignPath;
+  List<UserSuggestion>? friendsAvailable;
+  List<UserSuggestion> friendsToAdd = [];
+  DateTime? startDate;
+  DateTime? endDate;
+
+  @override
+  initState() {
+    _tripTitleController =
+        TextEditingController(text: widget.currentTrip?.title);
+    startDate = widget.currentTrip?.begin;
+    endDate = widget.currentTrip?.end;
+    tripDesignPath = widget.currentTrip?.tripDesign;
+
+    super.initState();
+  }
+
+  bool get _isNameValid => _tripTitleController.text.isNotEmpty;
+  bool get _isDateRangeSet => startDate != null && endDate != null;
+  bool get _isDesignValid => tripDesignPath != null;
+  bool get _isFormValid =>
+      _isDateRangeSet &&
+      _isNameValid &&
+      _isDesignValid &&
+      !_hasTripAcitivitiesOutsideOfTimeRange;
+  bool get _hasTripAcitivitiesOutsideOfTimeRange =>
+      widget.currentTrip != null &&
+      widget.currentTrip!.activities.any((element) =>
+          !element.timestamp.isAfterByDate(startDate!) ||
+          !element.timestamp.isBeforeByDate(endDate!));
+
+  Widget _buildNameSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: CustomTextInput(
+        controller: _tripTitleController,
+        labelText: 'Name der Reise',
+        errorText: _isNameValid ? null : "Der Name ist ungültig",
+        onChanged: (_) => setState(() {}),
+      ),
+    );
+  }
+
+  Widget _buildDateRangeSection() {
+    final dateFormatter = DateFormat("d. MMMM y");
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 6.0),
+            child: Text("Zeitraum",
+                style: Theme.of(context).textTheme.titleMedium),
+          ),
+          if (!_isDateRangeSet)
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 6.0),
+              child: Text(
+                "Bitte gib einen Zeitraum an.",
+                style: Theme.of(context)
+                    .textTheme
+                    .caption!
+                    .copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          if (_hasTripAcitivitiesOutsideOfTimeRange)
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 6.0),
+              child: Text(
+                "Einige Aktivitäten sind außerhalb des gewählten Zeitraums.",
+                style: Theme.of(context)
+                    .textTheme
+                    .caption!
+                    .copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextInput(
+                  readOnly: true,
+                  controller: TextEditingController(
+                      text: startDate != null
+                          ? dateFormatter.format(startDate!)
+                          : null),
+                  labelText: 'Beginn',
+                  onEntered: () {
+                    _showCalendarDialog();
+                  },
+                ),
+              ),
+              Expanded(
+                child: CustomTextInput(
+                  readOnly: true,
+                  controller: TextEditingController(
+                      text: endDate != null
+                          ? dateFormatter.format(endDate!)
+                          : null),
+                  labelText: 'Ende',
+                  onEntered: () {
+                    _showCalendarDialog();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanionsSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: CompanionsFriends(
+        header: 'Freunde',
+        canAddPerson: true,
+        addFriend: () async {
+          final newFriend = await context
+              .read<TripNavigationService>()
+              .pushAddFriendScreen(context,
+              friendsAvailable!.where((e) => !friendsToAdd.contains(e)).toList());
+          if (newFriend != null) {
+            setState(() {
+              friendsToAdd.add(newFriend);
+            });
+          }
+        },
+        friends: friendsToAdd,
+        removeFriend: (uid) => setState(() {
+          friendsToAdd.removeWhere((element) => element.userId == uid);
+        }),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final dataService = context.read<TripDataService>();
+
+    if (friendsAvailable == null) {
+      final friends =
+          context.read<ApplicationState>().currentUser!.customData!.friends;
+      dataService.getFriends(friends).then((value) => setState((() {
+            friendsAvailable = value;
+            friendsToAdd = widget.currentTrip?.companions
+                    .map((e) =>
+                        value.singleWhere((element) => element.userId == e))
+                    .toList() ??
+                [];
+          })));
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text("Neue Reise"),
-        //toolbarHeight: MediaQuery.of(context).size.height * 0.001,
+        title: Text(widget.currentTrip == null
+            ? "Neue Reise"
+            : "${widget.currentTrip!.title} bearbeiten"),
+        actions: [
+          IconButton(
+            onPressed: _isFormValid
+                ? () async {
+                    LoadingOverlay.show(context);
+                    final companions =
+                        friendsToAdd.map((e) => e.userId).toList();
+                    final trip = Trip(
+                      widget.currentTrip?.tripId ?? uuid.v4(),
+                      _tripTitleController.text,
+                      startDate!,
+                      endDate!,
+                      companions,
+                      widget.currentTrip?.activities ?? [],
+                      tripDesignPath!,
+                    );
+                    await dataService.setTripAsync(trip);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }
+                : null,
+            icon: const Icon(Icons.check),
+          ),
+        ],
       ),
-      body: Center(
-        child: Column(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+            _buildNameSection(),
+            _buildDateRangeSection(),
+            DesignSelector(
+              errorText: _isDesignValid ? null : "Bitte wähle ein Design",
+              initialPath: tripDesignPath,
+              onPathChanged: (designPath) => setState(() {
+                tripDesignPath = designPath;
+              }),
             ),
-            Column(
-              children: [
-                CustomTextInput(
-                    controller: _tripTitleController,
-                    labelText: 'Name der Reise'),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        'Reisezeitraum',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.045),
-                      ),
-                    )),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextInput(
-                        controller: _startDateController,
-                        labelText: 'Beginn',
-                        onEntered: () {
-                          _selectDate(context, _startDateController);
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomTextInput(
-                        controller: _endDateController,
-                        labelText: 'Ende',
-                        onEntered: () {
-                          _selectDate(context, _endDateController);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    'Design',
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.045),
-                  ),
-                )),
-            Row(
-              children: const [
-                DesignSelect(),
-                //DesignCard(showBorder: false),
-              ],
-            ),
-            /*Row(
-              children: [
-                DesignCard(showBorder: false),
-                DesignCard(showBorder: false),
-              ],
-            ),*/
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.03,
-                  right: MediaQuery.of(context).size.width * 0.03),
-              child:
-                  const CompanionsFriends(header: 'Freunde', addPerson: true),
-            ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: FullWidthButton(
-                        text: "Speichern",
-                        onPressed: () => {_navigateToHomeScreen(context)},
-                        isElevated: false),
-                  )),
-            )
+            if (friendsAvailable != null) _buildCompanionsSection(),
           ],
         ),
       ),
     );
   }
 
-  void _navigateToHomeScreen(BuildContext context) {
-    Navigator.of(context).pop(context);
-  }
-
-  _selectDate(
-      BuildContext context, TextEditingController textController) async {
-    DateTime? newSelectedDate = await showDatePicker(
+  void _showCalendarDialog() {
+    showDialog(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 10),
-    );
-
-    if (newSelectedDate != null) {
-      _selectedDate = newSelectedDate;
-      textController
-        ..text = DateFormat('dd.MM.yyyy').format(_selectedDate)
-        ..selection = TextSelection.fromPosition(TextPosition(
-            offset: textController.text.length,
-            affinity: TextAffinity.upstream));
-    }
-  }
-
-  Widget buildDesignCard({required bool showBorder}) {
-    Color _color = Theme.of(context).colorScheme.primary;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _color = Colors.red;
-        });
-      },
-      child: Card(
-        color: _color,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          //side: BorderSide(width: 5, color: Colors.green),
-        ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.45,
-          height: MediaQuery.of(context).size.height * 0.09,
-          child: Column(
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Reisezeitraum wählen'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  'Reisetitel',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.35,
+                width: MediaQuery.of(context).size.width,
+                child: Card(
+                  child: SfDateRangePicker(
+                    view: DateRangePickerView.month,
+                    onSelectionChanged:
+                        (DateRangePickerSelectionChangedArgs args) {
+                      final range = args.value as PickerDateRange;
+                      setState(() {
+                        startDate = range.startDate ?? startDate;
+                        endDate = range.endDate ?? endDate;
+                      });
+                    },
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    minDate: DateTime.now(),
+                    initialSelectedRange: PickerDateRange(startDate, endDate),
+                    cancelText: "Abbrechen",
                   ),
                 ),
               ),
+              FullWidthButton(
+                  text: "Okay",
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  isElevated: false),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

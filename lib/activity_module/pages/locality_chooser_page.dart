@@ -5,12 +5,14 @@ import 'package:uuid/uuid.dart';
 
 import '../models/locality_suggestion.dart';
 import '../utils/debouncer.dart';
-import '../views/search_mask.dart';
+import '../../shared_module/views/search_mask.dart';
 import 'place_search_page.dart';
 
 class LocalityChooserPage extends StatefulWidget {
   final searchDebouncer = Debouncer(milliseconds: 200);
-  LocalityChooserPage({Key? key}) : super(key: key);
+  final String tripId;
+
+  LocalityChooserPage({Key? key, required this.tripId}) : super(key: key);
 
   @override
   _LocalityChooserPageState createState() => _LocalityChooserPageState();
@@ -40,7 +42,10 @@ class _LocalityChooserPageState extends State<LocalityChooserPage> {
             : null,
         onTap: () async {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PlaceSearchPage(locality: result.name)));
+              builder: (context) => PlaceSearchPage(
+                    locality: result.name,
+                    tripId: widget.tripId,
+                  )));
           sessionToken = uuid.v4();
         },
       ),

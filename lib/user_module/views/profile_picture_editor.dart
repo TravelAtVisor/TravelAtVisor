@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -24,16 +25,10 @@ class ProfilePictureEditor extends StatefulWidget {
 
 class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
   static const String _defaultProfilePicture =
-      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/images.jpeg?alt=media&token=c61daa6c-ea9f-4361-8074-768fc2961283";
+      "https://firebasestorage.googleapis.com/v0/b/travelatvisor.appspot.com/o/ph_profile.png?alt=media&token=9273044a-565d-4699-9290-8910d30d9c43";
 
   String? _profilePicturePath;
-  late bool _isRemotePhoto;
-
-  @override
-  void initState() {
-    _isRemotePhoto = widget.initialProfilePicture == null;
-    super.initState();
-  }
+  bool isDirty = false;
 
   void triggerPofilePictureWorkflow() {
     showModalBottomSheet(
@@ -46,26 +41,28 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
                         icon: Icons.camera_alt,
                         label: "Profilbild aufnehmen",
                         onPressed: () async {
-                          final pickedFile = await widget.imagePicker
-                              .getImage(source: ImageSource.camera);
+                          final pickedFile = await widget.imagePicker.getImage(
+                              source: ImageSource.camera, imageQuality: 25);
                           cropImage(pickedFile?.path);
                         }),
                     BottomSheetAction(
-                        icon: Icons.browse_gallery,
+                        icon: FontAwesomeIcons.image,
                         label: "Profilbild auswählen",
                         onPressed: () async {
-                          final pickedFile = await widget.imagePicker
-                              .getImage(source: ImageSource.gallery);
+                          final pickedFile = await widget.imagePicker.getImage(
+                              source: ImageSource.gallery, imageQuality: 25);
                           cropImage(pickedFile?.path);
                         }),
-                    BottomSheetAction(
-                      icon: Icons.delete_forever,
-                      label: "Profilbild entfernen",
-                      onPressed: () => setState(() {
-                        _profilePicturePath = null;
-                        _isRemotePhoto = true;
-                      }),
-                    )
+                    if (_profilePicturePath != null ||
+                        (widget.initialProfilePicture != null && !isDirty))
+                      BottomSheetAction(
+                        icon: Icons.delete_forever,
+                        label: "Profilbild entfernen",
+                        onPressed: () => setState(() {
+                          _profilePicturePath = null;
+                          isDirty = true;
+                        }),
+                      )
                   ],
                 ),
               ),
@@ -81,9 +78,9 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
         ratioX: 1,
         ratioY: 1,
       ),
-      androidUiSettings: const AndroidUiSettings(
+      androidUiSettings: AndroidUiSettings(
           toolbarTitle: 'Profilbild zuschneiden',
-          toolbarColor: Colors.deepOrange,
+          toolbarColor: Theme.of(context).colorScheme.primary,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true),
@@ -93,15 +90,18 @@ class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
 
     setState(() {
       _profilePicturePath = croppedFile?.path;
-      _isRemotePhoto = false;
+      isDirty = true;
     });
   }
 
   Image getImage() {
-    if (_isRemotePhoto == true || _profilePicturePath == null) {
-      return Image.network(_profilePicturePath ?? _defaultProfilePicture);
+    if (!isDirty && widget.initialProfilePicture != null) {
+      return Image.network(widget.initialProfilePicture!);
     }
-    return Image.file(File(_profilePicturePath!));
+    if (_profilePicturePath != null) {
+      return Image.file(File(_profilePicturePath!));
+    }
+    return Image.network(_defaultProfilePicture);
   }
 
   @override

@@ -5,8 +5,9 @@ import '../pages/place_details.dart';
 
 class PlaceSearchResult extends StatelessWidget {
   final PlaceCoreData place;
+  final String tripId;
 
-  const PlaceSearchResult({Key? key, required this.place}) : super(key: key);
+  const PlaceSearchResult({Key? key, required this.place, required this.tripId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class PlaceSearchResult extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => PlaceDetails(
-            foursquareId: place.foursquareId,
+            foursquareId: place.foursquareId, tripId: tripId,
           ),
         ),
       ),

@@ -24,6 +24,9 @@ dependencies:
   uuid: 3.0.6
   carousel_slider: 4.0.0
   url_launcher: 6.0.20
+  maps_launcher: 2.0.1
+  font_awesome_flutter: 10.1.0
+  flutter_speed_dial: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +37,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/mountains.jpg
-    - assets/empire.jpg
     - assets/ph_profile.png

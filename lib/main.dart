@@ -5,20 +5,31 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travel_atvisor/activity_module/activity.data_service.dart';
+import 'package:travel_atvisor/global.navigation_service.dart';
 import 'package:travel_atvisor/shared_module/data_service.dart';
 import 'package:travel_atvisor/shared_module/models/authentication_state.dart';
+import 'package:travel_atvisor/shared_module/navigation_service.dart';
 import 'package:travel_atvisor/shared_module/views/authentication_guard.dart';
 import 'package:travel_atvisor/trip_module/trip.data_service.dart';
+import 'package:travel_atvisor/trip_module/trip.navigation_service.dart';
 import 'package:travel_atvisor/user_module/user.data_service.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'global_tab_controller.dart';
+import 'trip_module/views/design_selector.dart';
 import 'user_module/pages/login_page.dart';
 
 const useLocalFunctions = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Future.wait([
+    Firebase.initializeApp(),
+    initializeDateFormatting('de_DE', null),
+  ]);
+  Intl.defaultLocale = 'de_DE';
+
   runApp(const TravelAtVisorApp());
 }
 
@@ -27,6 +38,9 @@ class TravelAtVisorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    for (var defaultDesign in DesignSelector.defaultDesigns) {
+      precacheImage(NetworkImage(defaultDesign), context);
+    }
     var functions = FirebaseFunctions.instanceFor(region: "europe-west6");
     if (useLocalFunctions) functions.useFunctionsEmulator("localhost", 5001);
 
@@ -35,9 +49,13 @@ class TravelAtVisorApp extends StatelessWidget {
       FirebaseStorage.instance,
       FirebaseAuth.instance,
     );
+    final navigationService = NavigationService();
     return MultiProvider(
       providers: [
-        Provider<TripDataservice>(
+        Provider<TripNavigationService>(
+          create: (_) => navigationService,
+        ),
+        Provider<TripDataService>(
           create: (_) => dataService,
         ),
         Provider<UserDataService>(
@@ -45,6 +63,9 @@ class TravelAtVisorApp extends StatelessWidget {
         ),
         Provider<ActivityDataService>(
           create: (_) => dataService,
+        ),
+        Provider<GlobalNavigationService>(
+          create: (_) => navigationService,
         ),
         StreamProvider(
             create: (_) => dataService.applicationState,

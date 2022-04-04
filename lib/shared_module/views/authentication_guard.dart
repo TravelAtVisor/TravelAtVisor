@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_atvisor/shared_module/views/loading_overlay.dart';
 
 import '../models/authentication_state.dart';
 
@@ -14,6 +15,9 @@ class AuthenticationGuard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ApplicationState>(builder: (context, authState, _) {
+      if (!authState.isInitialized) {
+        return const LoadingOverlay();
+      }
       if (authState.hasCompleteProfile) {
         return userSafeBuilder(context);
       }
